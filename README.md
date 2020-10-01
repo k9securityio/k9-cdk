@@ -1,8 +1,6 @@
-# Welcome to your CDK TypeScript project!
+# k9-cdk
 
-This is a blank project for TypeScript development with CDK.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+The `k9-cdk` provides AWS CDK constructs to provision strong security policies defined using the k9 access capability model. 
 
 ## Useful commands
 
