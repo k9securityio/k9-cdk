@@ -1,15 +1,11 @@
 import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3'
 import {BucketPolicy} from '@aws-cdk/aws-s3'
-import {AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
+import {AnyPrincipal, Condition, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
 
-export type ArnEqualsTest = {
-    value: "ArnEquals";
-};
+export type ArnEqualsTest = "ArnEquals"
 
-export type ArnLikeTest = {
-    value: "ArnLike";
-};
+export type ArnLikeTest = "ArnLike";
 
 export type ArnConditionTest =
     | ArnEqualsTest
@@ -48,7 +44,7 @@ export class K9PolicyFactory {
         let arns = props.k9AccessCapabilities.allowAdministerResourceArns;
         if (arns) {
             console.log("arns: " + arns.values());
-            let statement = makeAllowStatement(arns, ["s3:GetBucketPolicy"]);
+            let statement = makeAllowStatement(["s3:GetBucketPolicy"], arns,  "ArnEquals");
             policy.document.addStatements(statement)
         } else {
             console.log("no arns")
@@ -72,14 +68,15 @@ export class K9PolicyFactory {
     }
 }
 
-function makeAllowStatement(arns: Set<string>, actions: Array<string>) {
+function makeAllowStatement(actions: Array<string>, arns: Set<string>, test: ArnConditionTest) {
     let statement = new PolicyStatement();
+    statement.addActions(...actions);
+    statement.effect = Effect.ALLOW;
+    statement.addAnyPrincipal();
+    statement.addAllResources();
     for (let arn of arns) {
         console.log(arn);
-        statement.addActions(...actions);
-        statement.effect = Effect.ALLOW;
-        statement.addArnPrincipal(arn);
-        statement.addAllResources();
+        statement.addCondition(test, { 'aws:PrincipalArn' : arn })
     }
     return statement;
 }
