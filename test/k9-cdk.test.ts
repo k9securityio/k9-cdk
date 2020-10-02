@@ -1,7 +1,11 @@
 import {expect as expectCDK, haveResource} from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
-import {K9AccessCapabilities, K9BucketPolicyProps} from '../lib/k9-cdk-stack';
-import {Bucket} from "@aws-cdk/aws-s3/lib/bucket";
+import * as s3 from '@aws-cdk/aws-s3';
+import {
+    K9AccessCapabilities,
+    K9BucketPolicyProps,
+    K9PolicyFactory
+} from '../lib/k9-cdk-stack';
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::139710491120:user/ci",
@@ -44,7 +48,7 @@ test('K9BucketPolicy', () => {
     const app = new cdk.App();
 
     const stack = new cdk.Stack(app, 'K9BucketPolicyTest');
-    const bucket = new Bucket(stack, 'TestBucket');
+    const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
     const k9AccessCapabilities: K9AccessCapabilities = {
         allowAdministerResourceArns: administerResourceArns,
@@ -57,9 +61,14 @@ test('K9BucketPolicy', () => {
         bucket: bucket,
         k9AccessCapabilities: k9AccessCapabilities
     };
-
-    // THEN
     expect(k9BucketPolicyProps.k9AccessCapabilities).toEqual(k9AccessCapabilities);
+
+    const k9PolicyFactory = new K9PolicyFactory();
+
+    const bucketPolicy = k9PolicyFactory.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
+    
+    console.log("bucketPolicy: " + bucketPolicy.toString());
+    console.log("bucketPolicy.document: " + JSON.stringify(bucketPolicy.document.toJSON(), null, 2));
 
     expectCDK(stack).to(haveResource("AWS::S3::Bucket"));
 });
