@@ -67,8 +67,8 @@ export class K9PolicyFactory {
         "delete-data"
     );
 
-    getAccessSpec(k9_capability: string, desiredCapabilities: K9AccessCapabilities): K9AccessSpec {
-        switch (k9_capability) {
+    getAccessSpec(accessCapability: AccessCapability, desiredCapabilities: K9AccessCapabilities): K9AccessSpec {
+        switch (accessCapability) {
             case "administer-resource":
                 return {
                     accessCapability: "administer-resource",
@@ -94,7 +94,7 @@ export class K9PolicyFactory {
                     test: desiredCapabilities.allowDeleteDataTest ? desiredCapabilities.allowDeleteDataTest : "ArnEquals"
                 };
             default:
-                throw Error(`unsupported capability: ${k9_capability}`)
+                throw Error(`unsupported capability: ${accessCapability}`)
         }
     }
 
@@ -103,10 +103,10 @@ export class K9PolicyFactory {
 
         const policy = new s3.BucketPolicy(scope, `${id}Policy`, {bucket: props.bucket});
 
-        for (let access_capability of this.SUPPORTED_CAPABILITIES) {
-            let accessSpec = this.getAccessSpec(access_capability, props.k9AccessCapabilities);
-            let statement = makeAllowStatement(`Restricted-${access_capability}`,
-                this.getActions('S3', access_capability),
+        for (let accessCapability of this.SUPPORTED_CAPABILITIES) {
+            let accessSpec = this.getAccessSpec(accessCapability, props.k9AccessCapabilities);
+            let statement = makeAllowStatement(`Restricted-${accessCapability}`,
+                this.getActions('S3', accessCapability),
                 accessSpec.allowPrincipalArns,
                 accessSpec.test);
             policy.document.addStatements(statement)
