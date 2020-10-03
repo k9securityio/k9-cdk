@@ -63,7 +63,8 @@ export class K9PolicyFactory {
     SUPPORTED_CAPABILITIES = Array<AccessCapability>(
         "administer-resource",
         "read-data",
-        "write-data"
+        "write-data",
+        "delete-data"
     );
 
     getAccessSpec(k9_capability: string, desiredCapabilities: K9AccessCapabilities): K9AccessSpec {
@@ -86,6 +87,12 @@ export class K9PolicyFactory {
                     allowPrincipalArns: desiredCapabilities.allowWriteDataArns ? desiredCapabilities.allowWriteDataArns : new Set<string>(),
                     test: desiredCapabilities.allowWriteDataTest ? desiredCapabilities.allowWriteDataTest : "ArnEquals"
                 };
+            case "delete-data":
+                return {
+                    accessCapability: "delete-data",
+                    allowPrincipalArns: desiredCapabilities.allowDeleteDataArns ? desiredCapabilities.allowDeleteDataArns : new Set<string>(),
+                    test: desiredCapabilities.allowDeleteDataTest ? desiredCapabilities.allowDeleteDataTest : "ArnEquals"
+                };
             default:
                 throw Error(`unsupported capability: ${k9_capability}`)
         }
@@ -99,7 +106,7 @@ export class K9PolicyFactory {
         for (let access_capability of this.SUPPORTED_CAPABILITIES) {
             let accessSpec = this.getAccessSpec(access_capability, props.k9AccessCapabilities);
             let statement = makeAllowStatement(`Restricted-${access_capability}`,
-                ["s3:GetBucketPolicy"],
+                this.getActions('S3', access_capability),
                 accessSpec.allowPrincipalArns,
                 accessSpec.test);
             policy.document.addStatements(statement)
@@ -121,6 +128,27 @@ export class K9PolicyFactory {
         console.log("validated resource policy");
 
         return policy
+    }
+
+    private getActions(service: string, accessCapabiilty: AccessCapability): Array<string> {
+        switch (accessCapabiilty) {
+            case "administer-resource":
+                return ["s3:PutBucketPolicy",
+                    "s3:PutBucketPublicAccessBlock"
+                ];
+            case "read-data":
+                return ["s3:GetBucketPolicy"];
+            case "write-data":
+                return ["s3:PutObject"];
+            case "delete-data":
+                return ['s3:DeleteObject',
+                    's3:DeleteObjectTagging',
+                    's3:DeleteObjectVersion',
+                    's3:DeleteObjectVersionTagging'
+                ];
+            default:
+                throw Error(`unsupported capability: ${accessCapabiilty}`)
+        }
     }
 }
 
