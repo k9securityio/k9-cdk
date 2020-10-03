@@ -30,6 +30,7 @@ export interface K9AccessSpec {
 }
 
 export interface K9DesiredAccessSpecs {
+    // K9DesiredAccessSpecs may be able to replace K9AccessCapabilities in the near future
     [accessCapability: string]: K9AccessSpec;
 }
 
