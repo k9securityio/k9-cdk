@@ -169,7 +169,7 @@ function makeAllowStatement(sid: string, actions: Array<string>, arns: Set<strin
     statement.addActions(...actions);
     statement.addAnyPrincipal();
     statement.addAllResources();
-    statement.addCondition(test, {'aws:PrincipalArn': new Array<string>(...arns)});
+    statement.addCondition(test, {'aws:PrincipalArn': [...arns]});
     return statement;
 }
 
