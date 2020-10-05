@@ -55,12 +55,14 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
 
 export class K9PolicyFactory {
 
-    SUPPORTED_CAPABILITIES = Array<AccessCapability>(
+    SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
         AccessCapability.AdministerResource,
         AccessCapability.ReadData,
         AccessCapability.WriteData,
         AccessCapability.DeleteData,
     );
+
+    SUPPORTED_SERVICES = new Set<string>(["S3"]);
 
     getAccessSpec(accessCapability: AccessCapability, desiredCapabilities: K9AccessCapabilities): K9AccessSpec {
         switch (accessCapability) {
@@ -126,16 +128,20 @@ export class K9PolicyFactory {
     }
 
     private getActions(service: string, accessCapabiilty: AccessCapability): Array<string> {
+        if (!this.SUPPORTED_SERVICES.has(service)) {
+            throw Error(`unsupported service: ${service}`)
+        }
+
         switch (accessCapabiilty) {
-            case "administer-resource":
+            case AccessCapability.AdministerResource:
                 return ["s3:PutBucketPolicy",
                     "s3:PutBucketPublicAccessBlock"
                 ];
-            case "read-data":
+            case AccessCapability.ReadData:
                 return ["s3:GetBucketPolicy"];
-            case "write-data":
+            case AccessCapability.WriteData:
                 return ["s3:PutObject"];
-            case "delete-data":
+            case AccessCapability.DeleteData:
                 return ['s3:DeleteObject',
                     's3:DeleteObjectTagging',
                     's3:DeleteObjectVersion',
