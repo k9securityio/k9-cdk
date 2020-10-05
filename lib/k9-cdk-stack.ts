@@ -2,6 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3'
 import {BucketPolicy} from '@aws-cdk/aws-s3'
 import {AnyPrincipal, Effect, PolicyStatement, PolicyStatementProps} from "@aws-cdk/aws-iam";
+import {readFileSync} from 'fs';
 
 export type ArnEqualsTest = "ArnEquals"
 
@@ -63,6 +64,8 @@ export class K9PolicyFactory {
     );
 
     SUPPORTED_SERVICES = new Set<string>(["S3"]);
+
+    K9CapabilityMap: Map<string, any> = JSON.parse(readFileSync('./lib/capability_summary.json').toString());
 
     getAccessSpec(accessCapability: AccessCapability, desiredCapabilities: K9AccessCapabilities): K9AccessSpec {
         switch (accessCapability) {
@@ -128,7 +131,7 @@ export class K9PolicyFactory {
     }
 
     private getActions(service: string, accessCapabiilty: AccessCapability): Array<string> {
-        if (!this.SUPPORTED_SERVICES.has(service)) {
+        if (!this.SUPPORTED_SERVICES.has(service) && this.K9CapabilityMap.has(service)) {
             throw Error(`unsupported service: ${service}`)
         }
 
