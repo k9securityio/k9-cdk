@@ -65,7 +65,8 @@ export class K9PolicyFactory {
 
     SUPPORTED_SERVICES = new Set<string>(["S3"]);
 
-    K9CapabilityMap: Map<string, any> = JSON.parse(readFileSync('./lib/capability_summary.json').toString());
+    _K9CapabilityMapJSON: Object = JSON.parse(readFileSync('./lib/capability_summary.json').toString());
+    K9CapabilityMapByService: Map<string, Object> = new Map(Object.entries(this._K9CapabilityMapJSON));
 
     getAccessSpec(accessCapability: AccessCapability, desiredCapabilities: K9AccessCapabilities): K9AccessSpec {
         switch (accessCapability) {
@@ -131,27 +132,19 @@ export class K9PolicyFactory {
     }
 
     private getActions(service: string, accessCapabiilty: AccessCapability): Array<string> {
-        if (!this.SUPPORTED_SERVICES.has(service) && this.K9CapabilityMap.has(service)) {
+        if (!this.SUPPORTED_SERVICES.has(service) && this.K9CapabilityMapByService.has(service)) {
             throw Error(`unsupported service: ${service}`)
         }
 
-        switch (accessCapabiilty) {
-            case AccessCapability.AdministerResource:
-                return ["s3:PutBucketPolicy",
-                    "s3:PutBucketPublicAccessBlock"
-                ];
-            case AccessCapability.ReadData:
-                return ["s3:GetBucketPolicy"];
-            case AccessCapability.WriteData:
-                return ["s3:PutObject"];
-            case AccessCapability.DeleteData:
-                return ['s3:DeleteObject',
-                    's3:DeleteObjectTagging',
-                    's3:DeleteObjectVersion',
-                    's3:DeleteObjectVersionTagging'
-                ];
-            default:
-                throw Error(`unsupported capability: ${accessCapabiilty}`)
+        let serviceCapabilitiesObj: Object = this.K9CapabilityMapByService.get(service) || {};
+        let serviceCapabilitiesMap = new Map<string, Array<string>>(Object.entries(serviceCapabilitiesObj));
+
+        let accessCapabilityName = accessCapabiilty.toString();
+        if (serviceCapabilitiesMap &&
+            serviceCapabilitiesMap.has(accessCapabilityName)) {
+            return serviceCapabilitiesMap.get(accessCapabilityName) || Array<string>();
+        } else {
+            return new Array<string>();
         }
     }
 }
