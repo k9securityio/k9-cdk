@@ -11,25 +11,12 @@ export type ArnConditionTest =
     | ArnEqualsTest
     | ArnLikeTest;
 
-
-/**
- * enum Direction {
-   Up = "UP",
-   Down = "DOWN",
-   Left = "LEFT",
-   Right = "RIGHT"
- }
- */
-export type AccessCapabilityAdministerResource = "administer-resource"
-export type AccessCapabilityReadData = "read-data"
-export type AccessCapabilityWriteData = "write-data"
-export type AccessCapabilityDeleteData = "delete-data"
-
-export type AccessCapability =
-    | AccessCapabilityAdministerResource
-    | AccessCapabilityReadData
-    | AccessCapabilityWriteData
-    | AccessCapabilityDeleteData
+export enum AccessCapability {
+    AdministerResource = "administer-resource",
+    ReadData = "read-data",
+    WriteData = "write-data",
+    DeleteData = "delete-data",
+}
 
 export interface K9AccessSpec {
     accessCapability: AccessCapability
@@ -69,35 +56,35 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
 export class K9PolicyFactory {
 
     SUPPORTED_CAPABILITIES = Array<AccessCapability>(
-        "administer-resource",
-        "read-data",
-        "write-data",
-        "delete-data"
+        AccessCapability.AdministerResource,
+        AccessCapability.ReadData,
+        AccessCapability.WriteData,
+        AccessCapability.DeleteData,
     );
 
     getAccessSpec(accessCapability: AccessCapability, desiredCapabilities: K9AccessCapabilities): K9AccessSpec {
         switch (accessCapability) {
             case "administer-resource":
                 return {
-                    accessCapability: "administer-resource",
+                    accessCapability: accessCapability,
                     allowPrincipalArns: desiredCapabilities.allowAdministerResourceArns ? desiredCapabilities.allowAdministerResourceArns : new Set<string>(),
                     test: desiredCapabilities.allowAdministerResourceTest ? desiredCapabilities.allowAdministerResourceTest : "ArnEquals"
                 };
             case "read-data":
                 return {
-                    accessCapability: "read-data",
+                    accessCapability: accessCapability,
                     allowPrincipalArns: desiredCapabilities.allowReadDataArns ? desiredCapabilities.allowReadDataArns : new Set<string>(),
                     test: desiredCapabilities.allowReadDataTest ? desiredCapabilities.allowReadDataTest : "ArnEquals"
                 };
             case "write-data":
                 return {
-                    accessCapability: "write-data",
+                    accessCapability: accessCapability,
                     allowPrincipalArns: desiredCapabilities.allowWriteDataArns ? desiredCapabilities.allowWriteDataArns : new Set<string>(),
                     test: desiredCapabilities.allowWriteDataTest ? desiredCapabilities.allowWriteDataTest : "ArnEquals"
                 };
             case "delete-data":
                 return {
-                    accessCapability: "delete-data",
+                    accessCapability: accessCapability,
                     allowPrincipalArns: desiredCapabilities.allowDeleteDataArns ? desiredCapabilities.allowDeleteDataArns : new Set<string>(),
                     test: desiredCapabilities.allowDeleteDataTest ? desiredCapabilities.allowDeleteDataTest : "ArnEquals"
                 };
