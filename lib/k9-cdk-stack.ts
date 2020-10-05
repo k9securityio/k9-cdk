@@ -1,7 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3'
 import {BucketPolicy} from '@aws-cdk/aws-s3'
-import {AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
+import {AnyPrincipal, Effect, PolicyStatement, PolicyStatementProps} from "@aws-cdk/aws-iam";
 
 export type ArnEqualsTest = "ArnEquals"
 
@@ -12,6 +12,14 @@ export type ArnConditionTest =
     | ArnLikeTest;
 
 
+/**
+ * enum Direction {
+   Up = "UP",
+   Down = "DOWN",
+   Left = "LEFT",
+   Right = "RIGHT"
+ }
+ */
 export type AccessCapabilityAdministerResource = "administer-resource"
 export type AccessCapabilityReadData = "read-data"
 export type AccessCapabilityWriteData = "write-data"
@@ -153,16 +161,15 @@ export class K9PolicyFactory {
 }
 
 function makeAllowStatement(sid: string, actions: Array<string>, arns: Set<string>, test: ArnConditionTest) {
-    let statement = new PolicyStatement();
-    statement.sid = sid;
+    let policyStatementProps:PolicyStatementProps = {
+        sid: sid,
+        effect: Effect.ALLOW
+    };
+    let statement = new PolicyStatement(policyStatementProps);
     statement.addActions(...actions);
-    statement.effect = Effect.ALLOW;
     statement.addAnyPrincipal();
     statement.addAllResources();
-    for (let arn of arns) {
-        console.log(arn);
-        statement.addCondition(test, {'aws:PrincipalArn': arn})
-    }
+    statement.addCondition(test, {'aws:PrincipalArn': new Array<string>(...arns)});
     return statement;
 }
 
