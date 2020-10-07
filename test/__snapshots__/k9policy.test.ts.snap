@@ -254,6 +254,44 @@ Object {
                   ],
                 },
               ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::12345678910:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
             },
           ],
           "Version": "2012-10-17",

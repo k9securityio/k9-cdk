@@ -109,6 +109,7 @@ export class K9PolicyFactory {
             `${props.bucket.bucketArn}/*`
         ];
 
+        let allAllowedPrincipalArns = new Set<string>();
         for (let accessCapability of this.SUPPORTED_CAPABILITIES) {
             let accessSpec = this.getAccessSpec(accessCapability, props.k9AccessCapabilities);
             let statement = makeAllowStatement(`Restricted-${accessCapability}`,
@@ -116,11 +117,15 @@ export class K9PolicyFactory {
                 accessSpec.allowPrincipalArns,
                 accessSpec.test,
                 resourceArns);
-            policy.document.addStatements(statement)
+            policy.document.addStatements(statement);
 
+            accessSpec.allowPrincipalArns.forEach(function (value) {
+                allAllowedPrincipalArns.add(value);
+            });
         }
 
         policy.document.addStatements(new PolicyStatement({
+                sid: 'DenyInsecureCommunications',
                 effect: Effect.DENY,
                 principals: [new AnyPrincipal()],
                 actions: ['*'],
@@ -128,11 +133,20 @@ export class K9PolicyFactory {
                 conditions: {
                     Bool: {'aws:SecureTransport': false},
                 },
+            }),
+            new PolicyStatement({
+                sid: 'DenyEveryoneElse',
+                effect: Effect.DENY,
+                principals: [new AnyPrincipal()],
+                actions: ['s3:*'],
+                resources: resourceArns,
+                conditions: {
+                    ArnNotEquals: {'aws:PrincipalArn': [...allAllowedPrincipalArns]},
+                },
             })
         );
 
         policy.document.validateForResourcePolicy();
-        console.log("validated resource policy");
 
         return policy
     }
