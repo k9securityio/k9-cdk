@@ -42,7 +42,7 @@ define execute
 endef
 
 clean:
-	rm -rf .cdk.out/*
+	rm -rf cdk.out/*
 
 shell:
 	@$(call execute,sh,)
