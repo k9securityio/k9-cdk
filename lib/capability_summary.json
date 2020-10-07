@@ -472,18 +472,9 @@
   "S3": {
     "administer-resource": [
       "s3:BypassGovernanceRetention",
-      "s3:CreateAccessPoint",
-      "s3:CreateBucket",
-      "s3:CreateJob",
-      "s3:DeleteAccessPoint",
-      "s3:DeleteAccessPointPolicy",
-      "s3:DeleteBucket",
       "s3:DeleteBucketPolicy",
       "s3:DeleteBucketWebsite",
-      "s3:ObjectOwnerOverrideToBucketOwner",
       "s3:PutAccelerateConfiguration",
-      "s3:PutAccessPointPolicy",
-      "s3:PutAccountPublicAccessBlock",
       "s3:PutAnalyticsConfiguration",
       "s3:PutBucketAcl",
       "s3:PutBucketCORS",
