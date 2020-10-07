@@ -546,9 +546,7 @@
       "s3:ReplicateDelete",
       "s3:ReplicateObject",
       "s3:ReplicateTags",
-      "s3:RestoreObject",
-      "s3:UpdateJobPriority",
-      "s3:UpdateJobStatus"
+      "s3:RestoreObject"
     ]
   }
 }
