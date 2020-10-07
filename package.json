@@ -1,6 +1,7 @@
 {
   "name": "k9-cdk",
   "version": "0.1.0",
+  "license": "Apache-2.0",
   "bin": {
     "k9-cdk": "bin/k9-cdk.js"
   },
