@@ -504,13 +504,6 @@
       "s3:DeleteObjectVersionTagging"
     ],
     "read-data": [
-      "s3:DescribeJob",
-      "s3:GetAccelerateConfiguration",
-      "s3:GetAccessPoint",
-      "s3:GetAccessPointPolicy",
-      "s3:GetAccessPointPolicyStatus",
-      "s3:GetAccountPublicAccessBlock",
-      "s3:GetAnalyticsConfiguration",
       "s3:GetBucketAcl",
       "s3:GetBucketCORS",
       "s3:GetBucketLocation",
@@ -539,15 +532,9 @@
       "s3:GetObjectVersionForReplication",
       "s3:GetObjectVersionTagging",
       "s3:GetObjectVersionTorrent",
-      "s3:GetReplicationConfiguration",
-      "s3:HeadBucket",
-      "s3:ListAccessPoints",
-      "s3:ListAllMyBuckets",
       "s3:ListBucket",
-      "s3:ListBucketByTags",
       "s3:ListBucketMultipartUploads",
       "s3:ListBucketVersions",
-      "s3:ListJobs",
       "s3:ListMultipartUploadParts"
     ],
     "write-data": [
