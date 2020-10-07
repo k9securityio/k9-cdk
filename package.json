@@ -1,7 +1,12 @@
 {
-  "name": "k9-cdk",
+  "name": "@k9securityio/k9-cdk",
   "version": "0.1.0",
   "license": "Apache-2.0",
+  "author": {
+    "name": "K9 Security Inc.",
+    "url": "https://k9security.io",
+    "organization": true
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/k9securityio/k9-cdk.git"
