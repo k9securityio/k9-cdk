@@ -224,7 +224,7 @@ Object {
               "Sid": "Restricted-delete-data",
             },
             Object {
-              "Action": "*",
+              "Action": "s3:*",
               "Condition": Object {
                 "Bool": Object {
                   "aws:SecureTransport": false,
@@ -254,6 +254,116 @@ Object {
                   ],
                 },
               ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "Null": Object {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "StringNotEquals": Object {
+                  "s3:x-amz-server-side-encryption": "aws:kms",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyStorageWithoutKMSEncryption",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::12345678910:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
             },
           ],
           "Version": "2012-10-17",
