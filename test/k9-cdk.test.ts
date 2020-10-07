@@ -62,9 +62,10 @@ test('K9BucketPolicy', () => {
     const k9PolicyFactory = new K9PolicyFactory();
 
     const bucketPolicy = k9PolicyFactory.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
-    
+
     console.log("bucketPolicy: " + bucketPolicy.toString());
     console.log("bucketPolicy.document: " + JSON.stringify(bucketPolicy.document.toJSON(), null, 2));
 
     expectCDK(stack).to(haveResource("AWS::S3::Bucket"));
+    expectCDK(stack).to(haveResource("AWS::S3::BucketPolicy"));
 });
