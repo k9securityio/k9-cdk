@@ -1,4 +1,4 @@
-import {expect as expectCDK, haveResource} from '@aws-cdk/assert';
+import {expect as expectCDK, haveResource, SynthUtils} from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3';
 import {K9AccessCapabilities, K9BucketPolicyProps, K9PolicyFactory} from '../lib/k9-cdk-stack';
@@ -63,9 +63,9 @@ test('K9BucketPolicy', () => {
 
     const bucketPolicy = k9PolicyFactory.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
 
-    console.log("bucketPolicy: " + bucketPolicy.toString());
     console.log("bucketPolicy.document: " + JSON.stringify(bucketPolicy.document.toJSON(), null, 2));
 
     expectCDK(stack).to(haveResource("AWS::S3::Bucket"));
     expectCDK(stack).to(haveResource("AWS::S3::BucketPolicy"));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
