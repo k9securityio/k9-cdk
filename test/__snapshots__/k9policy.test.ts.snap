@@ -47,7 +47,28 @@ Object {
               },
               "Effect": "Allow",
               "Principal": "*",
-              "Resource": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
               "Sid": "Restricted-administer-resource",
             },
             Object {
@@ -95,7 +116,28 @@ Object {
               },
               "Effect": "Allow",
               "Principal": "*",
-              "Resource": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
               "Sid": "Restricted-read-data",
             },
             Object {
@@ -119,7 +161,28 @@ Object {
               },
               "Effect": "Allow",
               "Principal": "*",
-              "Resource": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
               "Sid": "Restricted-write-data",
             },
             Object {
@@ -136,7 +199,28 @@ Object {
               },
               "Effect": "Allow",
               "Principal": "*",
-              "Resource": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
               "Sid": "Restricted-delete-data",
             },
             Object {
@@ -148,20 +232,28 @@ Object {
               },
               "Effect": "Deny",
               "Principal": "*",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "TestBucket560B80BC",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
             },
           ],
           "Version": "2012-10-17",

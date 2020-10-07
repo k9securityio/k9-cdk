@@ -104,12 +104,18 @@ export class K9PolicyFactory {
 
         const policy = new s3.BucketPolicy(scope, `${id}Policy`, {bucket: props.bucket});
 
+        let resourceArns = [
+            `${props.bucket.bucketArn}`,
+            `${props.bucket.bucketArn}/*`
+        ];
+
         for (let accessCapability of this.SUPPORTED_CAPABILITIES) {
             let accessSpec = this.getAccessSpec(accessCapability, props.k9AccessCapabilities);
             let statement = makeAllowStatement(`Restricted-${accessCapability}`,
                 this.getActions('S3', accessCapability),
                 accessSpec.allowPrincipalArns,
-                accessSpec.test);
+                accessSpec.test,
+                resourceArns);
             policy.document.addStatements(statement)
 
         }
@@ -118,7 +124,7 @@ export class K9PolicyFactory {
                 effect: Effect.DENY,
                 principals: [new AnyPrincipal()],
                 actions: ['*'],
-                resources: [`${props.bucket.bucketArn}/*`],
+                resources: resourceArns,
                 conditions: {
                     Bool: {'aws:SecureTransport': false},
                 },
@@ -149,15 +155,19 @@ export class K9PolicyFactory {
     }
 }
 
-function makeAllowStatement(sid: string, actions: Array<string>, arns: Set<string>, test: ArnConditionTest) {
-    let policyStatementProps:PolicyStatementProps = {
+function makeAllowStatement(sid: string,
+                            actions: Array<string>,
+                            principalArns: Set<string>,
+                            test: ArnConditionTest,
+                            resources: Array<string>): PolicyStatement {
+    let policyStatementProps: PolicyStatementProps = {
         sid: sid,
         effect: Effect.ALLOW
     };
     let statement = new PolicyStatement(policyStatementProps);
     statement.addActions(...actions);
     statement.addAnyPrincipal();
-    statement.addAllResources();
-    statement.addCondition(test, {'aws:PrincipalArn': [...arns]});
+    statement.addResources(...resources);
+    statement.addCondition(test, {'aws:PrincipalArn': [...principalArns]});
     return statement;
 }
