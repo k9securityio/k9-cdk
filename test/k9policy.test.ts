@@ -1,7 +1,7 @@
 import {expect as expectCDK, haveResource, SynthUtils} from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3';
-import {K9AccessCapabilities, K9BucketPolicyProps, K9PolicyFactory} from '../lib/k9-cdk-stack';
+import {K9AccessCapabilities, K9BucketPolicyProps, K9PolicyFactory} from '../lib/k9policy';
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::139710491120:user/ci",
