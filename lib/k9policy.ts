@@ -128,10 +128,20 @@ export class K9PolicyFactory {
                 sid: 'DenyInsecureCommunications',
                 effect: Effect.DENY,
                 principals: [new AnyPrincipal()],
-                actions: ['*'],
+                actions: ['s3:*'],
                 resources: resourceArns,
                 conditions: {
                     Bool: {'aws:SecureTransport': false},
+                },
+            }),
+            new PolicyStatement({
+                sid: 'DenyUnencryptedStorage',
+                effect: Effect.DENY,
+                principals: [new AnyPrincipal()],
+                actions: ['s3:PutObject', 's3:ReplicateObject'],
+                resources: resourceArns,
+                conditions: {
+                    Null: {'s3:x-amz-server-side-encryption': true},
                 },
             }),
             new PolicyStatement({
