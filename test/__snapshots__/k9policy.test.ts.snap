@@ -293,6 +293,42 @@ Object {
               "Sid": "DenyUnencryptedStorage",
             },
             Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "StringNotEquals": Object {
+                  "s3:x-amz-server-side-encryption": "aws:kms",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucket560B80BC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucket560B80BC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyStorageWithoutKMSEncryption",
+            },
+            Object {
               "Action": "s3:*",
               "Condition": Object {
                 "ArnNotEquals": Object {

@@ -145,6 +145,16 @@ export class K9PolicyFactory {
                 },
             }),
             new PolicyStatement({
+                sid: 'DenyStorageWithoutKMSEncryption',
+                effect: Effect.DENY,
+                principals: [new AnyPrincipal()],
+                actions: ['s3:PutObject', 's3:ReplicateObject'],
+                resources: resourceArns,
+                conditions: {
+                    'StringNotEquals': {'s3:x-amz-server-side-encryption': 'aws:kms'},
+                },
+            }),
+            new PolicyStatement({
                 sid: 'DenyEveryoneElse',
                 effect: Effect.DENY,
                 principals: [new AnyPrincipal()],
