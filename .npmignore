@@ -4,3 +4,14 @@
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+.idea
+*.iml
+Makefile
+bin
+test
+node_modules
+examples
+
+tsconfig.json
+jest.config.js
