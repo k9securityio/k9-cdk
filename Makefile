@@ -53,6 +53,11 @@ deps:
 		docker pull $(FQ_IMAGE); \
 	fi;
 
+init:
+	@echo "installing package dependencies"
+	@set -e
+	@npm install
+
 lint:
 	@echo "linting (TODO)"
 
@@ -79,7 +84,7 @@ destroy:
 verify:
 	@echo "verifying integration test stack (TODO)"
 
-all: lint build unit-test converge verify
+all: init lint build unit-test converge verify
 
 circleci-build:
 	@circleci build \
