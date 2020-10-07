@@ -6,6 +6,16 @@ least-privilege bucket policy built on the
 
 ## Local Development and Testing
 
+The high level build commands for this project are driven by `make`:
+
+* `make all` - build library, run tests, and deploy 
+* `make build` - build the library 
+* `make unit-test` - run unit tests for the library
+* `make converge` - deploy the integration test resources
+* `make destroy` - destroy the integration test resources
+
+The low level build commands for this project are:
+
  * `npm run build`   compile typescript to js
  * `npm run watch`   watch for changes and compile
  * `npm run test`    perform the jest unit tests

@@ -1,17 +1,9 @@
-.PHONY: clean deps init format lint converge verify destroy circleci-build kitchen docs
+.PHONY: clean deps build unit-test lint converge verify destroy circleci-build
 
 IMAGE_NAME := TBD
 IMAGE_TAG := TBD
 
 FQ_IMAGE := $(IMAGE_NAME):$(IMAGE_TAG)
-
-TERRAFORM_OPTS :=
-terraform = @$(call execute,terraform $(1) $(TERRAFORM_OPTS))
-
-terraform-docs = @$(call execute,terraform-docs $(1))
-
-KITCHEN_OPTS :=
-kitchen = @$(call execute,bundle exec kitchen $(1) $(KITCHEN_OPTS))
 
 AWS_AUTH_VARS :=
 
@@ -50,7 +42,7 @@ define execute
 endef
 
 clean:
-	rm -rf .terraform .kitchen terraform.tfstate.d test/fixtures/minimal/.terraform/ test/fixtures/minimal/generated/*
+	rm -rf .cdk.out/*
 
 shell:
 	@$(call execute,sh,)
@@ -63,6 +55,16 @@ deps:
 
 lint:
 	@echo "linting (TODO)"
+
+build:
+	@echo "building k9 policy library"
+	@set -e
+	@npm run build
+
+unit-test:
+	@echo "unit testing k9 policy library"
+	@set -e
+	@npm run test
 
 converge:
 	@echo "converging integration test stack"
@@ -77,7 +79,7 @@ destroy:
 verify:
 	@echo "verifying integration test stack (TODO)"
 
-all: lint converge verify
+all: lint build unit-test converge verify
 
 circleci-build:
 	@circleci build \
