@@ -1,8 +1,10 @@
-# k9-cdk
+# k9 AWS CDK policy library #
 
-The `k9-cdk` provides AWS CDK constructs to provision strong security policies defined using the k9 access capability model. 
+k9 Security's `k9-cdk` helps you protect data by provisioning strong AWS security bucket with safe defaults and a 
+least-privilege bucket policy built on the 
+[k9 access capability model](https://k9security.io/docs/k9-access-capability-model/).
 
-## Useful commands
+## Local Development and Testing
 
  * `npm run build`   compile typescript to js
  * `npm run watch`   watch for changes and compile
