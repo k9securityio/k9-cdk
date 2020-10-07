@@ -161,11 +161,3 @@ function makeAllowStatement(sid: string, actions: Array<string>, arns: Set<strin
     statement.addCondition(test, {'aws:PrincipalArn': [...arns]});
     return statement;
 }
-
-export class K9CdkStack extends cdk.Stack {
-    // TODO - Remove stack definition.  We're not going to vend a stack.
-    constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
-        super(scope, id, props);
-
-    }
-}
