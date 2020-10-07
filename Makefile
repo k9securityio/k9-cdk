@@ -42,7 +42,7 @@ define execute
 endef
 
 clean:
-	rm -rf cdk.out/*
+	rm -f bin/*.js bin/*.d.ts lib/*.js lib/*.d.ts && rm -rf cdk.out/* node_modules
 
 shell:
 	@$(call execute,sh,)
