@@ -1,7 +1,7 @@
 import {expect as expectCDK, haveResource, SynthUtils} from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3';
-import {AccessCapability, K9AccessSpec} from '../lib/k9policy';
+import {AccessCapability, AccessSpec} from '../lib/k9policy';
 import {K9BucketPolicyProps} from "../lib/s3";
 import * as k9 from "../lib";
 
@@ -30,7 +30,7 @@ test('K9BucketPolicy', () => {
 
     const k9BucketPolicyProps: K9BucketPolicyProps = {
         bucket: bucket,
-        k9DesiredAccess: new Array<K9AccessSpec>(
+        k9DesiredAccess: new Array<AccessSpec>(
             {
                 accessCapability: AccessCapability.AdministerResource,
                 allowPrincipalArns: administerResourceArns,

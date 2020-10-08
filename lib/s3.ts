@@ -1,11 +1,11 @@
 import * as s3 from "@aws-cdk/aws-s3";
 import {BucketPolicy} from "@aws-cdk/aws-s3";
-import {AccessCapability, K9AccessSpec, K9PolicyFactory} from "./k9policy";
+import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 import * as cdk from "@aws-cdk/core";
 import {AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
 
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
-    readonly k9DesiredAccess: Array<K9AccessSpec>
+    readonly k9DesiredAccess: Array<AccessSpec>
     readonly bucket: s3.Bucket
 }
 
@@ -27,12 +27,12 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
 
     let allAllowedPrincipalArns = new Set<string>();
 
-    let accessSpecsByCapability: Map<AccessCapability, K9AccessSpec> = new Map<AccessCapability, K9AccessSpec>();
+    let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
 
     props.k9DesiredAccess.forEach(accessSpec => accessSpecsByCapability.set(accessSpec.accessCapability, accessSpec));
 
     for (let supportedCapability of SUPPORTED_CAPABILITIES) {
-        let accessSpec: K9AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
+        let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
             { //generate a default access spec if none was provided
                 accessCapability: supportedCapability,
                 allowPrincipalArns: new Set<string>(),

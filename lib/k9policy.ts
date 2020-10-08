@@ -16,7 +16,7 @@ export enum AccessCapability {
     DeleteData = "delete-data",
 }
 
-export interface K9AccessSpec {
+export interface AccessSpec {
     accessCapability: AccessCapability
     allowPrincipalArns: Set<string>
     test?: ArnConditionTest

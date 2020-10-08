@@ -2,7 +2,7 @@
 
 import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
-import {AccessCapability, K9AccessSpec} from "../lib/k9policy";
+import {AccessCapability, AccessSpec} from "../lib/k9policy";
 import * as k9 from "../lib";
 
 const administerResourceArns = new Set<string>([
@@ -25,7 +25,7 @@ const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<K9AccessSpec>(
+    k9DesiredAccess: new Array<AccessSpec>(
         {
             accessCapability: AccessCapability.AdministerResource,
             allowPrincipalArns: administerResourceArns,
