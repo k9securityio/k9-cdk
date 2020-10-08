@@ -35,7 +35,7 @@ const readDataArns = new Set<string>(writeDataArns)
 
 const app = new cdk.App();
 
-const stack = new cdk.Stack(app, 'K9PolicyLibIntegrationTest');
+const stack = new cdk.Stack(app, 'K9Example');
 const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
