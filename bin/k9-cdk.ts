@@ -38,6 +38,7 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
             accessCapability: AccessCapability.ReadData,
             allowPrincipalArns: readDataArns,
         }
+        // omit access spec for delete-data because it is unneeded
     )
 };
 
