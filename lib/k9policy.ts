@@ -3,6 +3,7 @@ import * as s3 from '@aws-cdk/aws-s3'
 import {BucketPolicy} from '@aws-cdk/aws-s3'
 import {AnyPrincipal, Effect, PolicyStatement, PolicyStatementProps} from "@aws-cdk/aws-iam";
 import {readFileSync} from 'fs';
+import {K9BucketPolicyProps} from "./s3";
 
 export type ArnEqualsTest = "ArnEquals"
 
@@ -45,13 +46,6 @@ export class K9AccessCapabilities {
 
     }
 
-    // ??? Add support for custom actions
-    // will probably encourage users to create custom statements directly using the policy instead of trying to model
-}
-
-export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
-    readonly k9AccessCapabilities: K9AccessCapabilities
-    readonly bucket: s3.Bucket
 }
 
 export class K9PolicyFactory {
