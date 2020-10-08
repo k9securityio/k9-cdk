@@ -2,7 +2,7 @@
 
 import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
-import {K9AccessCapabilities, K9BucketPolicyProps, K9PolicyFactory} from "../lib/k9policy";
+import * as k9 from "../lib";
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::139710491120:user/ci",
@@ -22,18 +22,23 @@ const app = new cdk.App();
 const stack = new cdk.Stack(app, 'K9PolicyLibIntegrationTest');
 const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
-const k9AccessCapabilities: K9AccessCapabilities = {
-        allowAdministerResourceArns: administerResourceArns,
-        allowWriteDataArns: writeDataArns,
-        allowReadDataArns: readDataArns,
-    };
-
-const k9BucketPolicyProps: K9BucketPolicyProps = {
-    k9AccessCapabilities: k9AccessCapabilities,
-    bucket: bucket
+const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
+    bucket: bucket,
+    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
+        {
+            accessCapability: k9.k9policy.AccessCapability.AdministerResource,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapability: k9.k9policy.AccessCapability.WriteData,
+            allowPrincipalArns: writeDataArns,
+        },
+        {
+            accessCapability: k9.k9policy.AccessCapability.ReadData,
+            allowPrincipalArns: readDataArns,
+        }
+        // omit access spec for delete-data because it is unneeded
+    )
 };
 
-const k9PolicyFactory = new K9PolicyFactory();
-
-k9PolicyFactory.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
-
+k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);

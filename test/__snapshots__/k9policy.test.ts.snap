@@ -194,7 +194,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -336,6 +338,7 @@ Object {
                     "arn:aws:iam::139710491120:user/ci",
                     "arn:aws:iam::12345678910:role/app-backend",
                     "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::139710491120:user/super-admin",
                   ],
                 },
               },
