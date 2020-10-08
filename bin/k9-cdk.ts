@@ -2,8 +2,8 @@
 
 import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
-import {K9AccessCapabilities, K9PolicyFactory} from "../lib/k9policy";
-import {K9BucketPolicyProps} from "../lib/s3";
+import {K9AccessCapabilities} from "../lib/k9policy";
+import * as k9 from "../lib";
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::139710491120:user/ci",
@@ -29,12 +29,10 @@ const k9AccessCapabilities: K9AccessCapabilities = {
         allowReadDataArns: readDataArns,
     };
 
-const k9BucketPolicyProps: K9BucketPolicyProps = {
+const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     k9AccessCapabilities: k9AccessCapabilities,
     bucket: bucket
 };
 
-const k9PolicyFactory = new K9PolicyFactory();
-
-k9PolicyFactory.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
+const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
 

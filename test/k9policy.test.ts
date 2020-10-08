@@ -1,8 +1,9 @@
 import {expect as expectCDK, haveResource, SynthUtils} from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3';
-import {K9AccessCapabilities, K9PolicyFactory} from '../lib/k9policy';
+import {K9AccessCapabilities} from '../lib/k9policy';
 import {K9BucketPolicyProps} from "../lib/s3";
+import * as k9 from "../lib";
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::139710491120:user/ci",
@@ -60,9 +61,7 @@ test('K9BucketPolicy', () => {
     };
     expect(k9BucketPolicyProps.k9AccessCapabilities).toEqual(k9AccessCapabilities);
 
-    const k9PolicyFactory = new K9PolicyFactory();
-
-    const bucketPolicy = k9PolicyFactory.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
+    const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
 
     console.log("bucketPolicy.document: " + JSON.stringify(bucketPolicy.document.toJSON(), null, 2));
 
