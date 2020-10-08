@@ -42,7 +42,11 @@ test('K9BucketPolicy', () => {
             {
                 accessCapability: AccessCapability.ReadData,
                 allowPrincipalArns: readDataArns,
-            }
+            },
+            {
+                accessCapability: AccessCapability.DeleteData,
+                allowPrincipalArns: deleteDataArns,
+            },
         )
     };
     const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
