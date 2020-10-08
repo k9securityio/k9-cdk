@@ -2,7 +2,7 @@
 
 import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
-import {K9AccessCapabilities} from "../lib/k9policy";
+import {AccessCapability, K9AccessSpec} from "../lib/k9policy";
 import * as k9 from "../lib";
 
 const administerResourceArns = new Set<string>([
@@ -23,16 +23,22 @@ const app = new cdk.App();
 const stack = new cdk.Stack(app, 'K9PolicyLibIntegrationTest');
 const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
-const k9AccessCapabilities: K9AccessCapabilities = {
-        allowAdministerResourceArns: administerResourceArns,
-        allowWriteDataArns: writeDataArns,
-        allowReadDataArns: readDataArns,
-    };
-
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
-    k9AccessCapabilities: k9AccessCapabilities,
-    bucket: bucket
+    bucket: bucket,
+    k9DesiredAccess: new Array<K9AccessSpec>(
+        {
+            accessCapability: AccessCapability.AdministerResource,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapability: AccessCapability.WriteData,
+            allowPrincipalArns: writeDataArns,
+        },
+        {
+            accessCapability: AccessCapability.ReadData,
+            allowPrincipalArns: readDataArns,
+        }
+    )
 };
 
-const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
-
+k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);

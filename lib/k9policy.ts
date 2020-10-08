@@ -19,29 +19,7 @@ export enum AccessCapability {
 export interface K9AccessSpec {
     accessCapability: AccessCapability
     allowPrincipalArns: Set<string>
-    test: ArnConditionTest
-}
-
-export interface K9DesiredAccessSpecs {
-    // K9DesiredAccessSpecs may be able to replace K9AccessCapabilities in the near future
-    [accessCapability: string]: K9AccessSpec;
-}
-
-export class K9AccessCapabilities {
-
-    constructor(
-        readonly allowAdministerResourceArns?: Set<string>,
-        readonly allowAdministerResourceTest?: ArnConditionTest,
-        readonly allowReadDataArns?: Set<string>,
-        readonly allowReadDataTest?: ArnConditionTest,
-        readonly allowWriteDataArns?: Set<string>,
-        readonly allowWriteDataTest?: ArnConditionTest,
-        readonly allowDeleteDataArns?: Set<string>,
-        readonly allowDeleteDataTest?: ArnConditionTest,
-    ) {
-
-    }
-
+    test?: ArnConditionTest
 }
 
 export class K9PolicyFactory {
@@ -50,39 +28,8 @@ export class K9PolicyFactory {
 
     _K9CapabilityMapJSON: Object = JSON.parse(readFileSync('./lib/capability_summary.json').toString());
     K9CapabilityMapByService: Map<string, Object> = new Map(Object.entries(this._K9CapabilityMapJSON));
-
-    getAccessSpec(accessCapability: AccessCapability, desiredCapabilities: K9AccessCapabilities): K9AccessSpec {
-        switch (accessCapability) {
-            case "administer-resource":
-                return {
-                    accessCapability: accessCapability,
-                    allowPrincipalArns: desiredCapabilities.allowAdministerResourceArns ? desiredCapabilities.allowAdministerResourceArns : new Set<string>(),
-                    test: desiredCapabilities.allowAdministerResourceTest ? desiredCapabilities.allowAdministerResourceTest : "ArnEquals"
-                };
-            case "read-data":
-                return {
-                    accessCapability: accessCapability,
-                    allowPrincipalArns: desiredCapabilities.allowReadDataArns ? desiredCapabilities.allowReadDataArns : new Set<string>(),
-                    test: desiredCapabilities.allowReadDataTest ? desiredCapabilities.allowReadDataTest : "ArnEquals"
-                };
-            case "write-data":
-                return {
-                    accessCapability: accessCapability,
-                    allowPrincipalArns: desiredCapabilities.allowWriteDataArns ? desiredCapabilities.allowWriteDataArns : new Set<string>(),
-                    test: desiredCapabilities.allowWriteDataTest ? desiredCapabilities.allowWriteDataTest : "ArnEquals"
-                };
-            case "delete-data":
-                return {
-                    accessCapability: accessCapability,
-                    allowPrincipalArns: desiredCapabilities.allowDeleteDataArns ? desiredCapabilities.allowDeleteDataArns : new Set<string>(),
-                    test: desiredCapabilities.allowDeleteDataTest ? desiredCapabilities.allowDeleteDataTest : "ArnEquals"
-                };
-            default:
-                throw Error(`unsupported capability: ${accessCapability}`)
-        }
-    }
-
-    getActions(service: string, accessCapabiilty: AccessCapability): Array<string> {
+    
+    getActions(service: string, accessCapability: AccessCapability): Array<string> {
         if (!this.SUPPORTED_SERVICES.has(service) && this.K9CapabilityMapByService.has(service)) {
             throw Error(`unsupported service: ${service}`)
         }
@@ -90,7 +37,7 @@ export class K9PolicyFactory {
         let serviceCapabilitiesObj: Object = this.K9CapabilityMapByService.get(service) || {};
         let serviceCapabilitiesMap = new Map<string, Array<string>>(Object.entries(serviceCapabilitiesObj));
 
-        let accessCapabilityName = accessCapabiilty.toString();
+        let accessCapabilityName = accessCapability.toString();
         if (serviceCapabilitiesMap &&
             serviceCapabilitiesMap.has(accessCapabilityName)) {
             return serviceCapabilitiesMap.get(accessCapabilityName) || Array<string>();

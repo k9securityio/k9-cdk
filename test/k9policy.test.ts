@@ -1,7 +1,7 @@
 import {expect as expectCDK, haveResource, SynthUtils} from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
 import * as s3 from '@aws-cdk/aws-s3';
-import {K9AccessCapabilities} from '../lib/k9policy';
+import {AccessCapability, K9AccessSpec} from '../lib/k9policy';
 import {K9BucketPolicyProps} from "../lib/s3";
 import * as k9 from "../lib";
 
@@ -22,45 +22,29 @@ const deleteDataArns = new Set<string>([
     ]
 );
 
-test('K9AccessCapabilities', () => {
-
-    const k9AccessCapabilities: K9AccessCapabilities = {
-        allowAdministerResourceArns: administerResourceArns,
-        allowWriteDataArns: writeDataArns,
-        allowReadDataArns: readDataArns,
-        allowDeleteDataArns: deleteDataArns,
-    };
-
-    expect(k9AccessCapabilities).toEqual(k9AccessCapabilities);
-
-    // Unit Test: k9 access capabilities
-    expect(k9AccessCapabilities.allowAdministerResourceArns).toEqual(administerResourceArns);
-    // expect(k9AccessCapabilities.allowAdministerResourceTest).toBe(ArnEqualsTest)
-    expect(k9AccessCapabilities.allowWriteDataArns).toEqual(writeDataArns);
-    expect(k9AccessCapabilities.allowReadDataArns).toEqual(readDataArns);
-    expect(k9AccessCapabilities.allowDeleteDataArns).toEqual(deleteDataArns)
-
-});
-
 test('K9BucketPolicy', () => {
     const app = new cdk.App();
 
     const stack = new cdk.Stack(app, 'K9BucketPolicyTest');
     const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
-    const k9AccessCapabilities: K9AccessCapabilities = {
-            allowAdministerResourceArns: administerResourceArns,
-            allowWriteDataArns: writeDataArns,
-            allowReadDataArns: readDataArns,
-            // omit delete data ARNs and 'test' configs -- use ArnEquals
-        };
-
     const k9BucketPolicyProps: K9BucketPolicyProps = {
-        k9AccessCapabilities: k9AccessCapabilities,
-        bucket: bucket
+        bucket: bucket,
+        k9DesiredAccess: new Array<K9AccessSpec>(
+            {
+                accessCapability: AccessCapability.AdministerResource,
+                allowPrincipalArns: administerResourceArns,
+            },
+            {
+                accessCapability: AccessCapability.WriteData,
+                allowPrincipalArns: writeDataArns,
+            },
+            {
+                accessCapability: AccessCapability.ReadData,
+                allowPrincipalArns: readDataArns,
+            }
+        )
     };
-    expect(k9BucketPolicyProps.k9AccessCapabilities).toEqual(k9AccessCapabilities);
-
     const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
 
     console.log("bucketPolicy.document: " + JSON.stringify(bucketPolicy.document.toJSON(), null, 2));
