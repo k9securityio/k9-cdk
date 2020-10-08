@@ -2,7 +2,6 @@
 
 import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
-import {AccessCapability, AccessSpec} from "../lib/k9policy";
 import * as k9 from "../lib";
 
 const administerResourceArns = new Set<string>([
@@ -25,17 +24,17 @@ const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<AccessSpec>(
+    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
         {
-            accessCapability: AccessCapability.AdministerResource,
+            accessCapability: k9.k9policy.AccessCapability.AdministerResource,
             allowPrincipalArns: administerResourceArns,
         },
         {
-            accessCapability: AccessCapability.WriteData,
+            accessCapability: k9.k9policy.AccessCapability.WriteData,
             allowPrincipalArns: writeDataArns,
         },
         {
-            accessCapability: AccessCapability.ReadData,
+            accessCapability: k9.k9policy.AccessCapability.ReadData,
             allowPrincipalArns: readDataArns,
         }
         // omit access spec for delete-data because it is unneeded
