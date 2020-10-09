@@ -2,7 +2,7 @@
 import {writeFileSync} from 'fs';
 import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
-import * as k9 from "../lib"; //change to from "@k9securityio/k9-cdk";
+import * as k9 from "@k9securityio/k9-cdk";
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::12345678910:user/ci",

@@ -39,8 +39,8 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.28]}",
-        "${Token[TOKEN.28]}/*"
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
       ],
       "Sid": "Restricted-administer-resource"
     },
@@ -90,8 +90,8 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.28]}",
-        "${Token[TOKEN.28]}/*"
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
       ],
       "Sid": "Restricted-read-data"
     },
@@ -117,8 +117,8 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.28]}",
-        "${Token[TOKEN.28]}/*"
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
       ],
       "Sid": "Restricted-write-data"
     },
@@ -137,8 +137,8 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.28]}",
-        "${Token[TOKEN.28]}/*"
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
       ],
       "Sid": "Restricted-delete-data"
     },
@@ -152,8 +152,8 @@
       "Effect": "Deny",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.28]}",
-        "${Token[TOKEN.28]}/*"
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
       ],
       "Sid": "DenyInsecureCommunications"
     },
@@ -170,8 +170,8 @@
       "Effect": "Deny",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.28]}",
-        "${Token[TOKEN.28]}/*"
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
       ],
       "Sid": "DenyUnencryptedStorage"
     },
@@ -188,8 +188,8 @@
       "Effect": "Deny",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.28]}",
-        "${Token[TOKEN.28]}/*"
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
       ],
       "Sid": "DenyStorageWithoutKMSEncryption"
     },
@@ -208,8 +208,8 @@
       "Effect": "Deny",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.28]}",
-        "${Token[TOKEN.28]}/*"
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
       ],
       "Sid": "DenyEveryoneElse"
     }
