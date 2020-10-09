@@ -60,6 +60,8 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
 ```
 
+See the [generated k9 bucket policy](examples/generated.bucket-policy.json) in the examples directory.
+
 ## Local Development and Testing
 
 The high level build commands for this project are driven by `make`:
