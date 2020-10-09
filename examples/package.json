@@ -1,6 +1,6 @@
 {
-  "name": "@k9securityio/k9-cdk",
-  "version": "0.3.0",
+  "name": "@k9securityio/k9-cdk-examples",
+  "version": "0.2.0",
   "license": "Apache-2.0",
   "author": {
     "name": "K9 Security Inc.",
@@ -9,33 +9,27 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/k9securityio/k9-cdk.git"
+    "url": "https://github.com/k9securityio/k9-cdk.git",
+    "directory": "examples"
   },
   "bin": {
-    "k9-cdk": "bin/k9-cdk.js"
+    "example": "bin/example.js"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest",
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.65.0",
-    "@types/jest": "^26.0.10",
-    "@types/node": "10.17.27",
-    "jest": "^26.4.2",
-    "ts-jest": "^26.2.0",
     "aws-cdk": "1.65.0",
     "ts-node": "^8.1.0",
     "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-cdk/core": "1.65.0",
     "@aws-cdk/aws-iam": "1.65.0",
     "@aws-cdk/aws-s3": "1.65.0",
+    "@aws-cdk/core": "1.65.0",
+    "@k9securityio/k9-cdk": "^0.2.0",
     "source-map-support": "^0.5.16"
   }
 }
