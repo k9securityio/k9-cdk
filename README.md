@@ -1,13 +1,18 @@
 # k9 AWS CDK policy library #
 
-k9 Security's `k9-cdk` helps you protect data by provisioning strong AWS security bucket with safe defaults and a 
-least-privilege bucket policy built on the 
-[k9 access capability model](https://k9security.io/docs/k9-access-capability-model/).
+k9 Security's `k9-cdk` makes strong security usable and helps you provision best practice AWS security policies 
+defined using the simplified [k9 access capability model](https://k9security.io/docs/k9-access-capability-model/) and
+safe defaults.
+
+Supported services:
+
+* S3
+* KMS (coming soon)
 
 ## Usage
 Use the k9 CDK to generate a policy and use it in your existing code base.
 
-For example the following code will
+For example, the following code will:
 
 1. provision an S3 Bucket
 2. allow the `ci` and `person1` users to administer the bucket
