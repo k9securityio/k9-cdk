@@ -2,7 +2,7 @@
 
 k9 Security's `k9-cdk` makes strong security usable and helps you provision best practice AWS security policies 
 defined using the simplified [k9 access capability model](https://k9security.io/docs/k9-access-capability-model/) and
-safe defaults.
+safe defaults.  In CDK terms, this library provides [Curated (L2) constructs](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html) that wrap core CloudFormation resources (L1) to simplify security.
 
 Supported services:
 
