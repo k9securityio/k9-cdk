@@ -26,6 +26,7 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
     ];
 
     let allAllowedPrincipalArns = new Set<string>();
+    let wasArnLikeTestUsed = false;
 
     let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
 
@@ -40,6 +41,10 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
             }
         ;
         let arnConditionTest = accessSpec.test || "ArnEquals";
+        if (arnConditionTest == "ArnLike"){
+            wasArnLikeTestUsed = true;
+        }
+
         let statement = policyFactory.makeAllowStatement(`Restricted-${supportedCapability}`,
             policyFactory.getActions('S3', supportedCapability),
             accessSpec.allowPrincipalArns,
@@ -52,7 +57,19 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
         });
     }
 
-    policy.document.addStatements(new PolicyStatement({
+    const denyEveryoneElseTest = wasArnLikeTestUsed ? 'ArnNotLike' : 'ArnNotEquals';
+    let denyEveryoneElseStatement = new PolicyStatement({
+                sid: 'DenyEveryoneElse',
+                effect: Effect.DENY,
+                principals: [new AccountRootPrincipal()],
+                actions: ['s3:*'],
+                resources: resourceArns
+            });
+    denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
+        {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
+
+    policy.document.addStatements(
+        new PolicyStatement({
             sid: 'DenyInsecureCommunications',
             effect: Effect.DENY,
             principals: [new AnyPrincipal()],
@@ -82,16 +99,7 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
                 'StringNotEquals': {'s3:x-amz-server-side-encryption': 'aws:kms'},
             },
         }),
-        new PolicyStatement({
-            sid: 'DenyEveryoneElse',
-            effect: Effect.DENY,
-            principals: [new AccountRootPrincipal()],
-            actions: ['s3:*'],
-            resources: resourceArns,
-            conditions: {
-                ArnNotEquals: {'aws:PrincipalArn': [...allAllowedPrincipalArns]},
-            },
-        })
+        denyEveryoneElseStatement,
     );
 
     policy.document.validateForResourcePolicy();
