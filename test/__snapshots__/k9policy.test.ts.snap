@@ -343,7 +343,24 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::",
+                      Object {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
+                    ],
+                  ],
+                },
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
