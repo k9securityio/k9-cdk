@@ -76,6 +76,7 @@ The high level build commands for this project are driven by `make`:
 * `make unit-test` - run unit tests for the library
 * `make converge` - deploy the integration test resources
 * `make destroy` - destroy the integration test resources
+* `make publish` - publish the package to npmjs
 
 The low level build commands for this project are:
 

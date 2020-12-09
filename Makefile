@@ -84,6 +84,10 @@ destroy:
 verify:
 	@echo "verifying integration test stack (TODO)"
 
+publish:
+	@echo "publishing to npmjs"
+	npm publish
+
 all: init lint build unit-test converge verify
 
 circleci-build:
