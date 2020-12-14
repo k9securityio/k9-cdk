@@ -22,10 +22,12 @@ const deleteDataArns = new Set<string>([
     ]
 );
 
-test('K9BucketPolicy', () => {
-    const app = new cdk.App();
+const app = new cdk.App();
 
-    const stack = new cdk.Stack(app, 'K9BucketPolicyTest');
+const stack = new cdk.Stack(app, 'K9PolicyTest');
+
+test('K9BucketPolicy', () => {
+
     const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
     const k9BucketPolicyProps: K9BucketPolicyProps = {
