@@ -7,7 +7,7 @@ safe defaults.  In CDK terms, this library provides [Curated (L2) constructs](ht
 Supported services:
 
 * S3
-* KMS (coming soon)
+* KMS
 
 ## Usage
 Use the k9 CDK to generate a policy and use it in your existing code base.
