@@ -88,6 +88,8 @@ publish:
 	@echo "publishing to npmjs"
 	npm publish
 
+quick: init lint build unit-test
+
 all: init lint build unit-test converge verify
 
 circleci-build:
