@@ -280,9 +280,7 @@
       "kms:ScheduleKeyDeletion",
       "kms:TagResource",
       "kms:UntagResource",
-      "kms:UpdateAlias",
-      "kms:UpdateCustomKeyStore",
-      "kms:UpdateKeyDescription"
+      "kms:UpdateCustomKeyStore"
     ],
     "delete-data": [
       "kms:DeleteCustomKeyStore",
@@ -314,7 +312,9 @@
       "kms:ImportKeyMaterial",
       "kms:ReEncryptFrom",
       "kms:ReEncryptTo",
-      "kms:Sign"
+      "kms:Sign",
+      "kms:UpdateAlias",
+      "kms:UpdateKeyDescription"
     ]
   },
   "RDS": {

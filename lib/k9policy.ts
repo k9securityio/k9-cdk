@@ -24,7 +24,10 @@ export interface AccessSpec {
 
 export class K9PolicyFactory {
 
-    SUPPORTED_SERVICES = new Set<string>(["S3"]);
+    SUPPORTED_SERVICES = new Set<string>([
+        "S3",
+        "KMS",
+    ]);
     _K9CapabilityMapJSON: Object = JSON.parse(readFileSync(`${__dirname}/capability_summary.json`).toString());
     K9CapabilityMapByService: Map<string, Object> = new Map(Object.entries(this._K9CapabilityMapJSON));
     
