@@ -44,3 +44,27 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
 writeFileSync('generated.bucket-policy.json',
     JSON.stringify(bucketPolicy.document.toJSON(), null, 2));
+
+
+const keyPolicyProps: k9.kms.K9KeyPolicyProps = {
+    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
+        {
+            accessCapability: k9.k9policy.AccessCapability.AdministerResource,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapability: k9.k9policy.AccessCapability.WriteData,
+            allowPrincipalArns: writeDataArns,
+        },
+        {
+            accessCapability: k9.k9policy.AccessCapability.ReadData,
+            allowPrincipalArns: readDataArns,
+        }
+        // omit access spec for delete-data because it is unneeded
+    )
+
+};
+const keyPolicy = k9.kms.makeKeyPolicy(stack, "KMSKey", keyPolicyProps);
+
+writeFileSync('generated.key-policy.json',
+    JSON.stringify(keyPolicy.toJSON(), null, 2));

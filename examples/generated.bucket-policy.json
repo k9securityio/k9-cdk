@@ -206,7 +206,9 @@
         }
       },
       "Effect": "Deny",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "${Token[TOKEN.25]}"
+      },
       "Resource": [
         "${Token[TOKEN.19]}",
         "${Token[TOKEN.19]}/*"
