@@ -48,11 +48,13 @@ export class K9PolicyFactory {
         }
     }
 
-    makeAllowStatements(supportedCapabilities: Array<AccessCapability>,
+    makeAllowStatements(serviceName: string,
+                        supportedCapabilities: Array<AccessCapability>,
                         desiredAccess: Array<AccessSpec>,
                         resourceArns: Array<string>): Array<PolicyStatement> {
         let policyStatements = new Array<PolicyStatement>();
         let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
+        desiredAccess.forEach(accessSpec => accessSpecsByCapability.set(accessSpec.accessCapability, accessSpec));
 
         for (let supportedCapability of supportedCapabilities) {
             let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
@@ -65,7 +67,7 @@ export class K9PolicyFactory {
             let arnConditionTest = accessSpec.test || "ArnEquals";
 
             let statement = this.makeAllowStatement(`Restricted-${supportedCapability}`,
-                this.getActions('KMS', supportedCapability),
+                this.getActions(serviceName, supportedCapability),
                 accessSpec.allowPrincipalArns,
                 arnConditionTest,
                 resourceArns);

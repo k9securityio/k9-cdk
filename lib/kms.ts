@@ -19,31 +19,13 @@ export function makeKeyPolicy(scope: cdk.Construct, id: string, props: K9KeyPoli
     const policyFactory = new K9PolicyFactory();
     const policy = new iam.PolicyDocument();
 
-    let resourceArns = [
-        `*`
-    ];
+    const resourceArns = ['*'];
 
-    let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
-
-    props.k9DesiredAccess.forEach(accessSpec => accessSpecsByCapability.set(accessSpec.accessCapability, accessSpec));
-
-    for (let supportedCapability of SUPPORTED_CAPABILITIES) {
-        let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
-            { //generate a default access spec if none was provided
-                accessCapability: supportedCapability,
-                allowPrincipalArns: new Set<string>(),
-                test: "ArnEquals"
-            }
-        ;
-        let arnConditionTest = accessSpec.test || "ArnEquals";
-
-        let statement = policyFactory.makeAllowStatement(`Restricted-${supportedCapability}`,
-            policyFactory.getActions('KMS', supportedCapability),
-            accessSpec.allowPrincipalArns,
-            arnConditionTest,
-            resourceArns);
-        policy.addStatements(statement);
-    }
+    const allowStatements = policyFactory.makeAllowStatements("KMS",
+        SUPPORTED_CAPABILITIES,
+        props.k9DesiredAccess,
+        resourceArns);
+    policy.addStatements(...allowStatements);
 
     const denyEveryoneElseStatement = new PolicyStatement({
         sid: 'DenyEveryoneElse',
