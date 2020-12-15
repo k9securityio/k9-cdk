@@ -7,6 +7,8 @@ import {K9BucketPolicyProps} from "../lib/s3";
 import {K9KeyPolicyProps} from "../lib/kms";
 import * as k9 from "../lib";
 
+// Test the primary public interface to k9 cdk
+
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::139710491120:user/ci",
     ]
