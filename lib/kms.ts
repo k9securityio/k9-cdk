@@ -55,7 +55,9 @@ export function makeKeyPolicy(scope: cdk.Construct, id: string, props: K9KeyPoli
         });
     }
 
-    const denyEveryoneElseTest = wasArnLikeTestUsed ? 'ArnNotLike' : 'ArnNotEquals';
+    const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
+        'ArnNotLike' :
+        'ArnNotEquals';
     let denyEveryoneElseStatement = new PolicyStatement({
         sid: 'DenyEveryoneElse',
         effect: Effect.DENY,
@@ -80,5 +82,5 @@ export function makeKeyPolicy(scope: cdk.Construct, id: string, props: K9KeyPoli
 
     policy.validateForResourcePolicy();
 
-    return policy
+    return policy;
 }
