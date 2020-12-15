@@ -25,8 +25,6 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
         `${props.bucket.bucketArn}/*`
     ];
 
-    let allAllowedPrincipalArns = new Set<string>();
-
     let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
 
     props.k9DesiredAccess.forEach(accessSpec => accessSpecsByCapability.set(accessSpec.accessCapability, accessSpec));
@@ -47,22 +45,19 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
             arnConditionTest,
             resourceArns);
         policy.document.addStatements(statement);
-
-        accessSpec.allowPrincipalArns.forEach(function (value) {
-            allAllowedPrincipalArns.add(value);
-        });
     }
 
     const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
         'ArnNotLike' :
         'ArnNotEquals';
-    let denyEveryoneElseStatement = new PolicyStatement({
+    const denyEveryoneElseStatement = new PolicyStatement({
                 sid: 'DenyEveryoneElse',
                 effect: Effect.DENY,
                 principals: [new AccountRootPrincipal()],
                 actions: ['s3:*'],
                 resources: resourceArns
             });
+    const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
         {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
 
