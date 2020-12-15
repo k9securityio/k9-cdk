@@ -1,95 +1,42 @@
-import {expect as expectCDK, haveResource, SynthUtils} from '@aws-cdk/assert';
-import * as cdk from '@aws-cdk/core';
-import * as kms from '@aws-cdk/aws-kms';
-import * as s3 from '@aws-cdk/aws-s3';
-import {AccessCapability, AccessSpec} from '../lib/k9policy';
-import {K9BucketPolicyProps} from "../lib/s3";
-import {K9KeyPolicyProps} from "../lib/kms";
-import * as k9 from "../lib";
+import * as k9policy from "../lib/k9policy";
+import {AccessCapability, AccessSpec} from "../lib/k9policy";
 
-const administerResourceArns = new Set<string>([
-        "arn:aws:iam::139710491120:user/ci",
-    ]
-);
+test('K9PolicyFactory#wasLikeUsed', () => {
+    let k9PolicyFactory = new k9policy.K9PolicyFactory();
+    expect(k9PolicyFactory.wasLikeUsed([])).toBeFalsy();
+    expect(k9PolicyFactory.wasLikeUsed([
+        {
+            accessCapability: AccessCapability.AdministerResource,
+            allowPrincipalArns: new Set<string>(),
+            test: "ArnEquals"
+        }
+    ])).toBeFalsy();
 
-const writeDataArns = new Set<string>([
-        "arn:aws:iam::12345678910:role/app-backend",
-    ]
-);
-const readDataArns = new Set<string>(writeDataArns)
-    .add("arn:aws:iam::12345678910:role/customer-service");
-
-const deleteDataArns = new Set<string>([
-        "arn:aws:iam::139710491120:user/super-admin",
-    ]
-);
-
-const app = new cdk.App();
-
-const stack = new cdk.Stack(app, 'K9PolicyTest');
-
-test('K9BucketPolicy', () => {
-
-    const bucket = new s3.Bucket(stack, 'TestBucket', {});
-
-    const k9BucketPolicyProps: K9BucketPolicyProps = {
-        bucket: bucket,
-        k9DesiredAccess: new Array<AccessSpec>(
-            {
-                accessCapability: AccessCapability.AdministerResource,
-                allowPrincipalArns: administerResourceArns,
-            },
-            {
-                accessCapability: AccessCapability.WriteData,
-                allowPrincipalArns: writeDataArns,
-            },
-            {
-                accessCapability: AccessCapability.ReadData,
-                allowPrincipalArns: readDataArns,
-            },
-            {
-                accessCapability: AccessCapability.DeleteData,
-                allowPrincipalArns: deleteDataArns,
-            },
-        )
-    };
-    const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
-
-    console.log("bucketPolicy.document: " + JSON.stringify(bucketPolicy.document.toJSON(), null, 2));
-
-    expectCDK(stack).to(haveResource("AWS::S3::Bucket"));
-    expectCDK(stack).to(haveResource("AWS::S3::BucketPolicy"));
-    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+    expect(k9PolicyFactory.wasLikeUsed([
+        {
+            accessCapability: AccessCapability.AdministerResource,
+            allowPrincipalArns: new Set<string>(),
+            test: "ArnLike"
+        }
+    ])).toBeTruthy();
 });
 
-test('K9KeyPolicy', () => {
+test('K9PolicyFactory#getAllowedPrincipalArns', () => {
+    let k9PolicyFactory = new k9policy.K9PolicyFactory();
+    let accessSpecs:Array<AccessSpec> = [
+        {
+            accessCapability: AccessCapability.AdministerResource,
+            allowPrincipalArns: new Set(["arn1", "arn2"]),
+            test: "ArnEquals"
+        },
+        {
+            accessCapability: AccessCapability.ReadData,
+            allowPrincipalArns: new Set(["arn2", "arn3"]),
+            test: "ArnLike"
+        }
 
-    const k9KeyPolicyProps: K9KeyPolicyProps = {
-        k9DesiredAccess: new Array<AccessSpec>(
-            {
-                accessCapability: AccessCapability.AdministerResource,
-                allowPrincipalArns: administerResourceArns,
-            },
-            {
-                accessCapability: AccessCapability.WriteData,
-                allowPrincipalArns: writeDataArns,
-            },
-            {
-                accessCapability: AccessCapability.ReadData,
-                allowPrincipalArns: readDataArns,
-            },
-            {
-                accessCapability: AccessCapability.DeleteData,
-                allowPrincipalArns: deleteDataArns,
-            },
-        )
-    };
-    const keyPolicy = k9.kms.makeKeyPolicy(stack, "KMSKey", k9KeyPolicyProps);
-
-    console.log("keyPolicy.document: " + JSON.stringify(keyPolicy.toJSON(), null, 2));
-
-    new kms.Key(stack, 'TestKey', {policy: keyPolicy});
-
-    expectCDK(stack).to(haveResource("AWS::KMS::Key"));
-    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+    ];
+    expect(k9PolicyFactory.getAllowedPrincipalArns([])).toEqual(new Set<string>());
+    expect(k9PolicyFactory.getAllowedPrincipalArns(accessSpecs))
+        .toEqual(new Set(["arn1", "arn2", "arn3"]));
 });

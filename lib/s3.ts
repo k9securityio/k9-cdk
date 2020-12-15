@@ -25,46 +25,23 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
         `${props.bucket.bucketArn}/*`
     ];
 
-    let allAllowedPrincipalArns = new Set<string>();
-    let wasArnLikeTestUsed = false;
+    const allowStatements = policyFactory.makeAllowStatements("S3",
+        SUPPORTED_CAPABILITIES,
+        props.k9DesiredAccess,
+        resourceArns);
+    policy.document.addStatements(...allowStatements);
 
-    let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
-
-    props.k9DesiredAccess.forEach(accessSpec => accessSpecsByCapability.set(accessSpec.accessCapability, accessSpec));
-
-    for (let supportedCapability of SUPPORTED_CAPABILITIES) {
-        let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
-            { //generate a default access spec if none was provided
-                accessCapability: supportedCapability,
-                allowPrincipalArns: new Set<string>(),
-                test: "ArnEquals"
-            }
-        ;
-        let arnConditionTest = accessSpec.test || "ArnEquals";
-        if (arnConditionTest == "ArnLike"){
-            wasArnLikeTestUsed = true;
-        }
-
-        let statement = policyFactory.makeAllowStatement(`Restricted-${supportedCapability}`,
-            policyFactory.getActions('S3', supportedCapability),
-            accessSpec.allowPrincipalArns,
-            arnConditionTest,
-            resourceArns);
-        policy.document.addStatements(statement);
-
-        accessSpec.allowPrincipalArns.forEach(function (value) {
-            allAllowedPrincipalArns.add(value);
-        });
-    }
-
-    const denyEveryoneElseTest = wasArnLikeTestUsed ? 'ArnNotLike' : 'ArnNotEquals';
-    let denyEveryoneElseStatement = new PolicyStatement({
+    const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
+        'ArnNotLike' :
+        'ArnNotEquals';
+    const denyEveryoneElseStatement = new PolicyStatement({
                 sid: 'DenyEveryoneElse',
                 effect: Effect.DENY,
                 principals: [new AccountRootPrincipal()],
                 actions: ['s3:*'],
                 resources: resourceArns
             });
+    const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
         {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
 
