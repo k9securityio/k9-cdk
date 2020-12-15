@@ -64,4 +64,14 @@ export class K9PolicyFactory {
         statement.addCondition(test, {'aws:PrincipalArn': [...principalArns]});
         return statement;
     }
+
+    wasLikeUsed(accessSpecs: AccessSpec[]): boolean {
+        for (let accessSpec of accessSpecs) {
+            if ("ArnLike" == accessSpec.test) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
