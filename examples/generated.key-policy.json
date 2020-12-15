@@ -1,0 +1,140 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "kms:CancelKeyDeletion",
+        "kms:ConnectCustomKeyStore",
+        "kms:CreateAlias",
+        "kms:CreateCustomKeyStore",
+        "kms:CreateGrant",
+        "kms:CreateKey",
+        "kms:DeleteAlias",
+        "kms:DisableKey",
+        "kms:DisableKeyRotation",
+        "kms:DisconnectCustomKeyStore",
+        "kms:EnableKey",
+        "kms:EnableKeyRotation",
+        "kms:PutKeyPolicy",
+        "kms:RetireGrant",
+        "kms:RevokeGrant",
+        "kms:ScheduleKeyDeletion",
+        "kms:TagResource",
+        "kms:UntagResource",
+        "kms:UpdateCustomKeyStore"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::12345678910:user/ci",
+            "arn:aws:iam::12345678910:user/person1"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": "*",
+      "Resource": "*",
+      "Sid": "Restricted-administer-resource"
+    },
+    {
+      "Action": [
+        "kms:Decrypt",
+        "kms:DescribeCustomKeyStores",
+        "kms:DescribeKey",
+        "kms:GetKeyPolicy",
+        "kms:GetKeyRotationStatus",
+        "kms:GetParametersForImport",
+        "kms:GetPublicKey",
+        "kms:ListAliases",
+        "kms:ListGrants",
+        "kms:ListKeyPolicies",
+        "kms:ListKeys",
+        "kms:ListResourceTags",
+        "kms:ListRetirableGrants",
+        "kms:Verify"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::12345678910:role/app-backend",
+            "arn:aws:iam::12345678910:role/customer-service"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": "*",
+      "Resource": "*",
+      "Sid": "Restricted-read-data"
+    },
+    {
+      "Action": [
+        "kms:Encrypt",
+        "kms:GenerateDataKey",
+        "kms:GenerateDataKeyPair",
+        "kms:GenerateDataKeyPairWithoutPlaintext",
+        "kms:GenerateDataKeyWithoutPlaintext",
+        "kms:GenerateRandom",
+        "kms:ImportKeyMaterial",
+        "kms:ReEncryptFrom",
+        "kms:ReEncryptTo",
+        "kms:Sign",
+        "kms:UpdateAlias",
+        "kms:UpdateKeyDescription"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::12345678910:role/app-backend"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": "*",
+      "Resource": "*",
+      "Sid": "Restricted-write-data"
+    },
+    {
+      "Action": [
+        "kms:DeleteCustomKeyStore",
+        "kms:DeleteImportedKeyMaterial"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": []
+        }
+      },
+      "Effect": "Allow",
+      "Principal": "*",
+      "Resource": "*",
+      "Sid": "Restricted-delete-data"
+    },
+    {
+      "Action": "kms:*",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "${Token[TOKEN.29]}"
+      },
+      "Resource": "*",
+      "Sid": "AllowRootUserToAdministerKey"
+    },
+    {
+      "Action": "kms:*",
+      "Condition": {
+        "ArnNotEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::12345678910:user/ci",
+            "arn:aws:iam::12345678910:user/person1",
+            "arn:aws:iam::12345678910:role/app-backend",
+            "arn:aws:iam::12345678910:role/customer-service"
+          ]
+        }
+      },
+      "Effect": "Deny",
+      "Principal": {
+        "AWS": "${Token[TOKEN.27]}"
+      },
+      "Resource": "*",
+      "Sid": "DenyEveryoneElse"
+    }
+  ],
+  "Version": "2012-10-17"
+}
