@@ -23,9 +23,6 @@ export function makeKeyPolicy(scope: cdk.Construct, id: string, props: K9KeyPoli
         `*`
     ];
 
-    let allAllowedPrincipalArns = new Set<string>();
-    let wasArnLikeTestUsed = false;
-
     let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
 
     props.k9DesiredAccess.forEach(accessSpec => accessSpecsByCapability.set(accessSpec.accessCapability, accessSpec));
@@ -39,9 +36,6 @@ export function makeKeyPolicy(scope: cdk.Construct, id: string, props: K9KeyPoli
             }
         ;
         let arnConditionTest = accessSpec.test || "ArnEquals";
-        if (arnConditionTest == "ArnLike") {
-            wasArnLikeTestUsed = true;
-        }
 
         let statement = policyFactory.makeAllowStatement(`Restricted-${supportedCapability}`,
             policyFactory.getActions('KMS', supportedCapability),
@@ -49,22 +43,19 @@ export function makeKeyPolicy(scope: cdk.Construct, id: string, props: K9KeyPoli
             arnConditionTest,
             resourceArns);
         policy.addStatements(statement);
-
-        accessSpec.allowPrincipalArns.forEach(function (value) {
-            allAllowedPrincipalArns.add(value);
-        });
     }
 
-    const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
-        'ArnNotLike' :
-        'ArnNotEquals';
-    let denyEveryoneElseStatement = new PolicyStatement({
+    const denyEveryoneElseStatement = new PolicyStatement({
         sid: 'DenyEveryoneElse',
         effect: Effect.DENY,
         principals: [new AccountRootPrincipal()],
         actions: ['kms:*'],
         resources: resourceArns
     });
+    const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
+        'ArnNotLike' :
+        'ArnNotEquals';
+    const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest, {
         'aws:PrincipalArn': [...allAllowedPrincipalArns]
     });
