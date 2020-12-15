@@ -26,7 +26,6 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
     ];
 
     let allAllowedPrincipalArns = new Set<string>();
-    let wasArnLikeTestUsed = false;
 
     let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
 
@@ -41,9 +40,6 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
             }
         ;
         let arnConditionTest = accessSpec.test || "ArnEquals";
-        if (arnConditionTest == "ArnLike"){
-            wasArnLikeTestUsed = true;
-        }
 
         let statement = policyFactory.makeAllowStatement(`Restricted-${supportedCapability}`,
             policyFactory.getActions('S3', supportedCapability),
@@ -57,7 +53,9 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
         });
     }
 
-    const denyEveryoneElseTest = wasArnLikeTestUsed ? 'ArnNotLike' : 'ArnNotEquals';
+    const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
+        'ArnNotLike' :
+        'ArnNotEquals';
     let denyEveryoneElseStatement = new PolicyStatement({
                 sid: 'DenyEveryoneElse',
                 effect: Effect.DENY,
