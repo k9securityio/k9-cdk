@@ -27,6 +27,7 @@
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
     "jest": "^26.4.2",
+    "node-notifier": ">=8.0.1",
     "ts-jest": "^26.2.0",
     "aws-cdk": "1.65.0",
     "ts-node": "^8.1.0",
