@@ -1,4 +1,72 @@
 {
+  "Athena": {
+    "administer-resource": [
+      "athena:CreateDataCatalog",
+      "athena:CreateWorkGroup",
+      "athena:DeleteDataCatalog",
+      "athena:StopQueryExecution",
+      "athena:UpdateDataCatalog",
+      "athena:UpdateWorkGroup"
+    ],
+    "read-config": [
+      "athena:BatchGetNamedQuery",
+      "athena:BatchGetQueryExecution",
+      "athena:GetDatabase",
+      "athena:GetDataCatalog",
+      "athena:GetNamedQuery",
+      "athena:GetQueryExecution",
+      "athena:GetTableMetadata",
+      "athena:GetWorkGroup",
+      "athena:ListDatabases",
+      "athena:ListDataCatalogs",
+      "athena:ListNamedQueries",
+      "athena:ListQueryExecutions",
+      "athena:ListTableMetadata",
+      "athena:ListTagsForResource",
+      "athena:ListWorkGroups"
+    ],
+    "read-data": [
+      "athena:GetQueryResults",
+      "athena:GetQueryResultsStream"
+    ],
+    "write-data": [
+      "athena:CreateNamedQuery",
+      "athena:DeleteNamedQuery",
+      "athena:DeleteWorkGroup",
+      "athena:StartQueryExecution",
+      "athena:TagResource",
+      "athena:UntagResource"
+    ]
+  },
+  "CloudTrail": {
+    "administer-resource": [
+      "cloudtrail:AddTags",
+      "cloudtrail:CreateTrail",
+      "cloudtrail:DeleteTrail",
+      "cloudtrail:PutEventSelectors",
+      "cloudtrail:PutInsightSelectors",
+      "cloudtrail:RemoveTags",
+      "cloudtrail:StartLogging",
+      "cloudtrail:StopLogging",
+      "cloudtrail:UpdateTrail"
+    ],
+    "delete-data": [
+      "cloudtrail:DeleteTrail"
+    ],
+    "read-config": [
+      "cloudtrail:DescribeTrails",
+      "cloudtrail:GetEventSelectors",
+      "cloudtrail:GetInsightSelectors",
+      "cloudtrail:GetTrail",
+      "cloudtrail:GetTrailStatus",
+      "cloudtrail:ListPublicKeys",
+      "cloudtrail:ListTags",
+      "cloudtrail:ListTrails"
+    ],
+    "read-data": [
+      "cloudtrail:LookupEvents"
+    ]
+  },
   "DynamoDB": {
     "administer-resource": [
       "dynamodb:CreateBackup",
@@ -6,6 +74,7 @@
       "dynamodb:CreateTable",
       "dynamodb:CreateTableReplica",
       "dynamodb:DeleteTableReplica",
+      "dynamodb:ExportTableToPointInTime",
       "dynamodb:PurchaseReservedCapacityOfferings",
       "dynamodb:RestoreTableFromBackup",
       "dynamodb:RestoreTableToPointInTime",
@@ -23,14 +92,14 @@
       "dynamodb:DeleteBackup",
       "dynamodb:DeleteItem",
       "dynamodb:DeleteTable",
-      "dynamodb:DeleteTableReplica"
+      "dynamodb:DeleteTableReplica",
+      "dynamodb:PartiQLDelete"
     ],
-    "read-data": [
-      "dynamodb:BatchGetItem",
-      "dynamodb:ConditionCheckItem",
+    "read-config": [
       "dynamodb:DescribeBackup",
       "dynamodb:DescribeContinuousBackups",
       "dynamodb:DescribeContributorInsights",
+      "dynamodb:DescribeExport",
       "dynamodb:DescribeGlobalTable",
       "dynamodb:DescribeGlobalTableSettings",
       "dynamodb:DescribeLimits",
@@ -40,25 +109,33 @@
       "dynamodb:DescribeTable",
       "dynamodb:DescribeTableReplicaAutoScaling",
       "dynamodb:DescribeTimeToLive",
-      "dynamodb:GetItem",
-      "dynamodb:GetRecords",
-      "dynamodb:GetShardIterator",
       "dynamodb:ListBackups",
       "dynamodb:ListContributorInsights",
+      "dynamodb:ListExports",
       "dynamodb:ListGlobalTables",
       "dynamodb:ListStreams",
       "dynamodb:ListTables",
       "dynamodb:ListTagsOfResource",
+      "dynamodbstreams:DescribeStream",
+      "dynamodbstreams:ListStreams"
+    ],
+    "read-data": [
+      "dynamodb:BatchGetItem",
+      "dynamodb:ConditionCheckItem",
+      "dynamodb:GetItem",
+      "dynamodb:GetRecords",
+      "dynamodb:GetShardIterator",
+      "dynamodb:PartiQLSelect",
       "dynamodb:Query",
       "dynamodb:Scan",
-      "dynamodbstreams:DescribeStream",
       "dynamodbstreams:GetRecords",
-      "dynamodbstreams:GetShardIterator",
-      "dynamodbstreams:ListStreams"
+      "dynamodbstreams:GetShardIterator"
     ],
     "write-data": [
       "dynamodb:BatchWriteItem",
       "dynamodb:CreateTableReplica",
+      "dynamodb:PartiQLInsert",
+      "dynamodb:PartiQLUpdate",
       "dynamodb:PutItem",
       "dynamodb:UpdateItem"
     ]
@@ -83,17 +160,19 @@
       "dax:DeleteParameterGroup",
       "dax:DeleteSubnetGroup"
     ],
-    "read-data": [
-      "dax:BatchGetItem",
-      "dax:ConditionCheckItem",
+    "read-config": [
       "dax:DescribeClusters",
       "dax:DescribeDefaultParameters",
       "dax:DescribeEvents",
       "dax:DescribeParameterGroups",
       "dax:DescribeParameters",
       "dax:DescribeSubnetGroups",
+      "dax:ListTags"
+    ],
+    "read-data": [
+      "dax:BatchGetItem",
+      "dax:ConditionCheckItem",
       "dax:GetItem",
-      "dax:ListTags",
       "dax:Query",
       "dax:Scan"
     ],
@@ -104,11 +183,13 @@
     ]
   },
   "DynamoDB Streams": {
-    "read-data": [
+    "read-config": [
       "dynamodbstreams:DescribeStream",
-      "dynamodbstreams:GetRecords",
-      "dynamodbstreams:GetShardIterator",
       "dynamodbstreams:ListStreams"
+    ],
+    "read-data": [
+      "dynamodbstreams:GetRecords",
+      "dynamodbstreams:GetShardIterator"
     ]
   },
   "IAM": {
@@ -192,32 +273,22 @@
       "iam:UploadSigningCertificate",
       "iam:UploadSSHPublicKey"
     ],
-    "read-data": [
-      "iam:GenerateCredentialReport",
-      "iam:GenerateOrganizationsAccessReport",
-      "iam:GenerateServiceLastAccessedDetails",
-      "iam:GetAccessKeyLastUsed",
+    "read-config": [
       "iam:GetAccountAuthorizationDetails",
       "iam:GetAccountPasswordPolicy",
-      "iam:GetAccountSummary",
       "iam:GetContextKeysForCustomPolicy",
       "iam:GetContextKeysForPrincipalPolicy",
-      "iam:GetCredentialReport",
       "iam:GetGroup",
       "iam:GetGroupPolicy",
       "iam:GetInstanceProfile",
       "iam:GetLoginProfile",
       "iam:GetOpenIDConnectProvider",
-      "iam:GetOrganizationsAccessReport",
       "iam:GetPolicy",
       "iam:GetPolicyVersion",
       "iam:GetRole",
       "iam:GetRolePolicy",
       "iam:GetSAMLProvider",
       "iam:GetServerCertificate",
-      "iam:GetServiceLastAccessedDetails",
-      "iam:GetServiceLastAccessedDetailsWithEntities",
-      "iam:GetServiceLinkedRoleDeletionStatus",
       "iam:GetSSHPublicKey",
       "iam:GetUser",
       "iam:GetUserPolicy",
@@ -248,7 +319,19 @@
       "iam:ListUserPolicies",
       "iam:ListUsers",
       "iam:ListUserTags",
-      "iam:ListVirtualMFADevices",
+      "iam:ListVirtualMFADevices"
+    ],
+    "read-data": [
+      "iam:GenerateCredentialReport",
+      "iam:GenerateOrganizationsAccessReport",
+      "iam:GenerateServiceLastAccessedDetails",
+      "iam:GetAccessKeyLastUsed",
+      "iam:GetAccountSummary",
+      "iam:GetCredentialReport",
+      "iam:GetOrganizationsAccessReport",
+      "iam:GetServiceLastAccessedDetails",
+      "iam:GetServiceLastAccessedDetailsWithEntities",
+      "iam:GetServiceLinkedRoleDeletionStatus",
       "iam:SimulateCustomPolicy",
       "iam:SimulatePrincipalPolicy"
     ],
@@ -280,14 +363,15 @@
       "kms:ScheduleKeyDeletion",
       "kms:TagResource",
       "kms:UntagResource",
-      "kms:UpdateCustomKeyStore"
+      "kms:UpdateAlias",
+      "kms:UpdateCustomKeyStore",
+      "kms:UpdateKeyDescription"
     ],
     "delete-data": [
       "kms:DeleteCustomKeyStore",
       "kms:DeleteImportedKeyMaterial"
     ],
-    "read-data": [
-      "kms:Decrypt",
+    "read-config": [
       "kms:DescribeCustomKeyStores",
       "kms:DescribeKey",
       "kms:GetKeyPolicy",
@@ -299,7 +383,10 @@
       "kms:ListKeyPolicies",
       "kms:ListKeys",
       "kms:ListResourceTags",
-      "kms:ListRetirableGrants",
+      "kms:ListRetirableGrants"
+    ],
+    "read-data": [
+      "kms:Decrypt",
       "kms:Verify"
     ],
     "write-data": [
@@ -312,9 +399,7 @@
       "kms:ImportKeyMaterial",
       "kms:ReEncryptFrom",
       "kms:ReEncryptTo",
-      "kms:Sign",
-      "kms:UpdateAlias",
-      "kms:UpdateKeyDescription"
+      "kms:Sign"
     ]
   },
   "RDS": {
@@ -407,7 +492,7 @@
       "rds:DeleteGlobalCluster",
       "rds:DeleteOptionGroup"
     ],
-    "read-data": [
+    "read-config": [
       "rds:DescribeAccountAttributes",
       "rds:DescribeCertificates",
       "rds:DescribeDBClusterBacktracks",
@@ -445,18 +530,21 @@
       "rds:DescribeReservedDBInstancesOfferings",
       "rds:DescribeSourceRegions",
       "rds:DescribeValidDBInstanceModifications",
+      "rds:ListTagsForResource"
+    ],
+    "read-data": [
+      "rds:CrossRegionCommunication",
       "rds:DownloadCompleteDBLogFile",
       "rds:DownloadDBLogFilePortion",
-      "rds:ListTagsForResource"
+      "rds:RestoreDBClusterFromSnapshot",
+      "rds:RestoreDBInstanceFromDBSnapshot"
     ],
     "write-data": [
       "rds:CancelExportTask",
+      "rds:CreateDBClusterSnapshot",
+      "rds:CreateDBSnapshot",
+      "rds:CrossRegionCommunication",
       "rds:StartExportTask"
-    ]
-  },
-  "RDS DB": {
-    "use-resource": [
-      "rds-db:connect"
     ]
   },
   "RDS Data": {
@@ -469,11 +557,141 @@
       "rds-data:RollbackTransaction"
     ]
   },
+  "RDS DB": {
+    "use-resource": [
+      "rds-db:connect"
+    ]
+  },
+  "Redshift": {
+    "administer-resource": [
+      "redshift:AcceptReservedNodeExchange",
+      "redshift:AuthorizeClusterSecurityGroupIngress",
+      "redshift:AuthorizeSnapshotAccess",
+      "redshift:BatchDeleteClusterSnapshots",
+      "redshift:BatchModifyClusterSnapshots",
+      "redshift:CancelQuerySession",
+      "redshift:CancelResize",
+      "redshift:CopyClusterSnapshot",
+      "redshift:CreateCluster",
+      "redshift:CreateClusterParameterGroup",
+      "redshift:CreateClusterSecurityGroup",
+      "redshift:CreateClusterSnapshot",
+      "redshift:CreateClusterSubnetGroup",
+      "redshift:CreateClusterUser",
+      "redshift:CreateEventSubscription",
+      "redshift:CreateHsmClientCertificate",
+      "redshift:CreateHsmConfiguration",
+      "redshift:CreateSnapshotCopyGrant",
+      "redshift:CreateSnapshotSchedule",
+      "redshift:DeleteCluster",
+      "redshift:DeleteClusterParameterGroup",
+      "redshift:DeleteClusterSecurityGroup",
+      "redshift:DeleteClusterSnapshot",
+      "redshift:DeleteClusterSubnetGroup",
+      "redshift:DeleteEventSubscription",
+      "redshift:DeleteHsmClientCertificate",
+      "redshift:DeleteHsmConfiguration",
+      "redshift:DeleteSnapshotCopyGrant",
+      "redshift:DeleteSnapshotSchedule",
+      "redshift:DisableLogging",
+      "redshift:DisableSnapshotCopy",
+      "redshift:EnableLogging",
+      "redshift:EnableSnapshotCopy",
+      "redshift:JoinGroup",
+      "redshift:ModifyCluster",
+      "redshift:ModifyClusterDbRevision",
+      "redshift:ModifyClusterIamRoles",
+      "redshift:ModifyClusterMaintenance",
+      "redshift:ModifyClusterParameterGroup",
+      "redshift:ModifyClusterSnapshot",
+      "redshift:ModifyClusterSnapshotSchedule",
+      "redshift:ModifyClusterSubnetGroup",
+      "redshift:ModifyEventSubscription",
+      "redshift:ModifyScheduledAction",
+      "redshift:ModifySnapshotCopyRetentionPeriod",
+      "redshift:ModifySnapshotSchedule",
+      "redshift:PauseCluster",
+      "redshift:PurchaseReservedNodeOffering",
+      "redshift:RebootCluster",
+      "redshift:ResetClusterParameterGroup",
+      "redshift:ResizeCluster",
+      "redshift:RestoreFromClusterSnapshot",
+      "redshift:RestoreTableFromClusterSnapshot",
+      "redshift:ResumeCluster",
+      "redshift:RevokeClusterSecurityGroupIngress",
+      "redshift:RevokeSnapshotAccess",
+      "redshift:RotateEncryptionKey"
+    ],
+    "delete-data": [
+      "redshift:BatchDeleteClusterSnapshots",
+      "redshift:DeleteCluster",
+      "redshift:DeleteClusterSnapshot"
+    ],
+    "read-config": [
+      "redshift:DescribeAccountAttributes",
+      "redshift:DescribeClusterDbRevisions",
+      "redshift:DescribeClusterParameterGroups",
+      "redshift:DescribeClusterParameters",
+      "redshift:DescribeClusters",
+      "redshift:DescribeClusterSecurityGroups",
+      "redshift:DescribeClusterSnapshots",
+      "redshift:DescribeClusterSubnetGroups",
+      "redshift:DescribeClusterTracks",
+      "redshift:DescribeClusterVersions",
+      "redshift:DescribeDefaultClusterParameters",
+      "redshift:DescribeEventCategories",
+      "redshift:DescribeEvents",
+      "redshift:DescribeEventSubscriptions",
+      "redshift:DescribeHsmClientCertificates",
+      "redshift:DescribeHsmConfigurations",
+      "redshift:DescribeLoggingStatus",
+      "redshift:DescribeNodeConfigurationOptions",
+      "redshift:DescribeOrderableClusterOptions",
+      "redshift:DescribeQuery",
+      "redshift:DescribeReservedNodeOfferings",
+      "redshift:DescribeReservedNodes",
+      "redshift:DescribeResize",
+      "redshift:DescribeSavedQueries",
+      "redshift:DescribeScheduledActions",
+      "redshift:DescribeSnapshotCopyGrants",
+      "redshift:DescribeSnapshotSchedules",
+      "redshift:DescribeStorage",
+      "redshift:DescribeTable",
+      "redshift:DescribeTableRestoreStatus",
+      "redshift:DescribeTags",
+      "redshift:GetReservedNodeExchangeOfferings",
+      "redshift:ListDatabases",
+      "redshift:ListSavedQueries",
+      "redshift:ListSchemas",
+      "redshift:ListTables"
+    ],
+    "read-data": [
+      "redshift:FetchResults",
+      "redshift:ViewQueriesFromConsole"
+    ],
+    "use-resource": [
+      "redshift:GetClusterCredentials"
+    ],
+    "write-data": [
+      "redshift:CancelQuery",
+      "redshift:CopyClusterSnapshot",
+      "redshift:CreateSavedQuery",
+      "redshift:CreateScheduledAction",
+      "redshift:CreateTags",
+      "redshift:DeleteSavedQueries",
+      "redshift:DeleteScheduledAction",
+      "redshift:DeleteTags",
+      "redshift:ExecuteQuery",
+      "redshift:ModifySavedQuery",
+      "redshift:ViewQueriesInConsole"
+    ]
+  },
   "S3": {
     "administer-resource": [
       "s3:BypassGovernanceRetention",
       "s3:DeleteBucketPolicy",
       "s3:DeleteBucketWebsite",
+      "s3:ObjectOwnerOverrideToBucketOwner",
       "s3:PutAccelerateConfiguration",
       "s3:PutAnalyticsConfiguration",
       "s3:PutBucketAcl",
@@ -503,13 +721,16 @@
       "s3:DeleteObjectVersion",
       "s3:DeleteObjectVersionTagging"
     ],
-    "read-data": [
+    "read-config": [
+      "s3:GetAccelerateConfiguration",
+      "s3:GetAnalyticsConfiguration",
       "s3:GetBucketAcl",
       "s3:GetBucketCORS",
       "s3:GetBucketLocation",
       "s3:GetBucketLogging",
       "s3:GetBucketNotification",
       "s3:GetBucketObjectLockConfiguration",
+      "s3:GetBucketOwnershipControls",
       "s3:GetBucketPolicy",
       "s3:GetBucketPolicyStatus",
       "s3:GetBucketPublicAccessBlock",
@@ -521,21 +742,25 @@
       "s3:GetInventoryConfiguration",
       "s3:GetLifecycleConfiguration",
       "s3:GetMetricsConfiguration",
-      "s3:GetObject",
       "s3:GetObjectAcl",
       "s3:GetObjectLegalHold",
       "s3:GetObjectRetention",
       "s3:GetObjectTagging",
-      "s3:GetObjectTorrent",
-      "s3:GetObjectVersion",
       "s3:GetObjectVersionAcl",
-      "s3:GetObjectVersionForReplication",
       "s3:GetObjectVersionTagging",
-      "s3:GetObjectVersionTorrent",
-      "s3:ListBucket",
+      "s3:GetReplicationConfiguration",
       "s3:ListBucketMultipartUploads",
       "s3:ListBucketVersions",
       "s3:ListMultipartUploadParts"
+    ],
+    "read-data": [
+      "s3:GetObject",
+      "s3:GetObjectTorrent",
+      "s3:GetObjectVersion",
+      "s3:GetObjectVersionForReplication",
+      "s3:GetObjectVersionTorrent",
+      "s3:ListBucket",
+      "s3:ListBucketByTags"
     ],
     "write-data": [
       "s3:AbortMultipartUpload",
@@ -547,6 +772,58 @@
       "s3:ReplicateObject",
       "s3:ReplicateTags",
       "s3:RestoreObject"
+    ]
+  },
+  "SQS": {
+    "administer-resource": [
+      "sqs:AddPermission",
+      "sqs:CreateQueue",
+      "sqs:DeleteQueue",
+      "sqs:PurgeQueue",
+      "sqs:RemovePermission",
+      "sqs:SetQueueAttributes",
+      "sqs:TagQueue",
+      "sqs:UntagQueue"
+    ],
+    "delete-data": [
+      "sqs:DeleteMessage",
+      "sqs:DeleteMessageBatch",
+      "sqs:DeleteQueue",
+      "sqs:PurgeQueue"
+    ],
+    "read-config": [
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:ListDeadLetterSourceQueues",
+      "sqs:ListQueues",
+      "sqs:ListQueueTags"
+    ],
+    "read-data": [
+      "sqs:ReceiveMessage"
+    ],
+    "write-data": [
+      "sqs:ChangeMessageVisibility",
+      "sqs:ChangeMessageVisibilityBatch",
+      "sqs:SendMessage",
+      "sqs:SendMessageBatch"
+    ]
+  },
+  "STS": {
+    "read-data": [
+      "sts:GetAccessKeyInfo",
+      "sts:GetCallerIdentity",
+      "sts:GetFederationToken",
+      "sts:GetServiceBearerToken",
+      "sts:GetSessionToken"
+    ],
+    "use-resource": [
+      "sts:AssumeRole",
+      "sts:AssumeRoleWithSAML",
+      "sts:AssumeRoleWithWebIdentity"
+    ],
+    "write-data": [
+      "sts:DecodeAuthorizationMessage",
+      "sts:TagSession"
     ]
   }
 }

@@ -9,9 +9,12 @@ import * as k9 from "../lib";
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::139710491120:user/ci",
         "arn:aws:iam::139710491120:user/skuenzli",
-        "arn:aws:iam::139710491120:federated-user/skuenzli",
+        "arn:aws:sts::139710491120:federated-user/skuenzli",
     ]
 );
+
+const readConfigArns = new Set<string>(administerResourceArns)
+    .add("arn:aws:iam::12345678910:role/k9-auditor");
 
 const writeDataArns = new Set<string>([
         "arn:aws:iam::12345678910:role/app-backend",
@@ -33,6 +36,10 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
             allowPrincipalArns: administerResourceArns,
         },
         {
+            accessCapability: k9.k9policy.AccessCapability.ReadConfig,
+            allowPrincipalArns: readConfigArns,
+        },
+        {
             accessCapability: k9.k9policy.AccessCapability.WriteData,
             allowPrincipalArns: writeDataArns,
         },
@@ -52,6 +59,10 @@ const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
         {
             accessCapability: k9.k9policy.AccessCapability.AdministerResource,
             allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapability: k9.k9policy.AccessCapability.ReadConfig,
+            allowPrincipalArns: readConfigArns,
         },
         {
             accessCapability: k9.k9policy.AccessCapability.WriteData,
