@@ -10,6 +10,9 @@ const administerResourceArns = new Set<string>([
     ]
 );
 
+const readConfigArns = new Set<string>(administerResourceArns)
+    .add("arn:aws:iam::12345678910:role/k9-auditor");
+
 const writeDataArns = new Set<string>([
         "arn:aws:iam::12345678910:role/app-backend",
     ]
@@ -28,6 +31,10 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
         {
             accessCapability: k9.k9policy.AccessCapability.AdministerResource,
             allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapability: k9.k9policy.AccessCapability.ReadConfig,
+            allowPrincipalArns: readConfigArns,
         },
         {
             accessCapability: k9.k9policy.AccessCapability.WriteData,
