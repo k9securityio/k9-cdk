@@ -689,29 +689,16 @@
   "S3": {
     "administer-resource": [
       "s3:BypassGovernanceRetention",
-      "s3:CreateAccessPoint",
-      "s3:CreateBucket",
-      "s3:CreateJob",
-      "s3:DeleteAccessPoint",
-      "s3:DeleteAccessPointPolicy",
-      "s3:DeleteBucket",
-      "s3:DeleteBucketOwnershipControls",
       "s3:DeleteBucketPolicy",
       "s3:DeleteBucketWebsite",
-      "s3:DeleteJobTagging",
-      "s3:DeleteStorageLensConfiguration",
-      "s3:DeleteStorageLensConfigurationTagging",
       "s3:ObjectOwnerOverrideToBucketOwner",
       "s3:PutAccelerateConfiguration",
-      "s3:PutAccessPointPolicy",
-      "s3:PutAccountPublicAccessBlock",
       "s3:PutAnalyticsConfiguration",
       "s3:PutBucketAcl",
       "s3:PutBucketCORS",
       "s3:PutBucketLogging",
       "s3:PutBucketNotification",
       "s3:PutBucketObjectLockConfiguration",
-      "s3:PutBucketOwnershipControls",
       "s3:PutBucketPolicy",
       "s3:PutBucketPublicAccessBlock",
       "s3:PutBucketRequestPayment",
@@ -720,16 +707,13 @@
       "s3:PutBucketWebsite",
       "s3:PutEncryptionConfiguration",
       "s3:PutInventoryConfiguration",
-      "s3:PutJobTagging",
       "s3:PutLifecycleConfiguration",
       "s3:PutMetricsConfiguration",
       "s3:PutObjectAcl",
       "s3:PutObjectLegalHold",
       "s3:PutObjectRetention",
       "s3:PutObjectVersionAcl",
-      "s3:PutReplicationConfiguration",
-      "s3:PutStorageLensConfiguration",
-      "s3:PutStorageLensConfigurationTagging"
+      "s3:PutReplicationConfiguration"
     ],
     "delete-data": [
       "s3:DeleteObject",
@@ -738,12 +722,7 @@
       "s3:DeleteObjectVersionTagging"
     ],
     "read-config": [
-      "s3:DescribeJob",
       "s3:GetAccelerateConfiguration",
-      "s3:GetAccessPoint",
-      "s3:GetAccessPointPolicy",
-      "s3:GetAccessPointPolicyStatus",
-      "s3:GetAccountPublicAccessBlock",
       "s3:GetAnalyticsConfiguration",
       "s3:GetBucketAcl",
       "s3:GetBucketCORS",
@@ -761,7 +740,6 @@
       "s3:GetBucketWebsite",
       "s3:GetEncryptionConfiguration",
       "s3:GetInventoryConfiguration",
-      "s3:GetJobTagging",
       "s3:GetLifecycleConfiguration",
       "s3:GetMetricsConfiguration",
       "s3:GetObjectAcl",
@@ -771,15 +749,9 @@
       "s3:GetObjectVersionAcl",
       "s3:GetObjectVersionTagging",
       "s3:GetReplicationConfiguration",
-      "s3:GetStorageLensConfiguration",
-      "s3:GetStorageLensConfigurationTagging",
-      "s3:ListAccessPoints",
-      "s3:ListAllMyBuckets",
       "s3:ListBucketMultipartUploads",
       "s3:ListBucketVersions",
-      "s3:ListJobs",
-      "s3:ListMultipartUploadParts",
-      "s3:ListStorageLensConfigurations"
+      "s3:ListMultipartUploadParts"
     ],
     "read-data": [
       "s3:GetObject",
@@ -787,8 +759,6 @@
       "s3:GetObjectVersion",
       "s3:GetObjectVersionForReplication",
       "s3:GetObjectVersionTorrent",
-      "s3:GetStorageLensDashboard",
-      "s3:HeadBucket",
       "s3:ListBucket",
       "s3:ListBucketByTags"
     ],
@@ -801,9 +771,7 @@
       "s3:ReplicateDelete",
       "s3:ReplicateObject",
       "s3:ReplicateTags",
-      "s3:RestoreObject",
-      "s3:UpdateJobPriority",
-      "s3:UpdateJobStatus"
+      "s3:RestoreObject"
     ]
   },
   "SQS": {
