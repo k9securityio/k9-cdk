@@ -5,6 +5,7 @@
         "s3:BypassGovernanceRetention",
         "s3:DeleteBucketPolicy",
         "s3:DeleteBucketWebsite",
+        "s3:ObjectOwnerOverrideToBucketOwner",
         "s3:PutAccelerateConfiguration",
         "s3:PutAnalyticsConfiguration",
         "s3:PutBucketAcl",
@@ -46,12 +47,15 @@
     },
     {
       "Action": [
+        "s3:GetAccelerateConfiguration",
+        "s3:GetAnalyticsConfiguration",
         "s3:GetBucketAcl",
         "s3:GetBucketCORS",
         "s3:GetBucketLocation",
         "s3:GetBucketLogging",
         "s3:GetBucketNotification",
         "s3:GetBucketObjectLockConfiguration",
+        "s3:GetBucketOwnershipControls",
         "s3:GetBucketPolicy",
         "s3:GetBucketPolicyStatus",
         "s3:GetBucketPublicAccessBlock",
@@ -63,21 +67,43 @@
         "s3:GetInventoryConfiguration",
         "s3:GetLifecycleConfiguration",
         "s3:GetMetricsConfiguration",
-        "s3:GetObject",
         "s3:GetObjectAcl",
         "s3:GetObjectLegalHold",
         "s3:GetObjectRetention",
         "s3:GetObjectTagging",
-        "s3:GetObjectTorrent",
-        "s3:GetObjectVersion",
         "s3:GetObjectVersionAcl",
-        "s3:GetObjectVersionForReplication",
         "s3:GetObjectVersionTagging",
-        "s3:GetObjectVersionTorrent",
-        "s3:ListBucket",
+        "s3:GetReplicationConfiguration",
         "s3:ListBucketMultipartUploads",
         "s3:ListBucketVersions",
         "s3:ListMultipartUploadParts"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::12345678910:user/ci",
+            "arn:aws:iam::12345678910:user/person1",
+            "arn:aws:iam::12345678910:role/k9-auditor"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": "*",
+      "Resource": [
+        "${Token[TOKEN.19]}",
+        "${Token[TOKEN.19]}/*"
+      ],
+      "Sid": "Restricted-read-config"
+    },
+    {
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectTorrent",
+        "s3:GetObjectVersion",
+        "s3:GetObjectVersionForReplication",
+        "s3:GetObjectVersionTorrent",
+        "s3:ListBucket",
+        "s3:ListBucketByTags"
       ],
       "Condition": {
         "ArnEquals": {
@@ -200,6 +226,7 @@
           "aws:PrincipalArn": [
             "arn:aws:iam::12345678910:user/ci",
             "arn:aws:iam::12345678910:user/person1",
+            "arn:aws:iam::12345678910:role/k9-auditor",
             "arn:aws:iam::12345678910:role/app-backend",
             "arn:aws:iam::12345678910:role/customer-service"
           ]

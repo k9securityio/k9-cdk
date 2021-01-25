@@ -20,7 +20,9 @@
         "kms:ScheduleKeyDeletion",
         "kms:TagResource",
         "kms:UntagResource",
-        "kms:UpdateCustomKeyStore"
+        "kms:UpdateAlias",
+        "kms:UpdateCustomKeyStore",
+        "kms:UpdateKeyDescription"
       ],
       "Condition": {
         "ArnEquals": {
@@ -37,7 +39,6 @@
     },
     {
       "Action": [
-        "kms:Decrypt",
         "kms:DescribeCustomKeyStores",
         "kms:DescribeKey",
         "kms:GetKeyPolicy",
@@ -49,7 +50,21 @@
         "kms:ListKeyPolicies",
         "kms:ListKeys",
         "kms:ListResourceTags",
-        "kms:ListRetirableGrants",
+        "kms:ListRetirableGrants"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": []
+        }
+      },
+      "Effect": "Allow",
+      "Principal": "*",
+      "Resource": "*",
+      "Sid": "Restricted-read-config"
+    },
+    {
+      "Action": [
+        "kms:Decrypt",
         "kms:Verify"
       ],
       "Condition": {
@@ -76,9 +91,7 @@
         "kms:ImportKeyMaterial",
         "kms:ReEncryptFrom",
         "kms:ReEncryptTo",
-        "kms:Sign",
-        "kms:UpdateAlias",
-        "kms:UpdateKeyDescription"
+        "kms:Sign"
       ],
       "Condition": {
         "ArnEquals": {
