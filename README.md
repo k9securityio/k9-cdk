@@ -16,8 +16,9 @@ For example, the following code will:
 
 1. provision an S3 Bucket
 2. allow the `ci` and `person1` users to administer the bucket
-3. allow the `app-backend` role to write data into the bucket
-4. allow the `app-backend` and `customer-service` role to read data in the bucket
+3. allow administrators and `k9-auditor` to read bucket configuration
+4. allow the `app-backend` role to write data into the bucket
+5. allow the `app-backend` and `customer-service` role to read data in the bucket
 
 ```typescript
 import * as cdk from "@aws-cdk/core";
@@ -72,7 +73,10 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
 ```
 
-See the [generated k9 bucket policy](examples/generated.bucket-policy.json) in the examples directory.
+The example stack demonstrates full use of the k9 S3 and KMS policy generators.  Generated policies:
+
+* [k9 S3 bucket policy](examples/generated.bucket-policy.json)
+* [k9 KMS bucket policy](examples/generated.key-policy.json)
 
 ## Local Development and Testing
 
