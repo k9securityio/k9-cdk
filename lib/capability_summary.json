@@ -280,14 +280,15 @@
       "kms:ScheduleKeyDeletion",
       "kms:TagResource",
       "kms:UntagResource",
-      "kms:UpdateCustomKeyStore"
+      "kms:UpdateAlias",
+      "kms:UpdateCustomKeyStore",
+      "kms:UpdateKeyDescription"
     ],
     "delete-data": [
       "kms:DeleteCustomKeyStore",
       "kms:DeleteImportedKeyMaterial"
     ],
-    "read-data": [
-      "kms:Decrypt",
+    "read-config": [
       "kms:DescribeCustomKeyStores",
       "kms:DescribeKey",
       "kms:GetKeyPolicy",
@@ -299,7 +300,10 @@
       "kms:ListKeyPolicies",
       "kms:ListKeys",
       "kms:ListResourceTags",
-      "kms:ListRetirableGrants",
+      "kms:ListRetirableGrants"
+    ],
+    "read-data": [
+      "kms:Decrypt",
       "kms:Verify"
     ],
     "write-data": [
@@ -312,9 +316,7 @@
       "kms:ImportKeyMaterial",
       "kms:ReEncryptFrom",
       "kms:ReEncryptTo",
-      "kms:Sign",
-      "kms:UpdateAlias",
-      "kms:UpdateKeyDescription"
+      "kms:Sign"
     ]
   },
   "RDS": {
