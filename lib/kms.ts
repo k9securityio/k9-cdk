@@ -9,6 +9,7 @@ export interface K9KeyPolicyProps {
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
     AccessCapability.AdministerResource,
+    AccessCapability.ReadConfig,
     AccessCapability.ReadData,
     AccessCapability.WriteData,
     AccessCapability.DeleteData,

@@ -11,6 +11,7 @@ export type ArnConditionTest =
 
 export enum AccessCapability {
     AdministerResource = "administer-resource",
+    ReadConfig = "read-config",
     ReadData = "read-data",
     WriteData = "write-data",
     DeleteData = "delete-data",
