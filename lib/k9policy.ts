@@ -67,7 +67,7 @@ export class K9PolicyFactory {
             ;
             let arnConditionTest = accessSpec.test || "ArnEquals";
 
-            let statement = this.makeAllowStatement(`Restricted-${supportedCapability}`,
+            let statement = this.makeAllowStatement(`Allow Restricted ${supportedCapability}`,
                 this.getActions(serviceName, supportedCapability),
                 accessSpec.allowPrincipalArns,
                 arnConditionTest,

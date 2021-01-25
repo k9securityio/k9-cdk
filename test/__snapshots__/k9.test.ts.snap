@@ -70,7 +70,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-administer-resource",
+              "Sid": "Allow Restricted administer-resource",
             },
             Object {
               "Action": Array [
@@ -134,7 +134,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-read-config",
+              "Sid": "Allow Restricted read-config",
             },
             Object {
               "Action": Array [
@@ -178,7 +178,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-read-data",
+              "Sid": "Allow Restricted read-data",
             },
             Object {
               "Action": Array [
@@ -223,7 +223,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-write-data",
+              "Sid": "Allow Restricted write-data",
             },
             Object {
               "Action": Array [
@@ -263,7 +263,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-delete-data",
+              "Sid": "Allow Restricted delete-data",
             },
             Object {
               "Action": "s3:*",
@@ -510,7 +510,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-administer-resource",
+              "Sid": "Allow Restricted administer-resource",
             },
             Object {
               "Action": Array [
@@ -574,7 +574,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-read-config",
+              "Sid": "Allow Restricted read-config",
             },
             Object {
               "Action": Array [
@@ -618,7 +618,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-read-data",
+              "Sid": "Allow Restricted read-data",
             },
             Object {
               "Action": Array [
@@ -663,7 +663,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-write-data",
+              "Sid": "Allow Restricted write-data",
             },
             Object {
               "Action": Array [
@@ -703,7 +703,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "Restricted-delete-data",
+              "Sid": "Allow Restricted delete-data",
             },
             Object {
               "Action": "s3:*",
@@ -915,7 +915,7 @@ Object {
               "Effect": "Allow",
               "Principal": "*",
               "Resource": "*",
-              "Sid": "Restricted-administer-resource",
+              "Sid": "Allow Restricted administer-resource",
             },
             Object {
               "Action": Array [
@@ -940,7 +940,7 @@ Object {
               "Effect": "Allow",
               "Principal": "*",
               "Resource": "*",
-              "Sid": "Restricted-read-config",
+              "Sid": "Allow Restricted read-config",
             },
             Object {
               "Action": Array [
@@ -958,7 +958,7 @@ Object {
               "Effect": "Allow",
               "Principal": "*",
               "Resource": "*",
-              "Sid": "Restricted-read-data",
+              "Sid": "Allow Restricted read-data",
             },
             Object {
               "Action": Array [
@@ -983,7 +983,7 @@ Object {
               "Effect": "Allow",
               "Principal": "*",
               "Resource": "*",
-              "Sid": "Restricted-write-data",
+              "Sid": "Allow Restricted write-data",
             },
             Object {
               "Action": Array [
@@ -1000,7 +1000,7 @@ Object {
               "Effect": "Allow",
               "Principal": "*",
               "Resource": "*",
-              "Sid": "Restricted-delete-data",
+              "Sid": "Allow Restricted delete-data",
             },
             Object {
               "Action": "kms:*",
