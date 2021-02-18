@@ -3,6 +3,8 @@ import {writeFileSync} from 'fs';
 import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
 import * as k9 from "@k9securityio/k9-cdk";
+import * as kms from "@aws-cdk/aws-kms";
+import * as cxapi from "@aws-cdk/cx-api";
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::12345678910:user/ci",
@@ -75,3 +77,7 @@ const keyPolicy = k9.kms.makeKeyPolicy(stack, "KMSKey", keyPolicyProps);
 
 writeFileSync('generated.key-policy.json',
     JSON.stringify(keyPolicy.toJSON(), null, 2));
+
+new kms.Key(stack, 'TestKey', {policy: keyPolicy});
+
+const assembly = app.synth();

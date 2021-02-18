@@ -2,7 +2,6 @@
   "Statement": [
     {
       "Action": [
-        "s3:BypassGovernanceRetention",
         "s3:DeleteBucketPolicy",
         "s3:DeleteBucketWebsite",
         "s3:ObjectOwnerOverrideToBucketOwner",
@@ -43,7 +42,7 @@
         "${Token[TOKEN.19]}",
         "${Token[TOKEN.19]}/*"
       ],
-      "Sid": "Restricted-administer-resource"
+      "Sid": "Allow Restricted administer-resource"
     },
     {
       "Action": [
@@ -93,7 +92,7 @@
         "${Token[TOKEN.19]}",
         "${Token[TOKEN.19]}/*"
       ],
-      "Sid": "Restricted-read-config"
+      "Sid": "Allow Restricted read-config"
     },
     {
       "Action": [
@@ -102,8 +101,7 @@
         "s3:GetObjectVersion",
         "s3:GetObjectVersionForReplication",
         "s3:GetObjectVersionTorrent",
-        "s3:ListBucket",
-        "s3:ListBucketByTags"
+        "s3:ListBucket"
       ],
       "Condition": {
         "ArnEquals": {
@@ -119,7 +117,7 @@
         "${Token[TOKEN.19]}",
         "${Token[TOKEN.19]}/*"
       ],
-      "Sid": "Restricted-read-data"
+      "Sid": "Allow Restricted read-data"
     },
     {
       "Action": [
@@ -146,7 +144,7 @@
         "${Token[TOKEN.19]}",
         "${Token[TOKEN.19]}/*"
       ],
-      "Sid": "Restricted-write-data"
+      "Sid": "Allow Restricted write-data"
     },
     {
       "Action": [
@@ -166,7 +164,7 @@
         "${Token[TOKEN.19]}",
         "${Token[TOKEN.19]}/*"
       ],
-      "Sid": "Restricted-delete-data"
+      "Sid": "Allow Restricted delete-data"
     },
     {
       "Action": "s3:*",

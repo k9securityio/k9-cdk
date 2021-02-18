@@ -35,7 +35,7 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": "*",
-      "Sid": "Restricted-administer-resource"
+      "Sid": "Allow Restricted administer-resource"
     },
     {
       "Action": [
@@ -60,7 +60,7 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": "*",
-      "Sid": "Restricted-read-config"
+      "Sid": "Allow Restricted read-config"
     },
     {
       "Action": [
@@ -78,7 +78,7 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": "*",
-      "Sid": "Restricted-read-data"
+      "Sid": "Allow Restricted read-data"
     },
     {
       "Action": [
@@ -103,7 +103,7 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": "*",
-      "Sid": "Restricted-write-data"
+      "Sid": "Allow Restricted write-data"
     },
     {
       "Action": [
@@ -118,7 +118,7 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": "*",
-      "Sid": "Restricted-delete-data"
+      "Sid": "Allow Restricted delete-data"
     },
     {
       "Action": "kms:*",

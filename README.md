@@ -75,8 +75,13 @@ k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
 
 The example stack demonstrates full use of the k9 S3 and KMS policy generators.  Generated policies:
 
-* [k9 S3 bucket policy](examples/generated.bucket-policy.json)
-* [k9 KMS bucket policy](examples/generated.key-policy.json)
+S3 Bucket Policy:
+* [Templatized Bucket Policy](examples/generated.bucket-policy.json)
+* [BucketPolicy resource in CFn template](examples/K9Example.template.json)
+
+KMS Key Policy:
+* [Templatized Key Policy](examples/generated.key-policy.json)
+* [KeyPolicy attribute of Key resource in CFn template](examples/K9Example.template.json)
 
 ## Local Development and Testing
 
