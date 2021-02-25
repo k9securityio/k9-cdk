@@ -77,4 +77,7 @@ const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
 };
 const keyPolicy = k9.kms.makeKeyPolicy(stack, "KMSKey", k9KeyPolicyProps);
 
-new kms.Key(stack, 'KMSKey', {policy: keyPolicy});
+new kms.Key(stack, 'KMSKey', {
+    alias: 'k9-cdk-integration-test',
+    policy: keyPolicy
+});
