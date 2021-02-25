@@ -31,7 +31,7 @@ export function makeKeyPolicy(scope: cdk.Construct, id: string, props: K9KeyPoli
     const denyEveryoneElseStatement = new PolicyStatement({
         sid: 'DenyEveryoneElse',
         effect: Effect.DENY,
-        principals: [new AccountRootPrincipal()],
+        principals: policyFactory.makeDenyEveryoneElsePrincipals(),
         actions: ['kms:*'],
         resources: resourceArns
     });

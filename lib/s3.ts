@@ -2,7 +2,7 @@ import * as s3 from "@aws-cdk/aws-s3";
 import {BucketPolicy} from "@aws-cdk/aws-s3";
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 import * as cdk from "@aws-cdk/core";
-import {AccountRootPrincipal, AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
+import {AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
 
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
@@ -32,13 +32,14 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
         resourceArns);
     policy.document.addStatements(...allowStatements);
 
+
     const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
         'ArnNotLike' :
         'ArnNotEquals';
     const denyEveryoneElseStatement = new PolicyStatement({
                 sid: 'DenyEveryoneElse',
                 effect: Effect.DENY,
-                principals: [new AccountRootPrincipal()],
+                principals: policyFactory.makeDenyEveryoneElsePrincipals(),
                 actions: ['s3:*'],
                 resources: resourceArns
             });
