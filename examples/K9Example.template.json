@@ -18,6 +18,7 @@
           "Statement": [
             {
               "Action": [
+                "s3:DeleteBucket",
                 "s3:DeleteBucketPolicy",
                 "s3:DeleteBucketWebsite",
                 "s3:ObjectOwnerOverrideToBucketOwner",
@@ -392,22 +393,10 @@
               },
               "Effect": "Deny",
               "Principal": {
-                "AWS": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":root"
-                    ]
-                  ]
-                }
+                "AWS": [
+                  "*",
+                  "*"
+                ]
               },
               "Resource": [
                 {
@@ -604,22 +593,10 @@
               },
               "Effect": "Deny",
               "Principal": {
-                "AWS": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":root"
-                    ]
-                  ]
-                }
+                "AWS": [
+                  "*",
+                  "*"
+                ]
               },
               "Resource": "*",
               "Sid": "DenyEveryoneElse"

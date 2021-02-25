@@ -2,6 +2,7 @@
   "Statement": [
     {
       "Action": [
+        "s3:DeleteBucket",
         "s3:DeleteBucketPolicy",
         "s3:DeleteBucketWebsite",
         "s3:ObjectOwnerOverrideToBucketOwner",
@@ -232,7 +233,10 @@
       },
       "Effect": "Deny",
       "Principal": {
-        "AWS": "${Token[TOKEN.25]}"
+        "AWS": [
+          "*",
+          "*"
+        ]
       },
       "Resource": [
         "${Token[TOKEN.19]}",
