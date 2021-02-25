@@ -2,7 +2,7 @@ import * as s3 from "@aws-cdk/aws-s3";
 import {BucketPolicy} from "@aws-cdk/aws-s3";
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 import * as cdk from "@aws-cdk/core";
-import {AccountRootPrincipal, AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
+import {AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
 
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
@@ -32,13 +32,28 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
         resourceArns);
     policy.document.addStatements(...allowStatements);
 
+
+    // denyEveryoneElsePrincipals requires explanation.
+    // We want to deny all AWS accounts and IAM principals not explicitly allowed.
+    // We (should) need AnyPrincipal once (of course), but provide multiple times so that
+    // AWS CDK does not convert:
+    // "Principal": {
+    //     "AWS": "*"    // identifies all AWS accounts and IAM.
+    // }
+    // to:
+    // "Principal": "*"  // identifies all principals including AWS Service principals
+    //
+    // S3 rewrites the AWS member of the policy on save so only the unique set of principals are included
+    // So after these machinations, we end up with what we want.
+    const denyEveryoneElsePrincipals = [new AnyPrincipal(), new AnyPrincipal()];
+
     const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
         'ArnNotLike' :
         'ArnNotEquals';
     const denyEveryoneElseStatement = new PolicyStatement({
                 sid: 'DenyEveryoneElse',
                 effect: Effect.DENY,
-                principals: [new AccountRootPrincipal()],
+                principals: denyEveryoneElsePrincipals,
                 actions: ['s3:*'],
                 resources: resourceArns
             });

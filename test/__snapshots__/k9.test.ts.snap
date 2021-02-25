@@ -382,22 +382,10 @@ Object {
               },
               "Effect": "Deny",
               "Principal": Object {
-                "AWS": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "arn:",
-                      Object {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":iam::",
-                      Object {
-                        "Ref": "AWS::AccountId",
-                      },
-                      ":root",
-                    ],
-                  ],
-                },
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
               },
               "Resource": Array [
                 Object {
@@ -820,22 +808,10 @@ Object {
               },
               "Effect": "Deny",
               "Principal": Object {
-                "AWS": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "arn:",
-                      Object {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":iam::",
-                      Object {
-                        "Ref": "AWS::AccountId",
-                      },
-                      ":root",
-                    ],
-                  ],
-                },
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
               },
               "Resource": Array [
                 Object {
