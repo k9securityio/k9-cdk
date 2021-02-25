@@ -12,6 +12,7 @@ Object {
           "Statement": Array [
             Object {
               "Action": Array [
+                "s3:DeleteBucket",
                 "s3:DeleteBucketPolicy",
                 "s3:DeleteBucketWebsite",
                 "s3:ObjectOwnerOverrideToBucketOwner",
@@ -438,6 +439,7 @@ Object {
           "Statement": Array [
             Object {
               "Action": Array [
+                "s3:DeleteBucket",
                 "s3:DeleteBucketPolicy",
                 "s3:DeleteBucketWebsite",
                 "s3:ObjectOwnerOverrideToBucketOwner",
