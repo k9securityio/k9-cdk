@@ -1012,22 +1012,10 @@ Object {
               },
               "Effect": "Deny",
               "Principal": Object {
-                "AWS": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "arn:",
-                      Object {
-                        "Ref": "AWS::Partition",
-                      },
-                      ":iam::",
-                      Object {
-                        "Ref": "AWS::AccountId",
-                      },
-                      ":root",
-                    ],
-                  ],
-                },
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
               },
               "Resource": "*",
               "Sid": "DenyEveryoneElse",

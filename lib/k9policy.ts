@@ -1,4 +1,4 @@
-import {Effect, PolicyStatement, PolicyStatementProps} from "@aws-cdk/aws-iam";
+import {AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps} from "@aws-cdk/aws-iam";
 import {readFileSync} from 'fs';
 
 export type ArnEqualsTest = "ArnEquals"
@@ -111,6 +111,31 @@ export class K9PolicyFactory {
             });
         }
         return allowedPrincipalArns;
+    }
+
+    /**
+     * k9 wants to deny all AWS accounts and IAM principals not explicitly allowed; this *should*
+     * be straightforward, but it isn't because of the way aws-cdk merges and manipulates Principals.
+     * @return list of principals for a DenyEveryoneElse statement
+     */
+    makeDenyEveryoneElsePrincipals(): ArnPrincipal[] {
+        /**
+         * We should be able to provide AnyPrincipal once (of course), but AWS CDK converts:
+         * "Principal": {
+         *   "AWS": "*"    // identifies all AWS accounts and IAM.
+         * }
+         * to:
+         * "Principal": "*"  // identifies all principals including AWS Service principals
+         *
+         * That's a greater scope than we want.
+         *
+         * So provide AnyPrincipal twice, so aws-cdk maintains the array form.
+         * 
+         * AWS rewrites the AWS member of the policy on save so
+         * only the unique set of principals are included
+         * So after these machinations, we end up with what we want.
+         */
+        return [new AnyPrincipal(), new AnyPrincipal()];
     }
 
 }
