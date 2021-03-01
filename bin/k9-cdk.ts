@@ -5,6 +5,7 @@ import * as kms from "@aws-cdk/aws-kms";
 import * as s3 from "@aws-cdk/aws-s3";
 
 import * as k9 from "../lib";
+import {RemovalPolicy} from "@aws-cdk/core";
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::139710491120:user/ci",
@@ -52,6 +53,14 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 };
 
 k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
+
+const autoDeleteBucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
+    bucketName: 'k9-cdk-auto-delete-test',
+    removalPolicy: RemovalPolicy.DESTROY,
+    autoDeleteObjects: true,
+});
+
+console.log(`autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
 
 
 const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
