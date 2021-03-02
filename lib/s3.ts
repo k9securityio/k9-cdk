@@ -23,7 +23,7 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
 
     let resourceArns = [
         `${props.bucket.bucketArn}`,
-        `${props.bucket.bucketArn}/*`
+        `${props.bucket.arnForObjects('*')}`
     ];
 
     const allowStatements = policyFactory.makeAllowStatements("S3",
