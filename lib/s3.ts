@@ -56,12 +56,9 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
                 resources: resourceArns
             });
     const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
-    console.log(`origAllowedAWSPrincipals: ${origAllowedAWSPrincipals}`);
     for (let origAWSPrincipal of origAllowedAWSPrincipals){
-        console.log(`adding origAWSPrincipal: ${origAWSPrincipal} to set of all Allowed Principal Arns`);
         allAllowedPrincipalArns.add(origAWSPrincipal);
     }
-    console.log(`allAllowedPrincipalArns: ${[...allAllowedPrincipalArns]}`);
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
         {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
 
