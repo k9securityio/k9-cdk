@@ -19,12 +19,45 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 
 export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9BucketPolicyProps): BucketPolicy {
     const policyFactory = new K9PolicyFactory();
-    const policy = new s3.BucketPolicy(scope, `${id}Policy`, {bucket: props.bucket});
+    // If the bucket already has a policy, use it.  Maintaining the existing policy instance
+    // is important because other CDK features like S3 autoDeleteObjects may have expressed dependencies
+    // on that instance which must be maintained.
+    const policy = props.bucket.policy ?
+        props.bucket.policy :
+        new s3.BucketPolicy(scope, `${id}Policy`, {bucket: props.bucket});
 
     let resourceArns = [
         `${props.bucket.bucketArn}`,
         `${props.bucket.arnForObjects('*')}`
     ];
+
+    // Find principals that have already been allowed to do something
+    const origStatements = new Array<PolicyStatement>();
+    const origAllowedAWSPrincipals = new Array<string>();
+    if(policy.document.statementCount > 0){
+        const origPolicyJSON: any = policy.document.toJSON();
+        for(let statementJson of origPolicyJSON.Statement){
+            let origStatement = PolicyStatement.fromJson(statementJson);
+            origStatements.push(origStatement);
+            if (origStatement.effect == Effect.ALLOW &&
+                origStatement.hasPrincipal) {
+                let origStatementJSON = origStatement.toStatementJson();
+                console.log(`origStatementJSON: ${JSON.stringify(origStatementJSON)}`);
+                if(origStatementJSON?.Principal?.AWS){
+                    let awsPrincipals = origStatementJSON.Principal.AWS;
+                    if (typeof awsPrincipals == 'string') {
+                        console.log(`origStatementJSON.Principal (str): ${awsPrincipals}`);
+                        origAllowedAWSPrincipals.push(awsPrincipals)
+                    } else if (Array.isArray(awsPrincipals)) {
+                        console.log(`origStatementJSON.Principal (array): ${awsPrincipals}`);
+                        origAllowedAWSPrincipals.push(...awsPrincipals)
+                    } else {
+                        console.log(`origStatementJSON.Principal (${typeof awsPrincipals}): ${JSON.stringify(awsPrincipals)}`);
+                    }
+                }
+            }
+        }
+    }
 
     const allowStatements = policyFactory.makeAllowStatements("S3",
         SUPPORTED_CAPABILITIES,
@@ -44,6 +77,12 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
                 resources: resourceArns
             });
     const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
+    console.log(`origAllowedAWSPrincipals: ${origAllowedAWSPrincipals}`);
+    for (let origAWSPrincipal of origAllowedAWSPrincipals){
+        console.log(`adding origAWSPrincipal: ${origAWSPrincipal} to set of all Allowed Principal Arns`)
+        allAllowedPrincipalArns.add(origAWSPrincipal);
+    }
+    console.log(`allAllowedPrincipalArns: ${[...allAllowedPrincipalArns]}`);
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
         {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
 

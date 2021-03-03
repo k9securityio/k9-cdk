@@ -60,7 +60,28 @@ const autoDeleteBucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
     autoDeleteObjects: true,
 });
 
-console.log(`autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
+console.log(`original autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
+const k9AutoDeleteBucketPolicyProps: k9.s3.K9BucketPolicyProps = {
+    bucket: autoDeleteBucket,
+    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
+        {
+            accessCapability: k9.k9policy.AccessCapability.AdministerResource,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapability: k9.k9policy.AccessCapability.ReadConfig,
+            allowPrincipalArns: readConfigArns,
+        },
+        {
+            accessCapability: k9.k9policy.AccessCapability.WriteData,
+            allowPrincipalArns: writeDataArns,
+        }
+    )
+};
+
+k9.s3.makeBucketPolicy(stack, 'AutoDeleteBucket', k9AutoDeleteBucketPolicyProps);
+
+console.log(`k9 autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
 
 
 const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {

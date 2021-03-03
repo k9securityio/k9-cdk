@@ -66,6 +66,38 @@ test('K9BucketPolicy', () => {
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
+test('k9.s3.makeBucketPolicy merges permissions for autoDeleteObjects', () => {
+
+    const bucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
+        autoDeleteObjects: true,
+        removalPolicy: RemovalPolicy.DESTROY
+    });
+
+    let originalBucketPolicy = bucket.policy;
+    expect(originalBucketPolicy).toBeTruthy();
+    console.log("original bucketPolicy.document: " + stringifyPolicy(bucket?.policy?.document));
+
+    const k9BucketPolicyProps: K9BucketPolicyProps = {
+        bucket: bucket,
+        k9DesiredAccess: new Array<AccessSpec>(
+            {
+                accessCapability: AccessCapability.AdministerResource,
+                allowPrincipalArns: administerResourceArns,
+            },
+            {
+                accessCapability: AccessCapability.DeleteData,
+                allowPrincipalArns: deleteDataArns,
+            },
+        )
+    };
+    const bucketPolicy = k9.s3.makeBucketPolicy(stack, "AutoDeleteBucket", k9BucketPolicyProps);
+
+    expect(bucketPolicy).toStrictEqual(originalBucketPolicy);
+    
+    console.log("k9 bucketPolicy.document: " + stringifyPolicy(bucketPolicy.document));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+});
+
 test('K9KeyPolicy', () => {
 
     const k9KeyPolicyProps: K9KeyPolicyProps = {
@@ -99,6 +131,10 @@ test('K9KeyPolicy', () => {
 });
 
 
-function stringifyPolicy(policyDocument: PolicyDocument) {
-    return JSON.stringify(policyDocument, null, 2);
+function stringifyPolicy(policyDocument?: PolicyDocument) {
+    if(policyDocument){
+        return JSON.stringify(policyDocument.toJSON(), null, 2);
+    } else {
+        return "<none>"
+    }
 }
