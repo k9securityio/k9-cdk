@@ -22,19 +22,16 @@ export function getAllowedPrincipalArns(policyDocument: PolicyDocument): Set<str
             if (origStatement.effect == Effect.ALLOW &&
                 origStatement.hasPrincipal) {
                 let origStatementJSON = origStatement.toStatementJson();
-                console.log(`origStatementJSON: ${JSON.stringify(origStatementJSON)}`);
                 if (origStatementJSON?.Principal?.AWS) {
                     let awsPrincipals = origStatementJSON.Principal.AWS;
                     if (typeof awsPrincipals == 'string') {
-                        console.log(`origStatementJSON.Principal (str): ${awsPrincipals}`);
                         origAllowedAWSPrincipals.add(awsPrincipals)
                     } else if (Array.isArray(awsPrincipals)) {
-                        console.log(`origStatementJSON.Principal (array): ${awsPrincipals}`);
                         awsPrincipals.forEach(function (value) {
                             origAllowedAWSPrincipals.add(value);
                         });
                     } else {
-                        console.log(`origStatementJSON.Principal (${typeof awsPrincipals}): ${JSON.stringify(awsPrincipals)}`);
+                        throw new Error(`Found unexpected and unhandled principal type: (${typeof awsPrincipals}): ${JSON.stringify(awsPrincipals)}`);
                     }
                 }
             }
