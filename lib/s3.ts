@@ -32,6 +32,10 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
         `${props.bucket.arnForObjects('*')}`
     ];
 
+    // Capture the principals that were allowed prior to modifying policy
+    // One could argue this can be done at the end because we're going to
+    // narrow the DenyEveryoneElse to the unique set of allowed principals.
+    // Record here for now to preserve ability to generate fine-grained DenyEveryoneElse-$capability statements.
     const origAllowedAWSPrincipals = aws_iam_utils.getAllowedPrincipalArns(policy.document);
 
     const allowStatements = policyFactory.makeAllowStatements("S3",
