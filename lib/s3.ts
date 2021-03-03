@@ -3,7 +3,7 @@ import {BucketPolicy} from "@aws-cdk/aws-s3";
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 import * as cdk from "@aws-cdk/core";
 import {AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
-import {getAllowedPrincipalArns} from "./aws-iam-utils";
+import * as aws_iam_utils from "./aws-iam-utils";
 
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
@@ -32,7 +32,7 @@ export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9Buck
         `${props.bucket.arnForObjects('*')}`
     ];
 
-    const origAllowedAWSPrincipals = getAllowedPrincipalArns(policy.document);
+    const origAllowedAWSPrincipals = aws_iam_utils.getAllowedPrincipalArns(policy.document);
 
     const allowStatements = policyFactory.makeAllowStatements("S3",
         SUPPORTED_CAPABILITIES,
