@@ -1,10 +1,11 @@
 import {Effect, PolicyDocument, PolicyStatement} from "@aws-cdk/aws-iam";
 
 /**
- * Gets the unique set of Principal ARNs (or tokenized representation) that appear in the Principal element of
+ * Gets the unique set of AWS Principal ARNs (or tokenized representation) that appear in the Principal element of
  * a Statement that Allows access from an existing PolicyDocument.  Parallels K9PolicyFactory#getAllowedPrincipalArns.
  *
- * Limitations:
+ * Notes & Limitations:
+ *  * only examines 'AWS' principal types, so no e.g. Service principals
  *  * does not examine the statement's condition element
  *  * does not do anything with NotPrincipal
  *
@@ -12,23 +13,21 @@ import {Effect, PolicyDocument, PolicyStatement} from "@aws-cdk/aws-iam";
  * @return the set of allowed principal ARNs or tokens
  */
 export function getAllowedPrincipalArns(policyDocument: PolicyDocument): Set<string> {
-    const origStatements = new Array<PolicyStatement>();
-    const origAllowedAWSPrincipals = new Set<string>();
+    const allowedAWSPrincipals = new Set<string>();
     if (policyDocument.statementCount > 0) {
-        const origPolicyJSON: any = policyDocument.toJSON();
-        for (let statementJson of origPolicyJSON.Statement) {
-            let origStatement = PolicyStatement.fromJson(statementJson);
-            origStatements.push(origStatement);
-            if (origStatement.effect == Effect.ALLOW &&
-                origStatement.hasPrincipal) {
-                let origStatementJSON = origStatement.toStatementJson();
-                if (origStatementJSON?.Principal?.AWS) {
-                    let awsPrincipals = origStatementJSON.Principal.AWS;
+        const policyJSON: any = policyDocument.toJSON();
+        for (let statementJson of policyJSON.Statement) {
+            let statement = PolicyStatement.fromJson(statementJson);
+            if (statement.effect == Effect.ALLOW &&
+                statement.hasPrincipal) {
+                let statementJSON = statement.toStatementJson();
+                if (statementJSON?.Principal?.AWS) {
+                    let awsPrincipals = statementJSON.Principal.AWS;
                     if (typeof awsPrincipals == 'string') {
-                        origAllowedAWSPrincipals.add(awsPrincipals)
+                        allowedAWSPrincipals.add(awsPrincipals)
                     } else if (Array.isArray(awsPrincipals)) {
                         awsPrincipals.forEach(function (value) {
-                            origAllowedAWSPrincipals.add(value);
+                            allowedAWSPrincipals.add(value);
                         });
                     } else {
                         throw new Error(`Found unexpected and unhandled principal type: (${typeof awsPrincipals}): ${JSON.stringify(awsPrincipals)}`);
@@ -37,5 +36,5 @@ export function getAllowedPrincipalArns(policyDocument: PolicyDocument): Set<str
             }
         }
     }
-    return origAllowedAWSPrincipals;
+    return allowedAWSPrincipals;
 }
