@@ -4,7 +4,6 @@ import * as cdk from "@aws-cdk/core";
 import * as s3 from "@aws-cdk/aws-s3";
 import * as k9 from "@k9securityio/k9-cdk";
 import * as kms from "@aws-cdk/aws-kms";
-import * as cxapi from "@aws-cdk/cx-api";
 
 const administerResourceArns = new Set<string>([
         "arn:aws:iam::12345678910:user/ci",
@@ -50,9 +49,9 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     )
 };
 
-const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
+k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
 writeFileSync('generated.bucket-policy.json',
-    JSON.stringify(bucketPolicy.document.toJSON(), null, 2));
+    JSON.stringify(bucket.policy?.document.toJSON(), null, 2));
 
 
 const keyPolicyProps: k9.kms.K9KeyPolicyProps = {
@@ -73,11 +72,11 @@ const keyPolicyProps: k9.kms.K9KeyPolicyProps = {
     )
 
 };
-const keyPolicy = k9.kms.makeKeyPolicy(stack, "KMSKey", keyPolicyProps);
+const keyPolicy = k9.kms.makeKeyPolicy(keyPolicyProps);
 
 writeFileSync('generated.key-policy.json',
     JSON.stringify(keyPolicy.toJSON(), null, 2));
 
 new kms.Key(stack, 'TestKey', {policy: keyPolicy});
 
-const assembly = app.synth();
+app.synth();

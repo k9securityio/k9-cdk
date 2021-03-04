@@ -653,7 +653,7 @@
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Modules": "aws-cdk=1.65.0,@aws-cdk/aws-events=1.65.0,@aws-cdk/aws-iam=1.65.0,@aws-cdk/aws-kms=1.65.0,@aws-cdk/aws-s3=1.65.0,@aws-cdk/cloud-assembly-schema=1.65.0,@aws-cdk/core=1.65.0,@aws-cdk/cx-api=1.65.0,@aws-cdk/region-info=1.65.0,jsii-runtime=node.js/v12.18.4"
+        "Modules": "aws-cdk=1.81.0,@aws-cdk/aws-events=1.81.0,@aws-cdk/aws-iam=1.81.0,@aws-cdk/aws-kms=1.81.0,@aws-cdk/aws-s3=1.81.0,@aws-cdk/cloud-assembly-schema=1.81.0,@aws-cdk/core=1.81.0,@aws-cdk/cx-api=1.81.0,@aws-cdk/region-info=1.81.0,jsii-runtime=node.js/v12.18.4"
       },
       "Metadata": {
         "aws:cdk:path": "K9Example/CDKMetadata/Default"
