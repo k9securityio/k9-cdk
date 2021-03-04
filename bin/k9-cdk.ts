@@ -83,29 +83,11 @@ k9.s3.grantAccessViaResourcePolicy(stack, 'AutoDeleteBucket', k9AutoDeleteBucket
 
 console.log(`k9 autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
 
-
+// Now create a Key policy that grants access the same access
 const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
-    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
-        {
-            accessCapability: k9.k9policy.AccessCapability.AdministerResource,
-            allowPrincipalArns: administerResourceArns,
-        },
-        {
-            accessCapability: k9.k9policy.AccessCapability.ReadConfig,
-            allowPrincipalArns: readConfigArns,
-        },
-        {
-            accessCapability: k9.k9policy.AccessCapability.WriteData,
-            allowPrincipalArns: writeDataArns,
-        },
-        {
-            accessCapability: k9.k9policy.AccessCapability.ReadData,
-            allowPrincipalArns: readDataArns,
-        }
-        // omit access spec for delete-data because it is unneeded
-    )
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess
 };
-const keyPolicy = k9.kms.makeKeyPolicy(stack, "KMSKey", k9KeyPolicyProps);
+const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
 new kms.Key(stack, 'KMSKey', {
     alias: 'k9-cdk-integration-test',
