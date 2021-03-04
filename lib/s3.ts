@@ -2,7 +2,7 @@ import * as s3 from "@aws-cdk/aws-s3";
 import {BucketPolicy} from "@aws-cdk/aws-s3";
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 import * as cdk from "@aws-cdk/core";
-import {AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
+import {AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
 import * as aws_iam_utils from "./aws-iam-utils";
 
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
@@ -43,10 +43,12 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
     // If the bucket already has a policy, use it.  Maintaining the existing policy instance
     // is important because other CDK features like S3 autoDeleteObjects may have expressed dependencies
     // on that instance which must be maintained.
-    const policy = props.bucket.policy ?
-        props.bucket.policy :
-        new s3.BucketPolicy(scope, `${id}Policy`, {bucket: props.bucket});
+    if(!props.bucket.policy){
+        props.bucket.policy = new s3.BucketPolicy(scope, `${id}Policy`, {bucket: props.bucket})
+    }
+    const policy = props.bucket.policy;
 
+    const addToResourcePolicyResults = new Array<AddToResourcePolicyResult>();
     let resourceArns = [
         `${props.bucket.bucketArn}`,
         `${props.bucket.arnForObjects('*')}`
@@ -58,13 +60,13 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
     // Record here for now to preserve ability to generate fine-grained DenyEveryoneElse-$capability statements.
     const origAllowedAWSPrincipals = aws_iam_utils.getAllowedPrincipalArns(policy.document);
 
-    const allowStatements = policyFactory.makeAllowStatements("S3",
+    // Make Allow Statements
+    const k9Statements = policyFactory.makeAllowStatements("S3",
         SUPPORTED_CAPABILITIES,
         props.k9DesiredAccess,
         resourceArns);
-    policy.document.addStatements(...allowStatements);
 
-
+    // Make Deny Statements
     const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
         'ArnNotLike' :
         'ArnNotEquals';
@@ -82,7 +84,7 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
         {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
 
-    policy.document.addStatements(
+    k9Statements.push(
         new PolicyStatement({
             sid: 'DenyInsecureCommunications',
             effect: Effect.DENY,
@@ -115,6 +117,11 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
         }),
         denyEveryoneElseStatement,
     );
+
+    for(let statement of k9Statements){
+        let addToResourcePolicyResult = props.bucket.addToResourcePolicy(statement);
+        addToResourcePolicyResults.push(addToResourcePolicyResult);
+    }
 
     policy.document.validateForResourcePolicy();
 
