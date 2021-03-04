@@ -18,7 +18,27 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
     AccessCapability.DeleteData,
 );
 
-export function makeBucketPolicy(scope: cdk.Construct, id: string, props: K9BucketPolicyProps): BucketPolicy {
+/**
+ * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities described by `props`.
+ * 
+ * When a BucketPolicy already exists on the Bucket referenced in `props`:
+ *   * the BucketPolicy's existing Statements will pass through unmodified
+ *   * k9 will identify IAM principals there were allowed by the original policy and add those principals to
+ *   the `DenyEveryoneElse` Statement's exclusion list so that, e.g. autoDeleteObjects works as expected
+ *   * k9's Allow and Deny statements will be added to the policy
+ *
+ * @remarks
+ *
+ * k9 modifies the existing BucketPolicy in place instead of replacing or copying and modifying that
+ * to preserve dependency references created by certain S3 CDK features such as `autoDeleteObjects`.
+ *
+ * @param scope The scope in which to define this construct.
+ * @param id The scoped construct ID.
+ * @param props describing the desired access capabilities for the bucket
+ *
+ * @return the BucketPolicy that was created or modified
+ */
+export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, props: K9BucketPolicyProps): BucketPolicy {
     const policyFactory = new K9PolicyFactory();
     // If the bucket already has a policy, use it.  Maintaining the existing policy instance
     // is important because other CDK features like S3 autoDeleteObjects may have expressed dependencies

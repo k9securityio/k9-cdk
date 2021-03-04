@@ -52,7 +52,7 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     )
 };
 
-k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
+k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
 
 const autoDeleteBucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
     bucketName: 'k9-cdk-auto-delete-test',
@@ -79,7 +79,7 @@ const k9AutoDeleteBucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     )
 };
 
-k9.s3.makeBucketPolicy(stack, 'AutoDeleteBucket', k9AutoDeleteBucketPolicyProps);
+k9.s3.grantAccessViaResourcePolicy(stack, 'AutoDeleteBucket', k9AutoDeleteBucketPolicyProps);
 
 console.log(`k9 autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
 

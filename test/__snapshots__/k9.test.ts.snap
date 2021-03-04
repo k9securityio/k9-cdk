@@ -1641,7 +1641,7 @@ Object {
 }
 `;
 
-exports[`k9.s3.makeBucketPolicy merges permissions for autoDeleteObjects 1`] = `
+exports[`k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObjects 1`] = `
 Object {
   "Parameters": Object {
     "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392ArtifactHashE56CD69A": Object {

@@ -57,7 +57,7 @@ test('K9BucketPolicy', () => {
             },
         )
     };
-    const bucketPolicy = k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
+    const bucketPolicy = k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
 
     console.log("bucketPolicy.document: " + stringifyPolicy(bucketPolicy.document));
 
@@ -66,7 +66,7 @@ test('K9BucketPolicy', () => {
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
-test('k9.s3.makeBucketPolicy merges permissions for autoDeleteObjects', () => {
+test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObjects', () => {
 
     const bucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
         autoDeleteObjects: true,
@@ -90,7 +90,7 @@ test('k9.s3.makeBucketPolicy merges permissions for autoDeleteObjects', () => {
             },
         )
     };
-    const bucketPolicy = k9.s3.makeBucketPolicy(stack, "AutoDeleteBucket", k9BucketPolicyProps);
+    const bucketPolicy = k9.s3.grantAccessViaResourcePolicy(stack, "AutoDeleteBucket", k9BucketPolicyProps);
 
     expect(bucketPolicy).toStrictEqual(originalBucketPolicy);
     
