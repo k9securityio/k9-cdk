@@ -7,7 +7,7 @@ import {AccessCapability, AccessSpec} from '../lib/k9policy';
 import {K9BucketPolicyProps} from "../lib/s3";
 import {K9KeyPolicyProps} from "../lib/kms";
 import * as k9 from "../lib";
-import {PolicyDocument} from "@aws-cdk/aws-iam";
+import {AddToResourcePolicyResult, PolicyDocument} from "@aws-cdk/aws-iam";
 
 // Test the primary public interface to k9 cdk
 
@@ -57,9 +57,13 @@ test('K9BucketPolicy', () => {
             },
         )
     };
-    const bucketPolicy = k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
+    let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
+    expect(bucket.policy).toBeDefined();
 
-    console.log("bucketPolicy.document: " + stringifyPolicy(bucketPolicy.document));
+    console.log("bucket.policy?.document: " + stringifyPolicy(bucket.policy?.document));
+    expect(bucket.policy?.document).toBeDefined();
+
+    assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
 
     expectCDK(stack).to(haveResource("AWS::S3::Bucket"));
     expectCDK(stack).to(haveResource("AWS::S3::BucketPolicy"));
@@ -90,11 +94,13 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
             },
         )
     };
-    const bucketPolicy = k9.s3.grantAccessViaResourcePolicy(stack, "AutoDeleteBucket", k9BucketPolicyProps);
+    let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "AutoDeleteBucket", k9BucketPolicyProps);
 
-    expect(bucketPolicy).toStrictEqual(originalBucketPolicy);
+    expect(bucket.policy).toStrictEqual(originalBucketPolicy);
     
-    console.log("k9 bucketPolicy.document: " + stringifyPolicy(bucketPolicy.document));
+    assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+    
+    console.log("k9 bucket policy: " + stringifyPolicy(bucket.policy?.document));
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
@@ -130,6 +136,12 @@ test('K9KeyPolicy', () => {
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
+function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: AddToResourcePolicyResult[]) {
+    expect(addToResourcePolicyResults.length).toEqual(9);
+    for (let result of addToResourcePolicyResults) {
+        expect(result.statementAdded).toBeTruthy();
+    }
+}
 
 function stringifyPolicy(policyDocument?: PolicyDocument) {
     if(policyDocument){

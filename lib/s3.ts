@@ -1,5 +1,4 @@
 import * as s3 from "@aws-cdk/aws-s3";
-import {BucketPolicy} from "@aws-cdk/aws-s3";
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 import * as cdk from "@aws-cdk/core";
 import {AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
@@ -19,7 +18,8 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 );
 
 /**
- * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities described by `props`.
+ * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities
+ * described by `props`; the policy will be set on the Bucket specified in `props`.
  * 
  * When a BucketPolicy already exists on the Bucket referenced in `props`:
  *   * the BucketPolicy's existing Statements will pass through unmodified
@@ -36,9 +36,9 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
  * @param id The scoped construct ID.
  * @param props describing the desired access capabilities for the bucket
  *
- * @return the BucketPolicy that was created or modified
+ * @return an array of AddToResourcePolicyResult
  */
-export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, props: K9BucketPolicyProps): BucketPolicy {
+export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, props: K9BucketPolicyProps): AddToResourcePolicyResult[] {
     const policyFactory = new K9PolicyFactory();
     // If the bucket already has a policy, use it.  Maintaining the existing policy instance
     // is important because other CDK features like S3 autoDeleteObjects may have expressed dependencies
@@ -125,5 +125,5 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
 
     policy.document.validateForResourcePolicy();
 
-    return policy
+    return addToResourcePolicyResults;
 }
