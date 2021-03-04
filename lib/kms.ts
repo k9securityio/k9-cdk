@@ -1,7 +1,6 @@
 import * as iam from "@aws-cdk/aws-iam";
 import {AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement} from "@aws-cdk/aws-iam";
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
-import * as cdk from "@aws-cdk/core";
 
 export interface K9KeyPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
@@ -16,7 +15,7 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 );
 
 
-export function makeKeyPolicy(scope: cdk.Construct, id: string, props: K9KeyPolicyProps): PolicyDocument {
+export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     const policyFactory = new K9PolicyFactory();
     const policy = new iam.PolicyDocument();
 

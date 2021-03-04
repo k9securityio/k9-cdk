@@ -126,7 +126,7 @@ test('K9KeyPolicy', () => {
             },
         )
     };
-    const keyPolicy = k9.kms.makeKeyPolicy(stack, "KMSKey", k9KeyPolicyProps);
+    const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
     console.log("keyPolicy.document: " + stringifyPolicy(keyPolicy));
 

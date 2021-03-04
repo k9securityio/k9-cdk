@@ -70,7 +70,25 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
      )
 };
 
-k9.s3.makeBucketPolicy(stack, "S3Bucket", k9BucketPolicyProps);
+k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
+```
+
+Granting access to a KMS key is similar, but the custom resource policy is created first 
+so it can be set via `props` per CDK convention:
+ 
+```typescript
+import * as kms from "@aws-cdk/aws-kms"; 
+import {PolicyDocument} from "@aws-cdk/aws-iam";
+
+const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess
+};
+const keyPolicy: PolicyDocument = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
+
+new kms.Key(stack, 'KMSKey', {
+    alias: 'app-key-with-k9-policy',
+    policy: keyPolicy
+}); 
 ```
 
 The example stack demonstrates full use of the k9 S3 and KMS policy generators.  Generated policies:
