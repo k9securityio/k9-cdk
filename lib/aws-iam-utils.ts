@@ -6,7 +6,7 @@ import {Effect, PolicyDocument, PolicyStatement} from "@aws-cdk/aws-iam";
  *
  * Notes & Limitations:
  *  * only examines 'AWS' principal types, so no e.g. Service principals
- *  * does not examine the statement's condition element
+ *  * only collects Principals from statements without a Condition element
  *  * does not do anything with NotPrincipal
  *
  * @param policyDocument to analyze
@@ -18,11 +18,14 @@ export function getAllowedPrincipalArns(policyDocument: PolicyDocument): Set<str
         const policyJSON: any = policyDocument.toJSON();
         for (let statementJson of policyJSON.Statement) {
             let statement = PolicyStatement.fromJson(statementJson);
-            if (statement.effect == Effect.ALLOW &&
-                statement.hasPrincipal) {
-                let statementJSON = statement.toStatementJson();
-                if (statementJSON?.Principal?.AWS) {
-                    let awsPrincipals = statementJSON.Principal.AWS;
+            if (statement.effect == Effect.ALLOW
+                && statement.hasPrincipal) {
+                if (statementJson?.Principal?.AWS
+                    // Skip Statements with conditions because they're too complex
+                    // to analyze right now.  Skipping seems like the conservative approach.
+                    && undefined === statementJson.Condition
+                ) {
+                    let awsPrincipals = statementJson.Principal.AWS;
                     if (typeof awsPrincipals == 'string') {
                         allowedAWSPrincipals.add(awsPrincipals)
                     } else if (Array.isArray(awsPrincipals)) {
