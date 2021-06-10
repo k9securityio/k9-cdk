@@ -1580,6 +1580,11 @@ Object {
                     "arn:aws:iam::139710491120:user/super-admin",
                   ],
                 },
+                "Bool": Object {
+                  "aws:PrincipalIsAWSService": Array [
+                    "false",
+                  ],
+                },
               },
               "Effect": "Deny",
               "Principal": Object {
