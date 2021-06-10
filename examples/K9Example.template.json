@@ -582,6 +582,11 @@
             {
               "Action": "kms:*",
               "Condition": {
+                "Bool": {
+                  "aws:PrincipalIsAWSService": [
+                    "false"
+                  ]
+                },
                 "ArnNotEquals": {
                   "aws:PrincipalArn": [
                     "arn:aws:iam::12345678910:user/ci",

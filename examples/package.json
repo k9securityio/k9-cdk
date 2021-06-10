@@ -1,6 +1,6 @@
 {
   "name": "@k9securityio/k9-cdk-examples",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "license": "Apache-2.0",
   "author": {
     "name": "K9 Security Inc.",
@@ -30,7 +30,7 @@
     "@aws-cdk/aws-kms": "1.81.0",
     "@aws-cdk/aws-s3": "1.81.0",
     "@aws-cdk/core": "1.81.0",
-    "@k9securityio/k9-cdk": "^0.7.0",
+    "@k9securityio/k9-cdk": "^0.8.0",
     "source-map-support": "^0.5.16"
   }
 }
