@@ -7,7 +7,7 @@ import {AccessCapability, AccessSpec} from '../lib/k9policy';
 import {K9BucketPolicyProps} from "../lib/s3";
 import {K9KeyPolicyProps} from "../lib/kms";
 import * as k9 from "../lib";
-import {AddToResourcePolicyResult, PolicyDocument} from "@aws-cdk/aws-iam";
+import {AddToResourcePolicyResult, PolicyDocument, PolicyStatement} from "@aws-cdk/aws-iam";
 
 // Test the primary public interface to k9 cdk
 
@@ -143,9 +143,17 @@ function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: A
     }
 }
 
-function stringifyPolicy(policyDocument?: PolicyDocument) {
+export function stringifyPolicy(policyDocument?: PolicyDocument) {
     if(policyDocument){
         return JSON.stringify(policyDocument.toJSON(), null, 2);
+    } else {
+        return "<none>"
+    }
+}
+
+export function stringifyStatement(policyStatement?: PolicyStatement) {
+    if(policyStatement){
+        return JSON.stringify(policyStatement.toStatementJson(), null, 2);
     } else {
         return "<none>"
     }
