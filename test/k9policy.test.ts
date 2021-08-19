@@ -60,7 +60,7 @@ test('K9PolicyFactory#makeAllowStatements - single access capability spec', () =
         }
 
     ];
-    let supportedCapabilities = [AccessCapability.AdministerResource, AccessCapability.ReadData]
+    let supportedCapabilities = [AccessCapability.AdministerResource, AccessCapability.ReadData];
     let resourceArns = ["resource_arn_1", "resource_arn_2"];
     let actualPolicyStatements = k9PolicyFactory.makeAllowStatements('S3', supportedCapabilities, accessSpecs,resourceArns);
     expect(actualPolicyStatements.length).toEqual(2);
@@ -70,7 +70,7 @@ test('K9PolicyFactory#makeAllowStatements - single access capability spec', () =
         console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
         let statementObj = JSON.parse(statementJsonStr);
         if("Allow Restricted read-data" == stmt.sid){
-            expect(statementObj['Resource']).toEqual(resourceArns)
+            expect(statementObj['Resource']).toEqual(resourceArns);
             expect(statementObj['Condition']).toEqual({
                     "ArnLike": {
                         "aws:PrincipalArn": readerPrincipalArns
@@ -78,7 +78,7 @@ test('K9PolicyFactory#makeAllowStatements - single access capability spec', () =
                 }
             )
         } else if ("Allow Restricted administer-resource" == stmt.sid){
-            expect(statementObj['Resource']).toEqual(resourceArns)
+            expect(statementObj['Resource']).toEqual(resourceArns);
             expect(statementObj['Condition']).toEqual({
                     "ArnEquals": {
                         "aws:PrincipalArn": adminPrincipalArns
