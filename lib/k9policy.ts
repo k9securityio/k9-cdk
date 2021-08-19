@@ -18,7 +18,8 @@ export enum AccessCapability {
 }
 
 export interface AccessSpec {
-    accessCapability: AccessCapability
+    accessCapability?: AccessCapability
+    accessCapabilities?: Set<AccessCapability>
     allowPrincipalArns: Set<string>
     test?: ArnConditionTest
 }
@@ -49,13 +50,63 @@ export class K9PolicyFactory {
         }
     }
 
+    _mergeAccessSpecs(spec1: AccessSpec, spec2: AccessSpec): AccessSpec {
+        if (spec1?.test == spec2?.test) {
+            return {
+                accessCapability: spec1?.accessCapability,
+                test: spec1?.test,
+                allowPrincipalArns: new Set([
+                    ...(spec1!).allowPrincipalArns,
+                    ...spec2.allowPrincipalArns
+                ])
+            };
+        } else {
+            throw Error(`Cannot merge AccessSpecs; test attributes do not match:\n${spec1}\n${spec2}`)
+        }
+    }
+
     makeAllowStatements(serviceName: string,
                         supportedCapabilities: Array<AccessCapability>,
                         desiredAccess: Array<AccessSpec>,
                         resourceArns: Array<string>): Array<PolicyStatement> {
         let policyStatements = new Array<PolicyStatement>();
         let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
-        desiredAccess.forEach(accessSpec => accessSpecsByCapability.set(accessSpec.accessCapability, accessSpec));
+
+        let allDesiredAccessSpecs = new Array<AccessSpec>();
+        for(let desiredAccessSpec of desiredAccess){
+            if(desiredAccessSpec.accessCapability){
+                allDesiredAccessSpecs.push(desiredAccessSpec);
+            } else if (desiredAccessSpec.accessCapabilities){
+                //project multi-capability AccessSpec to list of AccessSpecs per capability
+                //probably need to do this first so we can operate on an Array<AccessSpec> for merging
+                //using single-capa algorithm
+                for(let capability of desiredAccessSpec.accessCapabilities){
+                    allDesiredAccessSpecs.push({
+                        accessCapability: capability as AccessCapability,
+                        test: desiredAccessSpec.test,
+                        allowPrincipalArns: desiredAccessSpec.allowPrincipalArns
+                    })
+                }
+            }
+        }
+
+        //need to collect AccessSe=pecs into a map organized by capability; this means:
+        //* find or create existing Capa-Spec entry
+        //* _AND_ merge AccessSpec; must detect incompatible tests
+        for(let desiredAccessSpec of allDesiredAccessSpecs){
+            if(desiredAccessSpec.accessCapability){
+                if(accessSpecsByCapability.has(desiredAccessSpec.accessCapability)){
+                    //merge AccessSpecs
+                    let existingSpec = (accessSpecsByCapability.get(desiredAccessSpec.accessCapability)!);
+                    let mergedSpec = this._mergeAccessSpecs(existingSpec, desiredAccessSpec);
+                    accessSpecsByCapability.set(desiredAccessSpec.accessCapability, mergedSpec);
+                } else {
+                    accessSpecsByCapability.set(desiredAccessSpec.accessCapability, desiredAccessSpec);
+                }
+            } else {
+                throw Error(`AccessSpec is missing capability: ${desiredAccessSpec}`)
+            }
+        }
 
         for (let supportedCapability of supportedCapabilities) {
             let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||

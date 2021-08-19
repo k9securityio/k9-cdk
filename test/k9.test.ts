@@ -70,6 +70,43 @@ test('K9BucketPolicy', () => {
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
+test('K9BucketPolicy - AccessSpec with set of capabilities ', () => {
+    const localstack = new cdk.Stack(app, 'K9BucketPolicyMultiAccessCapa');
+    const bucket = new s3.Bucket(localstack, 'TestBucketWithMultiAccessSpec', {});
+
+    const k9BucketPolicyProps: K9BucketPolicyProps = {
+        bucket: bucket,
+        k9DesiredAccess: new Array<AccessSpec>(
+            {
+                accessCapabilities: new Set([
+                    AccessCapability.AdministerResource,
+                    AccessCapability.ReadConfig
+                ]),
+                allowPrincipalArns: administerResourceArns,
+            },
+            {
+                accessCapabilities: new Set([
+                    AccessCapability.ReadData,
+                    AccessCapability.WriteData,
+                    AccessCapability.DeleteData,
+                ]),
+                allowPrincipalArns: writeDataArns,
+            },
+        )
+    };
+    let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(localstack, "S3BucketMultiAccessSpec", k9BucketPolicyProps);
+    expect(bucket.policy).toBeDefined();
+
+    console.log("bucket.policy?.document: " + stringifyPolicy(bucket.policy?.document));
+    expect(bucket.policy?.document).toBeDefined();
+
+    assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+
+    expectCDK(localstack).to(haveResource("AWS::S3::Bucket"));
+    expectCDK(localstack).to(haveResource("AWS::S3::BucketPolicy"));
+    expect(SynthUtils.toCloudFormation(localstack)).toMatchSnapshot();
+});
+
 test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObjects', () => {
 
     const bucket = new s3.Bucket(stack, 'AutoDeleteBucket', {

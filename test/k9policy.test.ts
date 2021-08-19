@@ -92,28 +92,6 @@ test('K9PolicyFactory#makeAllowStatements - single access capability spec', () =
     }
 });
 
-// test('K9PolicyFactory#makeAllowStatements - multi access capability spec', () => {
-//     let k9PolicyFactory = new k9policy.K9PolicyFactory();
-//     let accessSpecs:Array<AccessSpec> = [
-//         {
-//             accessCapability: new Set([AccessCapability.AdministerResource, AccessCapability.ReadData]),
-//             allowPrincipalArns: new Set(["arn1", "arn2"]),
-//             test: "ArnEquals"
-//         }
-//     ];
-//     let supportedCapabilities = [AccessCapability.AdministerResource, AccessCapability.ReadData];
-//     let resourceArns = ["resource_arn_1", "resource_arn_2"];
-//     let actualPolicyStatements = k9PolicyFactory.makeAllowStatements('S3', supportedCapabilities, accessSpecs,resourceArns);
-//     for(let stmt of actualPolicyStatements){
-//         console.log(`actual policy statement: ${stmt} json: ${stringify(stmt.toStatementJson())}`);
-//         if("Allow Restricted read-data" == stmt.sid){
-//
-//         }
-//
-//     }
-//     expect(actualPolicyStatements.length).toEqual(2);
-// });
-
 test('K9PolicyFactory#makeDenyEveryoneElsePrincipals', () => {
     let k9PolicyFactory = new k9policy.K9PolicyFactory();
     let denyEveryoneElsePrincipals = k9PolicyFactory.makeDenyEveryoneElsePrincipals();
