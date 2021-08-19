@@ -1,7 +1,7 @@
 import * as k9policy from "../lib/k9policy";
 import {AccessCapability, AccessSpec} from "../lib/k9policy";
 import {AnyPrincipal} from "@aws-cdk/aws-iam";
-import {stringifyStatement} from "./k9.test";
+import {stringifyStatement} from "./helpers";
 
 test('K9PolicyFactory#wasLikeUsed', () => {
     let k9PolicyFactory = new k9policy.K9PolicyFactory();
