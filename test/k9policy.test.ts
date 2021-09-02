@@ -8,7 +8,7 @@ test('K9PolicyFactory#wasLikeUsed', () => {
     expect(k9PolicyFactory.wasLikeUsed([])).toBeFalsy();
     expect(k9PolicyFactory.wasLikeUsed([
         {
-            accessCapability: AccessCapability.AdministerResource,
+            accessCapabilities: AccessCapability.AdministerResource,
             allowPrincipalArns: new Set<string>(),
             test: "ArnEquals"
         }
@@ -16,7 +16,7 @@ test('K9PolicyFactory#wasLikeUsed', () => {
 
     expect(k9PolicyFactory.wasLikeUsed([
         {
-            accessCapability: AccessCapability.AdministerResource,
+            accessCapabilities: AccessCapability.AdministerResource,
             allowPrincipalArns: new Set<string>(),
             test: "ArnLike"
         }
@@ -27,12 +27,12 @@ test('K9PolicyFactory#getAllowedPrincipalArns', () => {
     let k9PolicyFactory = new k9policy.K9PolicyFactory();
     let accessSpecs:Array<AccessSpec> = [
         {
-            accessCapability: AccessCapability.AdministerResource,
+            accessCapabilities: AccessCapability.AdministerResource,
             allowPrincipalArns: new Set(["arn1", "arn2"]),
             test: "ArnEquals"
         },
         {
-            accessCapability: AccessCapability.ReadData,
+            accessCapabilities: AccessCapability.ReadData,
             allowPrincipalArns: new Set(["arn2", "arn3"]),
             test: "ArnLike"
         }
@@ -49,12 +49,12 @@ test('K9PolicyFactory#makeAllowStatements - single access capability spec', () =
     let readerPrincipalArns = ["arn2", "arn3"];
     let accessSpecs:Array<AccessSpec> = [
         {
-            accessCapability: AccessCapability.AdministerResource,
+            accessCapabilities: AccessCapability.AdministerResource,
             allowPrincipalArns: new Set(adminPrincipalArns),
             test: "ArnEquals"
         },
         {
-            accessCapability: AccessCapability.ReadData,
+            accessCapabilities: AccessCapability.ReadData,
             allowPrincipalArns: new Set(readerPrincipalArns),
             test: "ArnLike"
         }

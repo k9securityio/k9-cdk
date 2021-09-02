@@ -41,19 +41,19 @@ test('K9BucketPolicy', () => {
         bucket: bucket,
         k9DesiredAccess: new Array<AccessSpec>(
             {
-                accessCapability: AccessCapability.AdministerResource,
+                accessCapabilities: AccessCapability.AdministerResource,
                 allowPrincipalArns: administerResourceArns,
             },
             {
-                accessCapability: AccessCapability.WriteData,
+                accessCapabilities: AccessCapability.WriteData,
                 allowPrincipalArns: writeDataArns,
             },
             {
-                accessCapability: AccessCapability.ReadData,
+                accessCapabilities: AccessCapability.ReadData,
                 allowPrincipalArns: readDataArns,
             },
             {
-                accessCapability: AccessCapability.DeleteData,
+                accessCapabilities: AccessCapability.DeleteData,
                 allowPrincipalArns: deleteDataArns,
             },
         )
@@ -123,11 +123,11 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
         bucket: bucket,
         k9DesiredAccess: new Array<AccessSpec>(
             {
-                accessCapability: AccessCapability.AdministerResource,
+                accessCapabilities: AccessCapability.AdministerResource,
                 allowPrincipalArns: administerResourceArns,
             },
             {
-                accessCapability: AccessCapability.DeleteData,
+                accessCapabilities: AccessCapability.DeleteData,
                 allowPrincipalArns: deleteDataArns,
             },
         )
@@ -147,19 +147,19 @@ test('K9KeyPolicy', () => {
     const k9KeyPolicyProps: K9KeyPolicyProps = {
         k9DesiredAccess: new Array<AccessSpec>(
             {
-                accessCapability: AccessCapability.AdministerResource,
+                accessCapabilities: AccessCapability.AdministerResource,
                 allowPrincipalArns: administerResourceArns,
             },
             {
-                accessCapability: AccessCapability.WriteData,
+                accessCapabilities: AccessCapability.WriteData,
                 allowPrincipalArns: writeDataArns,
             },
             {
-                accessCapability: AccessCapability.ReadData,
+                accessCapabilities: AccessCapability.ReadData,
                 allowPrincipalArns: readDataArns,
             },
             {
-                accessCapability: AccessCapability.DeleteData,
+                accessCapabilities: AccessCapability.DeleteData,
                 allowPrincipalArns: deleteDataArns,
             },
         )

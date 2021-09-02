@@ -18,8 +18,7 @@ export enum AccessCapability {
 }
 
 export interface AccessSpec {
-    accessCapability?: AccessCapability
-    accessCapabilities?: Set<AccessCapability>
+    accessCapabilities: Set<AccessCapability> | AccessCapability
     allowPrincipalArns: Set<string>
     test?: ArnConditionTest
 }
@@ -50,19 +49,24 @@ export class K9PolicyFactory {
         }
     }
 
-    _mergeAccessSpecs(spec1: AccessSpec, spec2: AccessSpec): AccessSpec {
-        if (spec1?.test == spec2?.test) {
-            return {
-                accessCapability: spec1?.accessCapability,
-                test: spec1?.test,
-                allowPrincipalArns: new Set([
-                    ...(spec1!).allowPrincipalArns,
-                    ...spec2.allowPrincipalArns
-                ])
-            };
-        } else {
-            throw Error(`Cannot merge AccessSpecs; test attributes do not match:\n${spec1}\n${spec2}`)
+    _mergeAccessSpecs(target: AccessSpec, addition: AccessSpec) {
+        console.log(`merging secondary\n${addition} into primary\n: ${target}`);
+        for (let desiredPrincipalArn of addition.allowPrincipalArns) {
+            console.log(`merging desiredPrincipalArn ${desiredPrincipalArn}`);
+            target.allowPrincipalArns.add(desiredPrincipalArn);
         }
+        if (target.test) {
+            //ok, user has specified a test at some point; ensure this desiredAccessSpec.test matches
+            if (target.test != addition.test) {
+                throw Error(`Cannot merge AccessSpecs; test attributes do not match:\n${target}\n${addition}`);
+            }
+        } else {
+            //first explicit test preference wins
+            if(addition.test){
+                target.test = addition.test;
+            }
+        }
+
     }
 
     makeAllowStatements(serviceName: string,
@@ -72,50 +76,53 @@ export class K9PolicyFactory {
         let policyStatements = new Array<PolicyStatement>();
         let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
 
-        let allDesiredAccessSpecs = new Array<AccessSpec>();
-        for(let desiredAccessSpec of desiredAccess){
-            if(desiredAccessSpec.accessCapability){
-                allDesiredAccessSpecs.push(desiredAccessSpec);
-            } else if (desiredAccessSpec.accessCapabilities){
-                //project multi-capability AccessSpec to list of AccessSpecs per capability
-                //probably need to do this first so we can operate on an Array<AccessSpec> for merging
-                //using single-capa algorithm
-                for(let capability of desiredAccessSpec.accessCapabilities){
-                    allDesiredAccessSpecs.push({
-                        accessCapability: capability as AccessCapability,
-                        test: desiredAccessSpec.test,
-                        allowPrincipalArns: desiredAccessSpec.allowPrincipalArns
-                    })
-                }
-            }
-        }
-
-        //need to collect AccessSe=pecs into a map organized by capability; this means:
-        //* find or create existing Capa-Spec entry
-        //* _AND_ merge AccessSpec; must detect incompatible tests
-        for(let desiredAccessSpec of allDesiredAccessSpecs){
-            if(desiredAccessSpec.accessCapability){
-                if(accessSpecsByCapability.has(desiredAccessSpec.accessCapability)){
-                    //merge AccessSpecs
-                    let existingSpec = (accessSpecsByCapability.get(desiredAccessSpec.accessCapability)!);
-                    let mergedSpec = this._mergeAccessSpecs(existingSpec, desiredAccessSpec);
-                    accessSpecsByCapability.set(desiredAccessSpec.accessCapability, mergedSpec);
-                } else {
-                    accessSpecsByCapability.set(desiredAccessSpec.accessCapability, desiredAccessSpec);
-                }
-            } else {
-                throw Error(`AccessSpec is missing capability: ${desiredAccessSpec}`)
-            }
-        }
+        // 1. populate accessSpecsByCapability with fresh AccessSpecs for each supported capability
+        // 2. iterate through desiredAccess specs and merge data into what we'll use
+        //    important: detect mismatched test types
+        //     we can leave `test` unset in the default access specs
+        //     and copy the value from the spec being merged if it is set
+        //     throw Error on mismatch
+        // 3. generate an Allow statement for each supported capability
 
         for (let supportedCapability of supportedCapabilities) {
+            //generate a default access spec for each of the service's supported capabilities
+            let effectiveAccessSpec: AccessSpec = {
+                accessCapabilities: supportedCapability,
+                allowPrincipalArns: new Set<string>(),
+                // leave 'test' property unset; will populate from user-provided data
+            };
+            accessSpecsByCapability.set(supportedCapability, effectiveAccessSpec);
+
+            //now... merge in the user's desired access for this capability
+            for (let desiredAccessSpec of desiredAccess) {
+                if(desiredAccessSpec.accessCapabilities instanceof Set){
+                    for (let desiredCapability of desiredAccessSpec.accessCapabilities) {
+                        if (supportedCapability == desiredCapability) {
+                            this._mergeAccessSpecs(effectiveAccessSpec, desiredAccessSpec);
+                        }
+                    }
+                } else if (typeof desiredAccessSpec.accessCapabilities == 'string') {
+                    if (supportedCapability == desiredAccessSpec.accessCapabilities) {
+                        this._mergeAccessSpecs(effectiveAccessSpec, desiredAccessSpec);
+                    }
+                } else {
+                    throw Error(`Unhandled type of accessCapabilities for ${desiredAccessSpec.accessCapabilities}`)
+                }
+            }
+        }
+
+        // ok, time to actually make Allow Statements from our AccessSpecs
+        for (let supportedCapability of supportedCapabilities) {
+
             let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
-                { //generate a default access spec if none was provided
-                    accessCapability: supportedCapability,
+                {   //satisfy compiler; should never happen, because we populate at the beginning.
+                    //generate a default access spec if none was provided
+                    accessCapabilities: new Set([supportedCapability]),
                     allowPrincipalArns: new Set<string>(),
                     test: "ArnEquals"
                 }
             ;
+            
             let arnConditionTest = accessSpec.test || "ArnEquals";
 
             let statement = this.makeAllowStatement(`Allow Restricted ${supportedCapability}`,

@@ -33,19 +33,19 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: bucket,
     k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
         {
-            accessCapability: k9.k9policy.AccessCapability.AdministerResource,
+            accessCapabilities: k9.k9policy.AccessCapability.AdministerResource,
             allowPrincipalArns: administerResourceArns,
         },
         {
-            accessCapability: k9.k9policy.AccessCapability.ReadConfig,
+            accessCapabilities: k9.k9policy.AccessCapability.ReadConfig,
             allowPrincipalArns: readConfigArns,
         },
         {
-            accessCapability: k9.k9policy.AccessCapability.WriteData,
+            accessCapabilities: k9.k9policy.AccessCapability.WriteData,
             allowPrincipalArns: writeDataArns,
         },
         {
-            accessCapability: k9.k9policy.AccessCapability.ReadData,
+            accessCapabilities: k9.k9policy.AccessCapability.ReadData,
             allowPrincipalArns: readDataArns,
         }
         // omit access spec for delete-data because it is unneeded
@@ -65,15 +65,15 @@ const k9AutoDeleteBucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: autoDeleteBucket,
     k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
         {
-            accessCapability: k9.k9policy.AccessCapability.AdministerResource,
+            accessCapabilities: k9.k9policy.AccessCapability.AdministerResource,
             allowPrincipalArns: administerResourceArns,
         },
         {
-            accessCapability: k9.k9policy.AccessCapability.ReadConfig,
+            accessCapabilities: k9.k9policy.AccessCapability.ReadConfig,
             allowPrincipalArns: readConfigArns,
         },
         {
-            accessCapability: k9.k9policy.AccessCapability.WriteData,
+            accessCapabilities: k9.k9policy.AccessCapability.WriteData,
             allowPrincipalArns: writeDataArns,
         }
     )
