@@ -160,6 +160,67 @@ test('K9PolicyFactory#makeAllowStatements - mixed access capability spec', () =>
     }
 });
 
+test('K9PolicyFactory#makeAllowStatements - multi access capability spec', () => {
+    let k9PolicyFactory = new k9policy.K9PolicyFactory();
+    let adminPrincipalArns = ["arn1", "arn2"];
+    let readWritePrincipalArns = ["arn2", "arn3"];
+    let accessSpecs:Array<AccessSpec> = [
+        {
+            accessCapabilities: new Set([AccessCapability.AdministerResource, AccessCapability.ReadConfig]),
+            allowPrincipalArns: new Set(adminPrincipalArns),
+            test: "ArnEquals"
+        },
+        {
+            accessCapabilities: new Set([AccessCapability.ReadData, AccessCapability.WriteData]),
+            allowPrincipalArns: new Set(readWritePrincipalArns),
+            test: "ArnLike"
+        }
+
+    ];
+
+    let resourceArns = ["resource_arn_1", "resource_arn_2"];
+    let actualPolicyStatements = k9PolicyFactory.makeAllowStatements('S3',
+        S3_SUPPORTED_CAPABILITIES,
+        accessSpecs,
+        resourceArns);
+
+    expect(actualPolicyStatements.length).toEqual(S3_SUPPORTED_CAPABILITIES.length);
+
+    for(let stmt of actualPolicyStatements){
+        let statementJsonStr = stringifyStatement(stmt);
+        console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
+        let statementObj = JSON.parse(statementJsonStr);
+
+        expect(statementObj['Resource']).toEqual(resourceArns);
+        if (("Allow Restricted read-data" == stmt.sid) ||
+            ("Allow Restricted write-data" == stmt.sid)) {
+            expect(statementObj['Condition']).toEqual({
+                    "ArnLike": {
+                        "aws:PrincipalArn": readWritePrincipalArns
+                    }
+                }
+            )
+        } else if (("Allow Restricted administer-resource" == stmt.sid) ||
+            ("Allow Restricted read-config" == stmt.sid)) {
+            expect(statementObj['Condition']).toEqual({
+                    "ArnEquals": {
+                        "aws:PrincipalArn": adminPrincipalArns
+                    }
+                }
+            )
+        } else {
+            //fail(`Unexpected statement ${stmt.sid}`)
+            expect(statementObj['Condition']).toEqual({
+                    "ArnEquals": {
+                        "aws:PrincipalArn": []
+                    }
+                }
+            );
+        }
+
+    }
+});
+
 test('K9PolicyFactory#makeDenyEveryoneElsePrincipals', () => {
     let k9PolicyFactory = new k9policy.K9PolicyFactory();
     let denyEveryoneElsePrincipals = k9PolicyFactory.makeDenyEveryoneElsePrincipals();
