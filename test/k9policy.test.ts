@@ -221,6 +221,28 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
         }
     });
 
+    test('throws an Error when ArnConditionTest mismatches between AccessSpecs', () => {
+        let accessSpecs: Array<AccessSpec> = [
+            {
+                accessCapabilities: AccessCapability.AdministerResource,
+                allowPrincipalArns: new Set(adminPrincipalArns),
+                test: "ArnEquals"
+            },
+            {
+                accessCapabilities: AccessCapability.AdministerResource,
+                allowPrincipalArns: new Set("more-admin-roles*"),
+                test: "ArnLike"
+            }
+        ];
+        let supportedCapabilities = [AccessCapability.AdministerResource];
+
+        expect(() => k9PolicyFactory.makeAllowStatements('S3',
+                    supportedCapabilities,
+                    accessSpecs,
+                    resourceArns)).toThrow(/Cannot merge AccessSpecs; test attributes do not match/);
+
+    });
+
     test('defaults ArnConditionTest to ArnEquals', () => {
         let accessSpecs: Array<AccessSpec> = [
             {
