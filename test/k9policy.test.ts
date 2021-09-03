@@ -221,6 +221,61 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
         }
     });
 
+    test('multiple access specs for a single capability - read-config', () => {
+        let addlConfigReaders = ['_internal-tool', 'auditor', 'observability'];
+        let accessSpecs: Array<AccessSpec> = [
+            {
+                accessCapabilities: new Set([AccessCapability.AdministerResource, AccessCapability.ReadConfig]),
+                allowPrincipalArns: new Set(adminPrincipalArns),
+                test: "ArnEquals"
+            },
+
+            {
+                accessCapabilities: new Set([AccessCapability.ReadConfig]),
+                allowPrincipalArns: new Set(addlConfigReaders),
+                test: "ArnEquals"
+            },
+        ];
+
+        let actualPolicyStatements = k9PolicyFactory.makeAllowStatements('S3',
+            S3_SUPPORTED_CAPABILITIES,
+            accessSpecs,
+            resourceArns);
+
+        expect(actualPolicyStatements.length).toEqual(S3_SUPPORTED_CAPABILITIES.length);
+
+        for (let stmt of actualPolicyStatements) {
+            let statementJsonStr = stringifyStatement(stmt);
+            //console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
+            let statementObj = JSON.parse(statementJsonStr);
+
+            expect(statementObj['Resource']).toEqual(resourceArns);
+            if ("Allow Restricted administer-resource" == stmt.sid) {
+                expect(statementObj['Condition']).toEqual({
+                        "ArnEquals": {
+                            "aws:PrincipalArn": adminPrincipalArns
+                        }
+                    }
+                )
+            } else if ("Allow Restricted read-config" == stmt.sid) {
+                expect(statementObj['Condition']).toEqual({
+                        "ArnEquals": {
+                            "aws:PrincipalArn": adminPrincipalArns.concat(addlConfigReaders).sort()
+                        }
+                    }
+                )
+            } else {
+                expect(statementObj['Condition']).toEqual({
+                        "ArnEquals": {
+                            "aws:PrincipalArn": []
+                        }
+                    }
+                );
+            }
+
+        }
+    });
+
     test('throws an Error when ArnConditionTest mismatches between AccessSpecs', () => {
         let accessSpecs: Array<AccessSpec> = [
             {

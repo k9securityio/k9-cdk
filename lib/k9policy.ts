@@ -149,7 +149,7 @@ export class K9PolicyFactory {
         statement.addActions(...actions);
         statement.addAnyPrincipal();
         statement.addResources(...resources);
-        statement.addCondition(test, {'aws:PrincipalArn': [...principalArns]});
+        statement.addCondition(test, {'aws:PrincipalArn': [...principalArns].sort()});
         return statement;
     }
 
