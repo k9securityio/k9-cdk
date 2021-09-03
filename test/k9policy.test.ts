@@ -1,6 +1,6 @@
 import * as k9policy from "../lib/k9policy";
 import {AccessCapability, AccessSpec} from "../lib/k9policy";
-import {AnyPrincipal} from "@aws-cdk/aws-iam";
+import {AnyPrincipal, PolicyStatement} from "@aws-cdk/aws-iam";
 import {stringifyStatement} from "./helpers";
 
 const S3_SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -51,6 +51,12 @@ test('K9PolicyFactory#getAllowedPrincipalArns', () => {
         .toEqual(new Set(["arn1", "arn2", "arn3"]));
 });
 
+// noinspection JSUnusedLocalSymbols
+function logStatement(stmt: PolicyStatement) {
+    let statementJsonStr = stringifyStatement(stmt);
+    console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
+}
+
 describe('K9PolicyFactory#makeAllowStatements', () => {
     const k9PolicyFactory = new k9policy.K9PolicyFactory();
     const adminPrincipalArns = ["arn1", "arn2"];
@@ -82,7 +88,6 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 
         for (let stmt of actualPolicyStatements) {
             let statementJsonStr = stringifyStatement(stmt);
-            //console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
             let statementObj = JSON.parse(statementJsonStr);
             if ("Allow Restricted read-data" == stmt.sid) {
                 expect(statementObj['Resource']).toEqual(resourceArns);
@@ -133,7 +138,6 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 
         for (let stmt of actualPolicyStatements) {
             let statementJsonStr = stringifyStatement(stmt);
-            //console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
             let statementObj = JSON.parse(statementJsonStr);
 
             expect(statementObj['Resource']).toEqual(resourceArns);
@@ -189,7 +193,6 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 
         for (let stmt of actualPolicyStatements) {
             let statementJsonStr = stringifyStatement(stmt);
-            //console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
             let statementObj = JSON.parse(statementJsonStr);
 
             expect(statementObj['Resource']).toEqual(resourceArns);
@@ -246,7 +249,6 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 
         for (let stmt of actualPolicyStatements) {
             let statementJsonStr = stringifyStatement(stmt);
-            //console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
             let statementObj = JSON.parse(statementJsonStr);
 
             expect(statementObj['Resource']).toEqual(resourceArns);
@@ -314,7 +316,6 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 
         for (let stmt of actualPolicyStatements) {
             let statementJsonStr = stringifyStatement(stmt);
-            //console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
             let statementObj = JSON.parse(statementJsonStr);
             if ("Allow Restricted administer-resource" == stmt.sid) {
                 expect(statementObj['Resource']).toEqual(resourceArns);
