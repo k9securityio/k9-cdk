@@ -50,9 +50,7 @@ export class K9PolicyFactory {
     }
 
     _mergeAccessSpecs(target: AccessSpec, addition: AccessSpec) {
-        console.log(`merging secondary\n${addition} into primary\n: ${target}`);
         for (let desiredPrincipalArn of addition.allowPrincipalArns) {
-            console.log(`merging desiredPrincipalArn ${desiredPrincipalArn}`);
             target.allowPrincipalArns.add(desiredPrincipalArn);
         }
         if (target.test) {
