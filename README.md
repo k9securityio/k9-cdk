@@ -35,12 +35,14 @@ const administerResourceArns = new Set<string>([
 const readConfigArns = new Set<string>(administerResourceArns)
     .add("arn:aws:iam::12345678910:role/k9-auditor");
 
-const writeDataArns = new Set<string>([
+const readWriteDataArns = new Set<string>([
         "arn:aws:iam::12345678910:role/app-backend",
     ]
 );
-const readDataArns = new Set<string>(writeDataArns)
-    .add("arn:aws:iam::12345678910:role/customer-service");
+
+const readDataArns = new Set<string>([
+        "arn:aws:iam::12345678910:role/customer-service"
+]);
 
 const app = new cdk.App();
 
@@ -50,7 +52,7 @@ const bucket = new s3.Bucket(stack, 'TestBucket', {});
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: bucket,
     k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
-         {
+         {   // declare access capabilities individually
              accessCapability: k9.k9policy.AccessCapability.AdministerResource,
              allowPrincipalArns: administerResourceArns,
          },
@@ -58,10 +60,14 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
              accessCapability: k9.k9policy.AccessCapability.ReadConfig,
              allowPrincipalArns: readConfigArns,
          },
-         {
-             accessCapability: k9.k9policy.AccessCapability.WriteData,
-             allowPrincipalArns: writeDataArns,
-         },
+        {  // or declare multiple access capabilities at once
+            accessCapabilities: new Set([
+                k9.k9policy.AccessCapability.ReadData,
+                k9.k9policy.AccessCapability.WriteData
+                ]
+            ),
+            allowPrincipalArns: readWriteDataArns,
+        },
          {
              accessCapability: k9.k9policy.AccessCapability.ReadData,
              allowPrincipalArns: readDataArns,
