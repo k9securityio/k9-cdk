@@ -7,7 +7,8 @@ import {AccessCapability, AccessSpec} from '../lib/k9policy';
 import {K9BucketPolicyProps} from "../lib/s3";
 import {K9KeyPolicyProps} from "../lib/kms";
 import * as k9 from "../lib";
-import {AddToResourcePolicyResult, PolicyDocument} from "@aws-cdk/aws-iam";
+import {AddToResourcePolicyResult} from "@aws-cdk/aws-iam";
+import {stringifyPolicy} from "./helpers";
 
 // Test the primary public interface to k9 cdk
 
@@ -40,19 +41,19 @@ test('K9BucketPolicy', () => {
         bucket: bucket,
         k9DesiredAccess: new Array<AccessSpec>(
             {
-                accessCapability: AccessCapability.AdministerResource,
+                accessCapabilities: AccessCapability.AdministerResource,
                 allowPrincipalArns: administerResourceArns,
             },
             {
-                accessCapability: AccessCapability.WriteData,
+                accessCapabilities: AccessCapability.WriteData,
                 allowPrincipalArns: writeDataArns,
             },
             {
-                accessCapability: AccessCapability.ReadData,
+                accessCapabilities: AccessCapability.ReadData,
                 allowPrincipalArns: readDataArns,
             },
             {
-                accessCapability: AccessCapability.DeleteData,
+                accessCapabilities: AccessCapability.DeleteData,
                 allowPrincipalArns: deleteDataArns,
             },
         )
@@ -70,6 +71,43 @@ test('K9BucketPolicy', () => {
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
+test('K9BucketPolicy - AccessSpec with set of capabilities', () => {
+    const localstack = new cdk.Stack(app, 'K9BucketPolicyMultiAccessCapa');
+    const bucket = new s3.Bucket(localstack, 'TestBucketWithMultiAccessSpec', {});
+
+    const k9BucketPolicyProps: K9BucketPolicyProps = {
+        bucket: bucket,
+        k9DesiredAccess: new Array<AccessSpec>(
+            {
+                accessCapabilities: new Set([
+                    AccessCapability.AdministerResource,
+                    AccessCapability.ReadConfig
+                ]),
+                allowPrincipalArns: administerResourceArns,
+            },
+            {
+                accessCapabilities: new Set([
+                    AccessCapability.ReadData,
+                    AccessCapability.WriteData,
+                    AccessCapability.DeleteData,
+                ]),
+                allowPrincipalArns: writeDataArns,
+            },
+        )
+    };
+    let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(localstack, "S3BucketMultiAccessSpec", k9BucketPolicyProps);
+    expect(bucket.policy).toBeDefined();
+
+    console.log("bucket.policy?.document: " + stringifyPolicy(bucket.policy?.document));
+    expect(bucket.policy?.document).toBeDefined();
+
+    assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+
+    expectCDK(localstack).to(haveResource("AWS::S3::Bucket"));
+    expectCDK(localstack).to(haveResource("AWS::S3::BucketPolicy"));
+    expect(SynthUtils.toCloudFormation(localstack)).toMatchSnapshot();
+});
+
 test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObjects', () => {
 
     const bucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
@@ -85,11 +123,11 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
         bucket: bucket,
         k9DesiredAccess: new Array<AccessSpec>(
             {
-                accessCapability: AccessCapability.AdministerResource,
+                accessCapabilities: AccessCapability.AdministerResource,
                 allowPrincipalArns: administerResourceArns,
             },
             {
-                accessCapability: AccessCapability.DeleteData,
+                accessCapabilities: AccessCapability.DeleteData,
                 allowPrincipalArns: deleteDataArns,
             },
         )
@@ -109,19 +147,19 @@ test('K9KeyPolicy', () => {
     const k9KeyPolicyProps: K9KeyPolicyProps = {
         k9DesiredAccess: new Array<AccessSpec>(
             {
-                accessCapability: AccessCapability.AdministerResource,
+                accessCapabilities: AccessCapability.AdministerResource,
                 allowPrincipalArns: administerResourceArns,
             },
             {
-                accessCapability: AccessCapability.WriteData,
+                accessCapabilities: AccessCapability.WriteData,
                 allowPrincipalArns: writeDataArns,
             },
             {
-                accessCapability: AccessCapability.ReadData,
+                accessCapabilities: AccessCapability.ReadData,
                 allowPrincipalArns: readDataArns,
             },
             {
-                accessCapability: AccessCapability.DeleteData,
+                accessCapabilities: AccessCapability.DeleteData,
                 allowPrincipalArns: deleteDataArns,
             },
         )
@@ -140,13 +178,5 @@ function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: A
     expect(addToResourcePolicyResults.length).toEqual(9);
     for (let result of addToResourcePolicyResults) {
         expect(result.statementAdded).toBeTruthy();
-    }
-}
-
-function stringifyPolicy(policyDocument?: PolicyDocument) {
-    if(policyDocument){
-        return JSON.stringify(policyDocument.toJSON(), null, 2);
-    } else {
-        return "<none>"
     }
 }

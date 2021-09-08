@@ -1,5 +1,6 @@
 import {AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps} from "@aws-cdk/aws-iam";
 import {readFileSync} from 'fs';
+import {stringify} from "querystring";
 
 export type ArnEqualsTest = "ArnEquals"
 
@@ -18,7 +19,7 @@ export enum AccessCapability {
 }
 
 export interface AccessSpec {
-    accessCapability: AccessCapability
+    accessCapabilities: Set<AccessCapability> | AccessCapability
     allowPrincipalArns: Set<string>
     test?: ArnConditionTest
 }
@@ -49,22 +50,80 @@ export class K9PolicyFactory {
         }
     }
 
+    _mergeAccessSpecs(target: AccessSpec, addition: AccessSpec) {
+        for (let desiredPrincipalArn of addition.allowPrincipalArns) {
+            target.allowPrincipalArns.add(desiredPrincipalArn);
+        }
+        if (target.test) {
+            //ok, user has specified a test at some point; ensure this desiredAccessSpec.test matches
+            if (target.test != addition.test) {
+                let msg = 'Cannot merge AccessSpecs; test attributes do not match:' +
+                    `\n${stringify(target)}\n${stringify(addition)}`;
+                throw Error(msg);
+            }
+        } else {
+            //first explicit test preference wins
+            if(addition.test){
+                target.test = addition.test;
+            }
+        }
+
+    }
+
     makeAllowStatements(serviceName: string,
                         supportedCapabilities: Array<AccessCapability>,
                         desiredAccess: Array<AccessSpec>,
                         resourceArns: Array<string>): Array<PolicyStatement> {
         let policyStatements = new Array<PolicyStatement>();
         let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
-        desiredAccess.forEach(accessSpec => accessSpecsByCapability.set(accessSpec.accessCapability, accessSpec));
+
+        // 1. populate accessSpecsByCapability with fresh AccessSpecs for each supported capability
+        // 2. iterate through desiredAccess specs and merge data into what we'll use
+        //    important: detect mismatched test types
+        //     we can leave `test` unset in the default access specs
+        //     and copy the value from the spec being merged if it is set
+        //     throw Error on mismatch
+        // 3. generate an Allow statement for each supported capability
 
         for (let supportedCapability of supportedCapabilities) {
+            //generate a default access spec for each of the service's supported capabilities
+            let effectiveAccessSpec: AccessSpec = {
+                accessCapabilities: supportedCapability,
+                allowPrincipalArns: new Set<string>(),
+                // leave 'test' property unset; will populate from user-provided data
+            };
+            accessSpecsByCapability.set(supportedCapability, effectiveAccessSpec);
+
+            //now... merge in the user's desired access for this capability
+            for (let desiredAccessSpec of desiredAccess) {
+                if(desiredAccessSpec.accessCapabilities instanceof Set){
+                    for (let desiredCapability of desiredAccessSpec.accessCapabilities) {
+                        if (supportedCapability == desiredCapability) {
+                            this._mergeAccessSpecs(effectiveAccessSpec, desiredAccessSpec);
+                        }
+                    }
+                } else if (typeof desiredAccessSpec.accessCapabilities == 'string') {
+                    if (supportedCapability == desiredAccessSpec.accessCapabilities) {
+                        this._mergeAccessSpecs(effectiveAccessSpec, desiredAccessSpec);
+                    }
+                } else {
+                    throw Error(`Unhandled type of accessCapabilities for ${desiredAccessSpec.accessCapabilities}`)
+                }
+            }
+        }
+
+        // ok, time to actually make Allow Statements from our AccessSpecs
+        for (let supportedCapability of supportedCapabilities) {
+
             let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
-                { //generate a default access spec if none was provided
-                    accessCapability: supportedCapability,
+                {   //satisfy compiler; should never happen, because we populate at the beginning.
+                    //generate a default access spec if none was provided
+                    accessCapabilities: new Set([supportedCapability]),
                     allowPrincipalArns: new Set<string>(),
                     test: "ArnEquals"
                 }
             ;
+            
             let arnConditionTest = accessSpec.test || "ArnEquals";
 
             let statement = this.makeAllowStatement(`Allow Restricted ${supportedCapability}`,
@@ -90,7 +149,7 @@ export class K9PolicyFactory {
         statement.addActions(...actions);
         statement.addAnyPrincipal();
         statement.addResources(...resources);
-        statement.addCondition(test, {'aws:PrincipalArn': [...principalArns]});
+        statement.addCondition(test, {'aws:PrincipalArn': [...principalArns].sort()});
         return statement;
     }
 
