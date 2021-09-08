@@ -16,7 +16,7 @@ test('K9PolicyFactory#wasLikeUsed', () => {
     expect(k9PolicyFactory.wasLikeUsed([
         {
             accessCapabilities: AccessCapability.AdministerResource,
-            allowPrincipalArns: new Set<string>(),
+            allowPrincipalArns: [],
             test: "ArnEquals"
         }
     ])).toBeFalsy();
@@ -24,7 +24,7 @@ test('K9PolicyFactory#wasLikeUsed', () => {
     expect(k9PolicyFactory.wasLikeUsed([
         {
             accessCapabilities: AccessCapability.AdministerResource,
-            allowPrincipalArns: new Set<string>(),
+            allowPrincipalArns: [],
             test: "ArnLike"
         }
     ])).toBeTruthy();
@@ -35,19 +35,19 @@ test('K9PolicyFactory#getAllowedPrincipalArns', () => {
     let accessSpecs:Array<AccessSpec> = [
         {
             accessCapabilities: AccessCapability.AdministerResource,
-            allowPrincipalArns: new Set(["arn1", "arn2"]),
+            allowPrincipalArns: ["arn1", "arn2"],
             test: "ArnEquals"
         },
         {
             accessCapabilities: AccessCapability.ReadData,
-            allowPrincipalArns: new Set(["arn2", "arn3"]),
+            allowPrincipalArns: ["arn2", "arn3"],
             test: "ArnLike"
         }
 
     ];
     expect(k9PolicyFactory.getAllowedPrincipalArns([])).toEqual(new Set<string>());
     expect(k9PolicyFactory.getAllowedPrincipalArns(accessSpecs))
-        .toEqual(new Set(["arn1", "arn2", "arn3"]));
+        .toEqual(new Set<string>(["arn1", "arn2", "arn3"]));
 });
 
 // noinspection JSUnusedLocalSymbols
@@ -68,12 +68,12 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
         let accessSpecs: Array<AccessSpec> = [
             {
                 accessCapabilities: AccessCapability.AdministerResource,
-                allowPrincipalArns: new Set(adminPrincipalArns),
+                allowPrincipalArns: adminPrincipalArns,
                 test: "ArnEquals"
             },
             {
                 accessCapabilities: AccessCapability.ReadData,
-                allowPrincipalArns: new Set(readerPrincipalArns),
+                allowPrincipalArns: readerPrincipalArns,
                 test: "ArnLike"
             }
 
@@ -117,12 +117,12 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
         let accessSpecs: Array<AccessSpec> = [
             {
                 accessCapabilities: AccessCapability.AdministerResource,
-                allowPrincipalArns: new Set(adminPrincipalArns),
+                allowPrincipalArns: adminPrincipalArns,
                 test: "ArnEquals"
             },
             {
-                accessCapabilities: new Set([AccessCapability.ReadData, AccessCapability.WriteData]),
-                allowPrincipalArns: new Set(readWritePrincipalArns),
+                accessCapabilities: [AccessCapability.ReadData, AccessCapability.WriteData],
+                allowPrincipalArns: readWritePrincipalArns,
                 test: "ArnLike"
             }
 
@@ -171,13 +171,13 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
         let readWritePrincipalArns = ["arn2", "arn3"];
         let accessSpecs: Array<AccessSpec> = [
             {
-                accessCapabilities: new Set([AccessCapability.AdministerResource, AccessCapability.ReadConfig]),
-                allowPrincipalArns: new Set(adminPrincipalArns),
+                accessCapabilities: [AccessCapability.AdministerResource, AccessCapability.ReadConfig],
+                allowPrincipalArns: adminPrincipalArns,
                 test: "ArnEquals"
             },
             {
-                accessCapabilities: new Set([AccessCapability.ReadData, AccessCapability.WriteData]),
-                allowPrincipalArns: new Set(readWritePrincipalArns),
+                accessCapabilities: [AccessCapability.ReadData, AccessCapability.WriteData],
+                allowPrincipalArns: readWritePrincipalArns,
                 test: "ArnLike"
             }
 
@@ -227,14 +227,14 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
         let addlConfigReaders = ['_internal-tool', 'auditor', 'observability'];
         let accessSpecs: Array<AccessSpec> = [
             {
-                accessCapabilities: new Set([AccessCapability.AdministerResource, AccessCapability.ReadConfig]),
-                allowPrincipalArns: new Set(adminPrincipalArns),
+                accessCapabilities: [AccessCapability.AdministerResource, AccessCapability.ReadConfig],
+                allowPrincipalArns: adminPrincipalArns,
                 test: "ArnEquals"
             },
 
             {
-                accessCapabilities: new Set([AccessCapability.ReadConfig]),
-                allowPrincipalArns: new Set(addlConfigReaders),
+                accessCapabilities: [AccessCapability.ReadConfig],
+                allowPrincipalArns: addlConfigReaders,
                 test: "ArnEquals"
             },
         ];
@@ -281,12 +281,12 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
         let accessSpecs: Array<AccessSpec> = [
             {
                 accessCapabilities: AccessCapability.AdministerResource,
-                allowPrincipalArns: new Set(adminPrincipalArns),
+                allowPrincipalArns: adminPrincipalArns,
                 test: "ArnEquals"
             },
             {
                 accessCapabilities: AccessCapability.AdministerResource,
-                allowPrincipalArns: new Set("more-admin-roles*"),
+                allowPrincipalArns: ["more-admin-roles*"],
                 test: "ArnLike"
             }
         ];
@@ -303,7 +303,7 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
         let accessSpecs: Array<AccessSpec> = [
             {
                 accessCapabilities: AccessCapability.AdministerResource,
-                allowPrincipalArns: new Set(adminPrincipalArns),
+                allowPrincipalArns: adminPrincipalArns,
             }
         ];
         let supportedCapabilities = [AccessCapability.AdministerResource];

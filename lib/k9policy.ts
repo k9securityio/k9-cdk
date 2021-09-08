@@ -19,8 +19,8 @@ export enum AccessCapability {
 }
 
 export interface AccessSpec {
-    accessCapabilities: Set<AccessCapability> | AccessCapability
-    allowPrincipalArns: Set<string>
+    accessCapabilities: Array<AccessCapability> | AccessCapability
+    allowPrincipalArns: Array<string>
     test?: ArnConditionTest
 }
 
@@ -51,9 +51,7 @@ export class K9PolicyFactory {
     }
 
     _mergeAccessSpecs(target: AccessSpec, addition: AccessSpec) {
-        for (let desiredPrincipalArn of addition.allowPrincipalArns) {
-            target.allowPrincipalArns.add(desiredPrincipalArn);
-        }
+        target.allowPrincipalArns.push(...addition.allowPrincipalArns);
         if (target.test) {
             //ok, user has specified a test at some point; ensure this desiredAccessSpec.test matches
             if (target.test != addition.test) {
@@ -89,14 +87,14 @@ export class K9PolicyFactory {
             //generate a default access spec for each of the service's supported capabilities
             let effectiveAccessSpec: AccessSpec = {
                 accessCapabilities: supportedCapability,
-                allowPrincipalArns: new Set<string>(),
+                allowPrincipalArns: new Array<string>(),
                 // leave 'test' property unset; will populate from user-provided data
             };
             accessSpecsByCapability.set(supportedCapability, effectiveAccessSpec);
 
             //now... merge in the user's desired access for this capability
             for (let desiredAccessSpec of desiredAccess) {
-                if(desiredAccessSpec.accessCapabilities instanceof Set){
+                if(desiredAccessSpec.accessCapabilities instanceof Array){
                     for (let desiredCapability of desiredAccessSpec.accessCapabilities) {
                         if (supportedCapability == desiredCapability) {
                             this._mergeAccessSpecs(effectiveAccessSpec, desiredAccessSpec);
@@ -118,8 +116,8 @@ export class K9PolicyFactory {
             let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
                 {   //satisfy compiler; should never happen, because we populate at the beginning.
                     //generate a default access spec if none was provided
-                    accessCapabilities: new Set([supportedCapability]),
-                    allowPrincipalArns: new Set<string>(),
+                    accessCapabilities: [supportedCapability],
+                    allowPrincipalArns: new Array<string>(),
                     test: "ArnEquals"
                 }
             ;
@@ -138,18 +136,19 @@ export class K9PolicyFactory {
 
     makeAllowStatement(sid: string,
                        actions: Array<string>,
-                       principalArns: Set<string>,
+                       principalArns: Array<string>,
                        test: ArnConditionTest,
                        resources: Array<string>): PolicyStatement {
-        let policyStatementProps: PolicyStatementProps = {
+        const uniquePrincipalArns = new Set<string>(principalArns);
+        const policyStatementProps: PolicyStatementProps = {
             sid: sid,
             effect: Effect.ALLOW
         };
-        let statement = new PolicyStatement(policyStatementProps);
+        const statement = new PolicyStatement(policyStatementProps);
         statement.addActions(...actions);
         statement.addAnyPrincipal();
         statement.addResources(...resources);
-        statement.addCondition(test, {'aws:PrincipalArn': [...principalArns].sort()});
+        statement.addCondition(test, {'aws:PrincipalArn': [...uniquePrincipalArns].sort()});
         return statement;
     }
 

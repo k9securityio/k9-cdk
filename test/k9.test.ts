@@ -12,22 +12,21 @@ import {stringifyPolicy} from "./helpers";
 
 // Test the primary public interface to k9 cdk
 
-const administerResourceArns = new Set<string>([
-        "arn:aws:iam::139710491120:user/ci",
-    ]
+const administerResourceArns = [
+    "arn:aws:iam::139710491120:user/ci",
+];
+
+const writeDataArns = [
+    "arn:aws:iam::12345678910:role/app-backend",
+];
+
+const readDataArns = writeDataArns.concat(
+    ["arn:aws:iam::12345678910:role/customer-service"]
 );
 
-const writeDataArns = new Set<string>([
-        "arn:aws:iam::12345678910:role/app-backend",
-    ]
-);
-const readDataArns = new Set<string>(writeDataArns)
-    .add("arn:aws:iam::12345678910:role/customer-service");
-
-const deleteDataArns = new Set<string>([
-        "arn:aws:iam::139710491120:user/super-admin",
-    ]
-);
+const deleteDataArns = [
+    "arn:aws:iam::139710491120:user/super-admin",
+];
 
 const app = new cdk.App();
 
@@ -79,18 +78,18 @@ test('K9BucketPolicy - AccessSpec with set of capabilities', () => {
         bucket: bucket,
         k9DesiredAccess: new Array<AccessSpec>(
             {
-                accessCapabilities: new Set([
+                accessCapabilities: [
                     AccessCapability.AdministerResource,
                     AccessCapability.ReadConfig
-                ]),
+                ],
                 allowPrincipalArns: administerResourceArns,
             },
             {
-                accessCapabilities: new Set([
+                accessCapabilities: [
                     AccessCapability.ReadData,
                     AccessCapability.WriteData,
                     AccessCapability.DeleteData,
-                ]),
+                ],
                 allowPrincipalArns: writeDataArns,
             },
         )
