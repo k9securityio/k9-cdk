@@ -299,6 +299,39 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 
     });
 
+    test('uses unique set of principals', () => {
+        const duplicatedPrincipals = adminPrincipalArns.concat(adminPrincipalArns);
+        
+        let accessSpecs: Array<AccessSpec> = [
+            {
+                accessCapabilities: AccessCapability.AdministerResource,
+                allowPrincipalArns: duplicatedPrincipals,
+            }
+        ];
+        let supportedCapabilities = [AccessCapability.AdministerResource];
+        let actualPolicyStatements = k9PolicyFactory.makeAllowStatements('S3',
+            supportedCapabilities,
+            accessSpecs,
+            resourceArns);
+        expect(actualPolicyStatements.length).toEqual(1);
+
+        for (let stmt of actualPolicyStatements) {
+            let statementJsonStr = stringifyStatement(stmt);
+            let statementObj = JSON.parse(statementJsonStr);
+            if ("Allow Restricted administer-resource" == stmt.sid) {
+                expect(statementObj['Resource']).toEqual(resourceArns);
+                expect(statementObj['Condition']).toEqual({
+                        "ArnEquals": {
+                            "aws:PrincipalArn": Array.from(new Set<string>(duplicatedPrincipals.values())).sort()
+                        }
+                    }
+                )
+            } else {
+                fail(`Unexpected statement ${stmt.sid}`)
+            }
+        }
+    });
+    
     test('defaults ArnConditionTest to ArnEquals', () => {
         let accessSpecs: Array<AccessSpec> = [
             {
