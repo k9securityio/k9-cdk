@@ -115,9 +115,9 @@
               "Condition": {
                 "ArnEquals": {
                   "aws:PrincipalArn": [
+                    "arn:aws:iam::12345678910:role/k9-auditor",
                     "arn:aws:iam::12345678910:user/ci",
-                    "arn:aws:iam::12345678910:user/person1",
-                    "arn:aws:iam::12345678910:role/k9-auditor"
+                    "arn:aws:iam::12345678910:user/person1"
                   ]
                 }
               },
@@ -658,7 +658,7 @@
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Modules": "aws-cdk=1.81.0,@aws-cdk/aws-events=1.81.0,@aws-cdk/aws-iam=1.81.0,@aws-cdk/aws-kms=1.81.0,@aws-cdk/aws-s3=1.81.0,@aws-cdk/cloud-assembly-schema=1.81.0,@aws-cdk/core=1.81.0,@aws-cdk/cx-api=1.81.0,@aws-cdk/region-info=1.81.0,jsii-runtime=node.js/v12.18.4"
+        "Analytics": "v2:deflate64:H4sIAAAAAAAAE0WLSwrCMBCGz9J9OrU+EHdil26knqBMRkhjM5BJFAm5u20juPr+ZwunA2yr8/CWGrVtErInSPcwoFUdOwk+YlDdw/UkHD3SoudCm2DYZbUck+wgXSJaWpc/VXDjp8HPPy4+KzsJpCutzYycs3KsCUZpXu0e2iNsqlGMqX10wUwEfeEX/mH+tLEAAAA="
       },
       "Metadata": {
         "aws:cdk:path": "K9Example/CDKMetadata/Default"
@@ -671,6 +671,14 @@
       "Fn::Or": [
         {
           "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "af-south-1"
+              ]
+            },
             {
               "Fn::Equals": [
                 {
@@ -742,14 +750,6 @@
                 },
                 "cn-northwest-1"
               ]
-            },
-            {
-              "Fn::Equals": [
-                {
-                  "Ref": "AWS::Region"
-                },
-                "eu-central-1"
-              ]
             }
           ]
         },
@@ -760,7 +760,23 @@
                 {
                   "Ref": "AWS::Region"
                 },
+                "eu-central-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
                 "eu-north-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-south-1"
               ]
             },
             {
@@ -818,7 +834,11 @@
                 },
                 "us-east-2"
               ]
-            },
+            }
+          ]
+        },
+        {
+          "Fn::Or": [
             {
               "Fn::Equals": [
                 {

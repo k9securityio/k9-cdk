@@ -124,7 +124,7 @@
       "Action": "kms:*",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "${Token[TOKEN.25]}"
+        "AWS": "${Token[TOKEN.33]}"
       },
       "Resource": "*",
       "Sid": "AllowRootUserToAdministerKey"

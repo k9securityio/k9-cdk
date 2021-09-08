@@ -40,8 +40,8 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "Allow Restricted administer-resource"
     },
@@ -81,17 +81,17 @@
       "Condition": {
         "ArnEquals": {
           "aws:PrincipalArn": [
+            "arn:aws:iam::12345678910:role/k9-auditor",
             "arn:aws:iam::12345678910:user/ci",
-            "arn:aws:iam::12345678910:user/person1",
-            "arn:aws:iam::12345678910:role/k9-auditor"
+            "arn:aws:iam::12345678910:user/person1"
           ]
         }
       },
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "Allow Restricted read-config"
     },
@@ -115,8 +115,8 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "Allow Restricted read-data"
     },
@@ -142,8 +142,8 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "Allow Restricted write-data"
     },
@@ -162,8 +162,8 @@
       "Effect": "Allow",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "Allow Restricted delete-data"
     },
@@ -177,8 +177,8 @@
       "Effect": "Deny",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "DenyInsecureCommunications"
     },
@@ -195,8 +195,8 @@
       "Effect": "Deny",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "DenyUnencryptedStorage"
     },
@@ -213,8 +213,8 @@
       "Effect": "Deny",
       "Principal": "*",
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "DenyStorageWithoutKMSEncryption"
     },
@@ -239,8 +239,8 @@
         ]
       },
       "Resource": [
-        "${Token[TOKEN.19]}",
-        "${Token[TOKEN.19]}/*"
+        "${Token[TOKEN.27]}",
+        "${Token[TOKEN.27]}/*"
       ],
       "Sid": "DenyEveryoneElse"
     }
