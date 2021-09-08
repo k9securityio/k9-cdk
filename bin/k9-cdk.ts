@@ -17,12 +17,13 @@ const administerResourceArns = new Set<string>([
 const readConfigArns = new Set<string>(administerResourceArns)
     .add("arn:aws:iam::12345678910:role/k9-auditor");
 
-const writeDataArns = new Set<string>([
+const readWriteDataArns = new Set<string>([
         "arn:aws:iam::12345678910:role/app-backend",
     ]
 );
-const readDataArns = new Set<string>(writeDataArns)
-    .add("arn:aws:iam::12345678910:role/customer-service");
+const readDataArns = new Set<string>([
+    "arn:aws:iam::12345678910:role/customer-service"]
+);
 
 const app = new cdk.App();
 
@@ -41,8 +42,12 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
             allowPrincipalArns: readConfigArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.WriteData,
-            allowPrincipalArns: writeDataArns,
+            accessCapabilities: new Set([
+                k9.k9policy.AccessCapability.ReadData,
+                k9.k9policy.AccessCapability.WriteData
+                ]
+            ),
+            allowPrincipalArns: readWriteDataArns,
         },
         {
             accessCapabilities: k9.k9policy.AccessCapability.ReadData,
@@ -74,7 +79,7 @@ const k9AutoDeleteBucketPolicyProps: k9.s3.K9BucketPolicyProps = {
         },
         {
             accessCapabilities: k9.k9policy.AccessCapability.WriteData,
-            allowPrincipalArns: writeDataArns,
+            allowPrincipalArns: readWriteDataArns,
         }
     )
 };
