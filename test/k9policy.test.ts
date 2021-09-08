@@ -1,5 +1,4 @@
-import * as k9policy from "../lib/k9policy";
-import {AccessCapability, AccessSpec} from "../lib/k9policy";
+import {AccessCapability, AccessSpec, K9PolicyFactory} from "../lib/k9policy";
 import {AnyPrincipal, PolicyStatement} from "@aws-cdk/aws-iam";
 import {stringifyStatement} from "./helpers";
 
@@ -12,7 +11,7 @@ const S3_SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 );
 
 test('K9PolicyFactory#wasLikeUsed', () => {
-    let k9PolicyFactory = new k9policy.K9PolicyFactory();
+    let k9PolicyFactory = new K9PolicyFactory();
     expect(k9PolicyFactory.wasLikeUsed([])).toBeFalsy();
     expect(k9PolicyFactory.wasLikeUsed([
         {
@@ -32,7 +31,7 @@ test('K9PolicyFactory#wasLikeUsed', () => {
 });
 
 test('K9PolicyFactory#getAllowedPrincipalArns', () => {
-    let k9PolicyFactory = new k9policy.K9PolicyFactory();
+    let k9PolicyFactory = new K9PolicyFactory();
     let accessSpecs:Array<AccessSpec> = [
         {
             accessCapabilities: AccessCapability.AdministerResource,
@@ -58,7 +57,7 @@ function logStatement(stmt: PolicyStatement) {
 }
 
 describe('K9PolicyFactory#makeAllowStatements', () => {
-    const k9PolicyFactory = new k9policy.K9PolicyFactory();
+    const k9PolicyFactory = new K9PolicyFactory();
     const adminPrincipalArns = ["arn1", "arn2"];
     const resourceArns = ["resource_arn_1", "resource_arn_2"];
 
@@ -333,7 +332,7 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 });
 
 test('K9PolicyFactory#makeDenyEveryoneElsePrincipals', () => {
-    let k9PolicyFactory = new k9policy.K9PolicyFactory();
+    let k9PolicyFactory = new K9PolicyFactory();
     let denyEveryoneElsePrincipals = k9PolicyFactory.makeDenyEveryoneElsePrincipals();
     expect(denyEveryoneElsePrincipals.length).toBeGreaterThan(1);
     const anyPrincipal = new AnyPrincipal();
