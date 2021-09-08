@@ -14,7 +14,7 @@ const administerResourceArns = [
 ];
 
 const readConfigArns = administerResourceArns.concat(
-    ...["arn:aws:iam::12345678910:role/k9-auditor"]
+    ["arn:aws:iam::12345678910:role/k9-auditor"]
 );
 
 const readWriteDataArns = [
