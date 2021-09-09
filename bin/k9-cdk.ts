@@ -11,6 +11,8 @@ const administerResourceArns = [
     "arn:aws:iam::139710491120:user/ci",
     "arn:aws:iam::139710491120:user/skuenzli",
     "arn:aws:sts::139710491120:federated-user/skuenzli",
+    "arn:aws:iam::139710491120:role/k9-dev-appeng",
+    "arn:aws:sts::139710491120:assumed-role/k9-dev-appeng/console"
 ];
 
 const readConfigArns = administerResourceArns.concat(
