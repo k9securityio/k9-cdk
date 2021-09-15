@@ -377,19 +377,22 @@ test('K9PolicyFactory#deduplicatePrincipals', () => {
         "Fn::ImportValue": "some-shared-stack:ExportsOutputFnGetAttSomeRole8DFA0181Arn43EC6E0B",
     };
 
-    const expectPrincipals: Array<string|object> = [
+    const expectPrincipals: Array<string | object> = [
         roleDefinedDirectlyByArn,
         roleDefinedInStack,
         roleImportedFromAnotherStack
     ];
 
 
-    const principalsWithDuplicates: Array<string|object> = expectPrincipals.concat(
-        ... (expectPrincipals.concat().reverse())
-    );
+    for (let i = 0; i < 100; i++) {
+        const principalsWithDuplicates: Array<string | object> = expectPrincipals.concat(
+            ...(expectPrincipals.concat().reverse())
+        );
 
-    const uniquePrincipals: Array<string|object> = K9PolicyFactory.deduplicatePrincipals(principalsWithDuplicates);
-    expect(uniquePrincipals).toEqual(expectPrincipals);
+        const uniquePrincipals: Array<string | object> = K9PolicyFactory.deduplicatePrincipals(principalsWithDuplicates);
+        expect(uniquePrincipals).toEqual(expectPrincipals);
+
+    }
 
 });
 
