@@ -134,8 +134,23 @@ export class K9PolicyFactory {
         return policyStatements;
     }
 
-    static deduplicatePrincipals(principalArns: Array<string>): Array<string> {
-        return [...(new Set<string>(principalArns))].sort();
+    /**
+     * Deduplicate an array of principals while preserving original order of principals.
+     * Note that principals may contain either strings or objects, so naive array sorting
+     * produces unstable results.
+     * 
+     * @param principals
+     */
+    static deduplicatePrincipals(principals: Array<string|object>): Array<string|object> {
+        const observedPrincipals = new Set<string|object>();
+        const uniquePrincipals = new Array<string|object>();
+        for (let principal of principals){
+            if(!observedPrincipals.has(principal)){
+                uniquePrincipals.push(principal);
+                observedPrincipals.add(principal);
+            }
+        }
+        return uniquePrincipals;
     }
 
     makeAllowStatement(sid: string,
