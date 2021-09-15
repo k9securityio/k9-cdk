@@ -134,12 +134,30 @@ export class K9PolicyFactory {
         return policyStatements;
     }
 
+    /**
+     * Deduplicate an array of principals while preserving original order of principals.
+     * Note that principals may contain either strings or objects, so naive array sorting
+     * produces unstable results.
+     * 
+     * @param principals
+     */
+    static deduplicatePrincipals(principals: Array<string|object>): Array<string|object> {
+        const observedPrincipals = new Set<string|object>();
+        const uniquePrincipals = new Array<string|object>();
+        for (let principal of principals){
+            if(!observedPrincipals.has(principal)){
+                uniquePrincipals.push(principal);
+                observedPrincipals.add(principal);
+            }
+        }
+        return uniquePrincipals;
+    }
+
     makeAllowStatement(sid: string,
                        actions: Array<string>,
                        principalArns: Array<string>,
                        test: ArnConditionTest,
                        resources: Array<string>): PolicyStatement {
-        const uniquePrincipalArns = new Set<string>(principalArns);
         const policyStatementProps: PolicyStatementProps = {
             sid: sid,
             effect: Effect.ALLOW
@@ -148,7 +166,7 @@ export class K9PolicyFactory {
         statement.addActions(...actions);
         statement.addAnyPrincipal();
         statement.addResources(...resources);
-        statement.addCondition(test, {'aws:PrincipalArn': [...uniquePrincipalArns].sort()});
+        statement.addCondition(test, {'aws:PrincipalArn': K9PolicyFactory.deduplicatePrincipals(principalArns)});
         return statement;
     }
 
