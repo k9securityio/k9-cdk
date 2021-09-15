@@ -134,12 +134,15 @@ export class K9PolicyFactory {
         return policyStatements;
     }
 
+    static deduplicatePrincipals(principalArns: Array<string>): Array<string> {
+        return [...(new Set<string>(principalArns))].sort();
+    }
+
     makeAllowStatement(sid: string,
                        actions: Array<string>,
                        principalArns: Array<string>,
                        test: ArnConditionTest,
                        resources: Array<string>): PolicyStatement {
-        const uniquePrincipalArns = new Set<string>(principalArns);
         const policyStatementProps: PolicyStatementProps = {
             sid: sid,
             effect: Effect.ALLOW
@@ -148,7 +151,7 @@ export class K9PolicyFactory {
         statement.addActions(...actions);
         statement.addAnyPrincipal();
         statement.addResources(...resources);
-        statement.addCondition(test, {'aws:PrincipalArn': [...uniquePrincipalArns].sort()});
+        statement.addCondition(test, {'aws:PrincipalArn': K9PolicyFactory.deduplicatePrincipals(principalArns)});
         return statement;
     }
 
