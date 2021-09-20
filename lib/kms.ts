@@ -41,15 +41,21 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
         'ArnNotLike' :
         'ArnNotEquals';
     const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
+    const accountRootPrincipal = new AccountRootPrincipal();
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest, {
-        'aws:PrincipalArn': [...allAllowedPrincipalArns]
+        'aws:PrincipalArn': [
+            // Place Root Principal arn in stable, prominent position;
+            // will render as an object Fn::Join'ing Partition & AccountId
+            accountRootPrincipal.arn,
+            ...allAllowedPrincipalArns
+        ]
     });
 
     policy.addStatements(
         new PolicyStatement({
             sid: 'AllowRootUserToAdministerKey',
             effect: Effect.ALLOW,
-            principals: [new AccountRootPrincipal()],
+            principals: [accountRootPrincipal],
             actions: ['kms:*'],
             resources: resourceArns,
         }),
