@@ -97,5 +97,7 @@ const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
 new kms.Key(stack, 'KMSKey', {
     alias: 'k9-cdk-integration-test',
-    policy: keyPolicy
+    policy: keyPolicy,
+    // Prevent CDK from granting account root user access and enabling access via Identity policies
+    trustAccountIdentities: false
 });

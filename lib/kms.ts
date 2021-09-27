@@ -52,14 +52,26 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     });
 
     policy.addStatements(
-        new PolicyStatement({
-            sid: 'AllowRootUserToAdministerKey',
-            effect: Effect.ALLOW,
-            principals: [accountRootPrincipal],
-            actions: ['kms:*'],
-            resources: resourceArns,
-        }),
-        denyEveryoneElseStatement,
+        // omit AllowRootUserToAdministerKey statement to avoid enabling access granted via Identity policies
+        // new PolicyStatement({
+        //     sid: 'AllowRootUserToAdministerKey',
+        //     effect: Effect.ALLOW,
+        //     principals: [accountRootPrincipal],
+        //     actions: ['kms:*'],
+        //     resources: resourceArns,
+        // }),
+
+        // omit DenyEveryoneElse statement because; instead, rely on KMS' special behavior that
+        // enables granting access solely via a KMS key policy, *irrespective of* Identity policy.
+        // see: https://docs.aws.amazon.com/kms/latest/developerguide/control-access-overview.html#managing-access
+        // "To allow access to a KMS key, you must use the key policy,
+        //  *either alone* or in combination with IAM policies or grants.
+        //  IAM policies by themselves are not sufficient to allow access to a KMS key,
+        //  though you can use them in combination with a key policy."
+        //
+        // *emphasis added*.  k9-cdk will take the solo route for KMS keys.
+        //
+        // denyEveryoneElseStatement,
     );
 
     policy.validateForResourcePolicy();
