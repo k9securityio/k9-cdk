@@ -16,6 +16,8 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
     AccessCapability.DeleteData,
 );
 
+export const SID_ALLOW_ROOT_AND_IDENTITY_POLICIES = 'Allow Root User to Administer Key And Identity Policies';
+export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
 export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     const policyFactory = new K9PolicyFactory();
@@ -38,7 +40,7 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     if(props.trustAccountIdentities || defaultKeyPoliciesFeatureEnabled){
         console.log(`Adding Allow root and DenyEveryoneElse statements`);
         const denyEveryoneElseStatement = new PolicyStatement({
-            sid: 'DenyEveryoneElse',
+            sid: SID_DENY_EVERYONE_ELSE,
             effect: Effect.DENY,
             principals: policyFactory.makeDenyEveryoneElsePrincipals(),
             actions: ['kms:*'],
@@ -64,7 +66,7 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
         policy.addStatements(
             // add AllowRootUserToAdministerKey statement and enable access granted via Identity policies
             new PolicyStatement({
-                sid: 'Allow Root User to Administer Key And Identity Policies',
+                sid: SID_ALLOW_ROOT_AND_IDENTITY_POLICIES,
                 effect: Effect.ALLOW,
                 principals: [accountRootPrincipal],
                 actions: ['kms:*'],
