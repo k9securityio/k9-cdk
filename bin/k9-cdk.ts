@@ -8,6 +8,7 @@ import * as s3 from "@aws-cdk/aws-s3";
 import * as k9 from "../lib";
 
 const administerResourceArns = [
+    // for development
     "arn:aws:iam::139710491120:user/ci",
     "arn:aws:iam::139710491120:user/skuenzli",
     "arn:aws:sts::139710491120:federated-user/skuenzli",
@@ -16,15 +17,18 @@ const administerResourceArns = [
 ];
 
 const readConfigArns = administerResourceArns.concat(
-    ["arn:aws:iam::12345678910:role/k9-auditor"]
+    [
+        "arn:aws:iam::139710491120:role/k9-auditor",     // for audit
+        "arn:aws:iam::139710491120:role/k9-backend-dev" // for integration tests
+    ]
 );
 
 const readWriteDataArns = [
-    "arn:aws:iam::12345678910:role/app-backend",
+    "arn:aws:iam::123456789012:role/app-backend",
 ];
 
 const readDataArns = [
-    "arn:aws:iam::12345678910:role/customer-service"
+    "arn:aws:iam::123456789012:role/customer-service"
 ];
 
 const app = new cdk.App();
@@ -91,7 +95,8 @@ console.log(`k9 autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
 
 // Now create a Key policy that grants access the same access
 const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
-    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess,
+    trustAccountIdentities: false
 };
 const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
@@ -99,5 +104,6 @@ new kms.Key(stack, 'KMSKey', {
     alias: 'k9-cdk-integration-test',
     policy: keyPolicy,
     // Prevent CDK from granting account root user access and enabling access via Identity policies
-    trustAccountIdentities: false
+    trustAccountIdentities: false,
 });
+

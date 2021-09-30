@@ -141,36 +141,55 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
-test('K9KeyPolicy', () => {
+describe('K9KeyPolicy', () => {
+    const desiredAccess = new Array<AccessSpec>(
+        {
+            accessCapabilities: AccessCapability.AdministerResource,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: AccessCapability.WriteData,
+            allowPrincipalArns: writeDataArns,
+        },
+        {
+            accessCapabilities: AccessCapability.ReadData,
+            allowPrincipalArns: readDataArns,
+        },
+        {
+            accessCapabilities: AccessCapability.DeleteData,
+            allowPrincipalArns: deleteDataArns,
+        },
+    );
+    test('Without Allow root user and Identity policies', () => {
+        const k9KeyPolicyProps: K9KeyPolicyProps = {
+            k9DesiredAccess: desiredAccess
+        };
+        const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
-    const k9KeyPolicyProps: K9KeyPolicyProps = {
-        k9DesiredAccess: new Array<AccessSpec>(
-            {
-                accessCapabilities: AccessCapability.AdministerResource,
-                allowPrincipalArns: administerResourceArns,
-            },
-            {
-                accessCapabilities: AccessCapability.WriteData,
-                allowPrincipalArns: writeDataArns,
-            },
-            {
-                accessCapabilities: AccessCapability.ReadData,
-                allowPrincipalArns: readDataArns,
-            },
-            {
-                accessCapabilities: AccessCapability.DeleteData,
-                allowPrincipalArns: deleteDataArns,
-            },
-        )
-    };
-    const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
+        console.log("keyPolicy.document: " + stringifyPolicy(keyPolicy));
 
-    console.log("keyPolicy.document: " + stringifyPolicy(keyPolicy));
+        new kms.Key(stack, 'TestKeyNoRoot', {policy: keyPolicy});
 
-    new kms.Key(stack, 'TestKey', {policy: keyPolicy});
+        expectCDK(stack).to(haveResource("AWS::KMS::Key"));
+        expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+    });
+    
+    test('Allow root user and Identity policies', () => {
 
-    expectCDK(stack).to(haveResource("AWS::KMS::Key"));
-    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+        const k9KeyPolicyProps: K9KeyPolicyProps = {
+            k9DesiredAccess: desiredAccess,
+            trustAccountIdentities: true
+        };
+        
+        const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
+
+        console.log("keyPolicy.document (trustAccountIdentities): " + stringifyPolicy(keyPolicy));
+
+        new kms.Key(stack, 'TestKeyAllowRoot', {policy: keyPolicy});
+
+        expectCDK(stack).to(haveResource("AWS::KMS::Key"));
+        expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+    });
 });
 
 function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: AddToResourcePolicyResult[]) {

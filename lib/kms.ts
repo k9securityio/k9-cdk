@@ -1,9 +1,11 @@
 import * as iam from "@aws-cdk/aws-iam";
 import {AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement} from "@aws-cdk/aws-iam";
+import * as cxapi from '@aws-cdk/cx-api';
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 
 export interface K9KeyPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
+    readonly trustAccountIdentities?: boolean
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -27,52 +29,67 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
         resourceArns);
     policy.addStatements(...allowStatements);
 
-    const denyEveryoneElseStatement = new PolicyStatement({
-        sid: 'DenyEveryoneElse',
-        effect: Effect.DENY,
-        principals: policyFactory.makeDenyEveryoneElsePrincipals(),
-        actions: ['kms:*'],
-        resources: resourceArns
-    });
-    denyEveryoneElseStatement.addCondition('Bool', {
-        'aws:PrincipalIsAWSService': ["false"]
-    });
-    const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
-        'ArnNotLike' :
-        'ArnNotEquals';
-    const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
-    const accountRootPrincipal = new AccountRootPrincipal();
-    denyEveryoneElseStatement.addCondition(denyEveryoneElseTest, {
-        'aws:PrincipalArn': [
-            // Place Root Principal arn in stable, prominent position;
-            // will render as an object Fn::Join'ing Partition & AccountId
-            accountRootPrincipal.arn,
-            ...allAllowedPrincipalArns
-        ]
-    });
+    console.log(`trustAccountIdentities: ${props.trustAccountIdentities}`);
 
-    policy.addStatements(
-        // omit AllowRootUserToAdministerKey statement to avoid enabling access granted via Identity policies
-        // new PolicyStatement({
-        //     sid: 'AllowRootUserToAdministerKey',
-        //     effect: Effect.ALLOW,
-        //     principals: [accountRootPrincipal],
-        //     actions: ['kms:*'],
-        //     resources: resourceArns,
-        // }),
+    // Allow root user and control access via Identity policy by aligning to Key's behavior:
+    // https://github.com/aws/aws-cdk/blob/master/packages/%40aws-cdk/aws-kms/lib/key.ts#L622
+    const defaultKeyPoliciesFeatureEnabled: boolean = cxapi.futureFlagDefault(cxapi.KMS_DEFAULT_KEY_POLICIES);
+    console.log(`defaultKeyPoliciesFeatureEnabled: ${defaultKeyPoliciesFeatureEnabled}`);
+    if(props.trustAccountIdentities || defaultKeyPoliciesFeatureEnabled){
+        console.log(`Adding Allow root and DenyEveryoneElse statements`);
+        const denyEveryoneElseStatement = new PolicyStatement({
+            sid: 'DenyEveryoneElse',
+            effect: Effect.DENY,
+            principals: policyFactory.makeDenyEveryoneElsePrincipals(),
+            actions: ['kms:*'],
+            resources: resourceArns
+        });
+        denyEveryoneElseStatement.addCondition('Bool', {
+            'aws:PrincipalIsAWSService': ["false"]
+        });
+        const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
+            'ArnNotLike' :
+            'ArnNotEquals';
+        const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
+        const accountRootPrincipal = new AccountRootPrincipal();
+        denyEveryoneElseStatement.addCondition(denyEveryoneElseTest, {
+            'aws:PrincipalArn': [
+                // Place Root Principal arn in stable, prominent position;
+                // will render as an object Fn::Join'ing Partition & AccountId
+                accountRootPrincipal.arn,
+                ...allAllowedPrincipalArns
+            ]
+        });
 
-        // omit DenyEveryoneElse statement because; instead, rely on KMS' special behavior that
+        policy.addStatements(
+            // add AllowRootUserToAdministerKey statement and enable access granted via Identity policies
+            new PolicyStatement({
+                sid: 'Allow Root User to Administer Key And Identity Policies',
+                effect: Effect.ALLOW,
+                principals: [accountRootPrincipal],
+                actions: ['kms:*'],
+                resources: resourceArns,
+            })
+            , denyEveryoneElseStatement
+        );
+    } else {
+
+        // Omit Allow Root & DenyEveryoneElse statement
+        //
+        // Instead, implement least privilege by relying on KMS' special behavior that
         // enables granting access solely via a KMS key policy, *irrespective of* Identity policy.
-        // see: https://docs.aws.amazon.com/kms/latest/developerguide/control-access-overview.html#managing-access
+        //
+        // See: https://docs.aws.amazon.com/kms/latest/developerguide/control-access-overview.html#managing-access
         // "To allow access to a KMS key, you must use the key policy,
         //  *either alone* or in combination with IAM policies or grants.
         //  IAM policies by themselves are not sufficient to allow access to a KMS key,
         //  though you can use them in combination with a key policy."
         //
-        // *emphasis added*.  k9-cdk will take the solo route for KMS keys.
-        //
-        // denyEveryoneElseStatement,
-    );
+        
+        // noinspection JSUnnecessarySemicolon
+        ;
+        console.log(`Omitting Allow root and DenyEveryoneElse statements`);
+    }
 
     policy.validateForResourcePolicy();
 
