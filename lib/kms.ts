@@ -19,15 +19,40 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_ALLOW_ROOT_AND_IDENTITY_POLICIES = 'Allow Root User to Administer Key And Identity Policies';
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
+function canPrincipalsCanManageKey(accessSpecsByCapability: Map<AccessCapability, AccessSpec>) {
+    let adminSpec = accessSpecsByCapability.get(AccessCapability.AdministerResource);
+    let readConfigSpec = accessSpecsByCapability.get(AccessCapability.ReadConfig);
+
+    if((adminSpec?.allowPrincipalArns && adminSpec.allowPrincipalArns.length > 0)
+        && (readConfigSpec?.allowPrincipalArns && readConfigSpec.allowPrincipalArns.length > 0)){
+        const adminPrincipals = new Set<string>(adminSpec.allowPrincipalArns);
+        const readConfigPrincipals = new Set<string>(readConfigSpec.allowPrincipalArns);
+        const intersection = new Set(
+          [...adminPrincipals].filter(x => readConfigPrincipals.has(x)));
+        return intersection.size > 0;
+    }
+    return false;
+}
+
 export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     const policyFactory = new K9PolicyFactory();
     const policy = new iam.PolicyDocument();
 
     const resourceArns = ['*'];
 
+    let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = policyFactory.mergeDesiredAccessSpecsByCapability(SUPPORTED_CAPABILITIES, props.k9DesiredAccess);
+
+    if(!canPrincipalsCanManageKey(accessSpecsByCapability)){
+        throw Error(`At least one principal must be able to administer and read-config for keys` +
+            ` so encrypted data remains accessible; found:\n` +
+            `administer-resource: '${accessSpecsByCapability.get(AccessCapability.AdministerResource)?.allowPrincipalArns}'` +
+            `read-config: '${accessSpecsByCapability.get(AccessCapability.ReadConfig)?.allowPrincipalArns}'`
+        );
+    }
+
     const allowStatements = policyFactory.makeAllowStatements("KMS",
         SUPPORTED_CAPABILITIES,
-        props.k9DesiredAccess,
+        Array.from(accessSpecsByCapability.values()),
         resourceArns);
     policy.addStatements(...allowStatements);
 

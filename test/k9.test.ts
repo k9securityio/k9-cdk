@@ -144,7 +144,10 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
 describe('K9KeyPolicy', () => {
     const desiredAccess = new Array<AccessSpec>(
         {
-            accessCapabilities: AccessCapability.AdministerResource,
+            accessCapabilities: [
+                AccessCapability.AdministerResource,
+                AccessCapability.ReadConfig
+            ],
             allowPrincipalArns: administerResourceArns,
         },
         {
@@ -230,6 +233,38 @@ describe('K9KeyPolicy', () => {
         expectCDK(stack).to(haveResource("AWS::KMS::Key"));
         expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
     });
+
+    test('Unmanageable key policy is rejected', () => {
+
+        const unmanageableCapabilityCombos = [
+          [],
+          [AccessCapability.AdministerResource],
+          [AccessCapability.ReadConfig],
+          [AccessCapability.AdministerResource, AccessCapability.WriteData]
+        ];
+
+        for(let trustAccountIdentities of [true, false]){
+            for(let unmanageableAccessCapabilities of unmanageableCapabilityCombos){
+                let desiredAccess = new Array<AccessSpec>(
+                    {
+                        accessCapabilities: unmanageableAccessCapabilities,
+                        allowPrincipalArns: administerResourceArns,
+                    },
+                );
+
+                let k9KeyPolicyProps: K9KeyPolicyProps = {
+                    k9DesiredAccess: desiredAccess,
+                    trustAccountIdentities: true
+                };
+
+                expect(() => k9.kms.makeKeyPolicy(k9KeyPolicyProps))
+                    .toThrow(/At least one principal must be able to administer and read-config for keys/)
+
+            }
+
+        }
+    });
+
 });
 
 function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: AddToResourcePolicyResult[]) {
