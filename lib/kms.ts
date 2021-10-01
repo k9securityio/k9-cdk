@@ -1,6 +1,5 @@
 import * as iam from "@aws-cdk/aws-iam";
 import {AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement} from "@aws-cdk/aws-iam";
-import * as cxapi from '@aws-cdk/cx-api';
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 
 export interface K9KeyPolicyProps {
@@ -110,8 +109,6 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
         //  though you can use them in combination with a key policy."
         //
         
-        // noinspection JSUnnecessarySemicolon
-        ;
         console.log(`Omitting Allow root and DenyEveryoneElse statements`);
     }
 
