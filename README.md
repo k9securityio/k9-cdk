@@ -91,6 +91,8 @@ new kms.Key(stack, 'KMSKey', {
 }); 
 ```
 
+Note: You must enable the `@aws-cdk/aws-kms:defaultKeyPolicies` feature ([example](cdk.json)) so that k9's policy is accepted unchanged by the KMS CDK construct. 
+
 The example stack demonstrates full use of the k9 S3 and KMS policy generators.  Generated policies:
 
 S3 Bucket Policy:
