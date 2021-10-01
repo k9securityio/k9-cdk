@@ -44,7 +44,6 @@
     "@aws-cdk/aws-iam": "1.95.2",
     "@aws-cdk/aws-s3": "1.95.2",
     "@aws-cdk/aws-kms": "1.95.2",
-    "set-value": ">=4.0.1",
     "source-map-support": "^0.5.16"
   }
 }
