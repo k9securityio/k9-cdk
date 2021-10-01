@@ -17,11 +17,11 @@ const administerResourceArns = [
 ];
 
 const writeDataArns = [
-    "arn:aws:iam::12345678910:role/app-backend",
+    "arn:aws:iam::123456789012:role/app-backend",
 ];
 
 const readDataArns = writeDataArns.concat(
-    ["arn:aws:iam::12345678910:role/customer-service"]
+    ["arn:aws:iam::123456789012:role/customer-service"]
 );
 
 const deleteDataArns = [

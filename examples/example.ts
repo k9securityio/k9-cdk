@@ -6,19 +6,19 @@ import * as k9 from "@k9securityio/k9-cdk";
 import * as kms from "@aws-cdk/aws-kms";
 
 const administerResourceArns = [
-    "arn:aws:iam::12345678910:user/ci",
-    "arn:aws:iam::12345678910:user/person1",
+    "arn:aws:iam::123456789012:user/ci",
+    "arn:aws:iam::123456789012:user/person1",
 ];
 
 const readConfigArns = administerResourceArns.concat([
-    "arn:aws:iam::12345678910:role/k9-auditor"
+    "arn:aws:iam::123456789012:role/k9-auditor"
 ]);
 
 const writeDataArns = [
-    "arn:aws:iam::12345678910:role/app-backend",
+    "arn:aws:iam::123456789012:role/app-backend",
 ];
 const readDataArns = writeDataArns.concat([
-    "arn:aws:iam::12345678910:role/customer-service"
+    "arn:aws:iam::123456789012:role/customer-service"
 ]);
 
 const app = new cdk.App();

@@ -27,12 +27,12 @@ import * as k9 from "@k9securityio/k9-cdk";
 
 // Define which principals may access the bucket and what capabilities they should have
 const administerResourceArns = [
-    "arn:aws:iam::12345678910:user/ci", 
-    "arn:aws:iam::12345678910:user/person1"
+    "arn:aws:iam::123456789012:user/ci", 
+    "arn:aws:iam::123456789012:user/person1"
 ];
 
 const readConfigArns = administerResourceArns.concat([
-    "arn:aws:iam::12345678910:role/k9-auditor"
+    "arn:aws:iam::123456789012:role/k9-auditor"
 ]);
 
 const app = new cdk.App();
@@ -57,13 +57,13 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
                 k9.k9policy.AccessCapability.WriteData
                 ],
             allowPrincipalArns: [
-                "arn:aws:iam::12345678910:role/app-backend",
+                "arn:aws:iam::123456789012:role/app-backend",
             ],
         },
          {
              accessCapability: k9.k9policy.AccessCapability.ReadData,
              allowPrincipalArns: [
-                 "arn:aws:iam::12345678910:role/customer-service"
+                 "arn:aws:iam::123456789012:role/customer-service"
              ],
          }
          // omit access spec for delete-data because it is unneeded
