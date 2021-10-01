@@ -104,6 +104,7 @@ new kms.Key(stack, 'KMSKey', {
     alias: 'k9-cdk-integration-test',
     policy: keyPolicy,
     // Prevent CDK from granting account root user access and enabling access via Identity policies
+    // Alternatively, set CDK preference @aws-cdk/aws-kms:defaultKeyPolicies to false (default)
     trustAccountIdentities: false,
 });
 
