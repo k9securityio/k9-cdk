@@ -19,7 +19,7 @@ const administerResourceArns = [
 const readConfigArns = administerResourceArns.concat(
     [
         "arn:aws:iam::139710491120:role/k9-auditor",     // for audit
-        "arn:aws:iam::139710491120:role/k9-backend-dev" // for integration tests
+        "arn:aws:iam::139710491120:role/k9-backend-dev"  // for integration tests
     ]
 );
 
@@ -96,15 +96,13 @@ console.log(`k9 autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
 // Now create a Key policy that grants access the same access
 const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
     k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess,
-    trustAccountIdentities: false
+    // trustAccountIdentities: false  // the effective default
 };
 const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
+// Set CDK preference @aws-cdk/aws-kms:defaultKeyPolicies to true in cdk.json
 new kms.Key(stack, 'KMSKey', {
     alias: 'k9-cdk-integration-test',
     policy: keyPolicy,
-    // Prevent CDK from granting account root user access and enabling access via Identity policies
-    // Alternatively, set CDK preference @aws-cdk/aws-kms:defaultKeyPolicies to false (default)
-    trustAccountIdentities: false,
 });
 

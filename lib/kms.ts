@@ -59,10 +59,7 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     console.log(`trustAccountIdentities: ${props.trustAccountIdentities}`);
 
     // Allow root user and control access via Identity policy by aligning to Key's behavior:
-    // https://github.com/aws/aws-cdk/blob/master/packages/%40aws-cdk/aws-kms/lib/key.ts#L622
-    const defaultKeyPoliciesFeatureEnabled: boolean = cxapi.futureFlagDefault(cxapi.KMS_DEFAULT_KEY_POLICIES);
-    console.log(`defaultKeyPoliciesFeatureEnabled: ${defaultKeyPoliciesFeatureEnabled}`);
-    if(props.trustAccountIdentities || defaultKeyPoliciesFeatureEnabled){
+    if(props.trustAccountIdentities){
         console.log(`Adding Allow root and DenyEveryoneElse statements`);
         const denyEveryoneElseStatement = new PolicyStatement({
             sid: SID_DENY_EVERYONE_ELSE,
