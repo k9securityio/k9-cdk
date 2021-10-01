@@ -26,6 +26,7 @@
     "@aws-cdk/assert": "1.95.2",
     "@types/jest": "^26.0.24",
     "@types/node": "10.17.27",
+    "ansi-regex": "5.0.1",
     "aws-cdk": "1.95.2",
     "browserslist": "^4.17.2",
     "hosted-git-info": ">=2.8.9",
