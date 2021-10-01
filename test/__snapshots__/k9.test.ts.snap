@@ -150,7 +150,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -195,7 +195,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -235,7 +235,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -376,7 +376,7 @@ Object {
                 "ArnNotEquals": Object {
                   "aws:PrincipalArn": Array [
                     "arn:aws:iam::139710491120:user/ci",
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -574,8 +574,8 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                   ],
                 },
               },
@@ -620,7 +620,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -801,8 +801,8 @@ Object {
                 "ArnNotEquals": Object {
                   "aws:PrincipalArn": Array [
                     "arn:aws:iam::139710491120:user/ci",
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                     "arn:aws:iam::139710491120:user/super-admin",
                   ],
                 },
@@ -1582,8 +1582,8 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                   ],
                 },
               },
@@ -1628,7 +1628,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -1809,8 +1809,8 @@ Object {
                 "ArnNotEquals": Object {
                   "aws:PrincipalArn": Array [
                     "arn:aws:iam::139710491120:user/ci",
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                     "arn:aws:iam::139710491120:user/super-admin",
                   ],
                 },
@@ -1933,8 +1933,8 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                   ],
                 },
               },
@@ -1959,7 +1959,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -2031,8 +2031,8 @@ Object {
                       ],
                     },
                     "arn:aws:iam::139710491120:user/ci",
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                     "arn:aws:iam::139710491120:user/super-admin",
                   ],
                 },
@@ -2174,8 +2174,8 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                   ],
                 },
               },
@@ -2200,7 +2200,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -3005,8 +3005,8 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                   ],
                 },
               },
@@ -3051,7 +3051,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -3232,8 +3232,8 @@ Object {
                 "ArnNotEquals": Object {
                   "aws:PrincipalArn": Array [
                     "arn:aws:iam::139710491120:user/ci",
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                     "arn:aws:iam::139710491120:user/super-admin",
                   ],
                 },
@@ -3356,8 +3356,8 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                   ],
                 },
               },
@@ -3382,7 +3382,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -4187,8 +4187,8 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                   ],
                 },
               },
@@ -4233,7 +4233,7 @@ Object {
               "Condition": Object {
                 "ArnEquals": Object {
                   "aws:PrincipalArn": Array [
-                    "arn:aws:iam::12345678910:role/app-backend",
+                    "arn:aws:iam::123456789012:role/app-backend",
                   ],
                 },
               },
@@ -4414,8 +4414,8 @@ Object {
                 "ArnNotEquals": Object {
                   "aws:PrincipalArn": Array [
                     "arn:aws:iam::139710491120:user/ci",
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
                     "arn:aws:iam::139710491120:user/super-admin",
                   ],
                 },
