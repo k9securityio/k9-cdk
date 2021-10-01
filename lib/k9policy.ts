@@ -68,13 +68,10 @@ export class K9PolicyFactory {
 
     }
 
-    makeAllowStatements(serviceName: string,
-                        supportedCapabilities: Array<AccessCapability>,
-                        desiredAccess: Array<AccessSpec>,
-                        resourceArns: Array<string>): Array<PolicyStatement> {
-        let policyStatements = new Array<PolicyStatement>();
-        let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
+    mergeDesiredAccessSpecsByCapability(supportedCapabilities: Array<AccessCapability>,
+                                        desiredAccess: Array<AccessSpec>): Map<AccessCapability, AccessSpec> {
 
+        let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
         // 1. populate accessSpecsByCapability with fresh AccessSpecs for each supported capability
         // 2. iterate through desiredAccess specs and merge data into what we'll use
         //    important: detect mismatched test types
@@ -94,7 +91,7 @@ export class K9PolicyFactory {
 
             //now... merge in the user's desired access for this capability
             for (let desiredAccessSpec of desiredAccess) {
-                if(desiredAccessSpec.accessCapabilities instanceof Array){
+                if (desiredAccessSpec.accessCapabilities instanceof Array) {
                     for (let desiredCapability of desiredAccessSpec.accessCapabilities) {
                         if (supportedCapability == desiredCapability) {
                             this._mergeAccessSpecs(effectiveAccessSpec, desiredAccessSpec);
@@ -109,6 +106,15 @@ export class K9PolicyFactory {
                 }
             }
         }
+        return accessSpecsByCapability;
+    }
+
+    makeAllowStatements(serviceName: string,
+                        supportedCapabilities: Array<AccessCapability>,
+                        desiredAccess: Array<AccessSpec>,
+                        resourceArns: Array<string>): Array<PolicyStatement> {
+        let policyStatements = new Array<PolicyStatement>();
+        let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = this.mergeDesiredAccessSpecsByCapability(supportedCapabilities, desiredAccess);
 
         // ok, time to actually make Allow Statements from our AccessSpecs
         for (let supportedCapability of supportedCapabilities) {
