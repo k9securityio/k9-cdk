@@ -68,7 +68,8 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
             resources: resourceArns
         });
         denyEveryoneElseStatement.addCondition('Bool', {
-            'aws:PrincipalIsAWSService': ["false"]
+            'aws:PrincipalIsAWSService': ["false"],
+            'kms:GrantIsForAWSResource': ["false"]
         });
         const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
             'ArnNotLike' :
