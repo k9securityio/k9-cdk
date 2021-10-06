@@ -31,7 +31,10 @@ const readDataArns = [
     "arn:aws:iam::123456789012:role/customer-service"
 ];
 
-const app = new cdk.App();
+const app = new cdk.App(
+    // Can configure features with an AppProps:
+    // https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_core.AppProps.html
+);
 
 const stack = new cdk.Stack(app, 'K9PolicyLibIntegrationTest');
 const bucket = new s3.Bucket(stack, 'TestBucket', {});
