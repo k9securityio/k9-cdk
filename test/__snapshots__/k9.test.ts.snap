@@ -2040,6 +2040,9 @@ Object {
                   "aws:PrincipalIsAWSService": Array [
                     "false",
                   ],
+                  "kms:GrantIsForAWSResource": Array [
+                    "false",
+                  ],
                 },
               },
               "Effect": "Deny",
