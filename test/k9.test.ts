@@ -4,7 +4,7 @@ import {RemovalPolicy} from '@aws-cdk/core';
 import * as kms from '@aws-cdk/aws-kms';
 import * as s3 from '@aws-cdk/aws-s3';
 import {AccessCapability, AccessSpec} from '../lib/k9policy';
-import {K9BucketPolicyProps} from "../lib/s3";
+import {K9BucketPolicyProps, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD} from "../lib/s3";
 import {K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE} from "../lib/kms";
 import * as k9 from "../lib";
 import {AddToResourcePolicyResult} from "@aws-cdk/aws-iam";
@@ -60,10 +60,20 @@ test('K9BucketPolicy', () => {
     let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
     expect(bucket.policy).toBeDefined();
 
-    console.log("bucket.policy?.document: " + stringifyPolicy(bucket.policy?.document));
+    let policyStr = stringifyPolicy(bucket.policy?.document);
+    console.log("bucket.policy?.document: " + policyStr);
     expect(bucket.policy?.document).toBeDefined();
 
     assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+    let policyObj = JSON.parse(policyStr)
+    let actualPolicyStatements = policyObj['Statement'];
+    expect(actualPolicyStatements).toBeDefined();
+
+    for (let stmt of actualPolicyStatements) {
+        if(SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid){
+            expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('aws:kms');
+        }
+    }
 
     expectCDK(stack).to(haveResource("AWS::S3::Bucket"));
     expectCDK(stack).to(haveResource("AWS::S3::BucketPolicy"));

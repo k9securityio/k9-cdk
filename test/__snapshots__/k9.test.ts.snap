@@ -368,7 +368,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption",
+              "Sid": "DenyUnexpectedEncryptionMethod",
             },
             Object {
               "Action": "s3:*",
@@ -793,7 +793,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption",
+              "Sid": "DenyUnexpectedEncryptionMethod",
             },
             Object {
               "Action": "s3:*",
@@ -1292,7 +1292,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption",
+              "Sid": "DenyUnexpectedEncryptionMethod",
             },
             Object {
               "Action": "s3:*",
@@ -1801,7 +1801,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption",
+              "Sid": "DenyUnexpectedEncryptionMethod",
             },
             Object {
               "Action": "s3:*",
@@ -2718,7 +2718,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption",
+              "Sid": "DenyUnexpectedEncryptionMethod",
             },
             Object {
               "Action": "s3:*",
@@ -3227,7 +3227,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption",
+              "Sid": "DenyUnexpectedEncryptionMethod",
             },
             Object {
               "Action": "s3:*",
@@ -3900,7 +3900,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption",
+              "Sid": "DenyUnexpectedEncryptionMethod",
             },
             Object {
               "Action": "s3:*",
@@ -4409,7 +4409,7 @@ Object {
                   ],
                 },
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption",
+              "Sid": "DenyUnexpectedEncryptionMethod",
             },
             Object {
               "Action": "s3:*",
