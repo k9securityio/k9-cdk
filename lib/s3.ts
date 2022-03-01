@@ -88,11 +88,10 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
         {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
 
-    // default encryption methdo to SSE-KMS,
+    // default encryption method to SSE-KMS,
     // allow override to SSE-S3 (AES256)
     let encryptionMethod = 'aws:kms'
     if(props.encryption){
-        //if(BucketEncryption.S3_MANAGED.valueOf() == props.encryption.valueOf()){
         if(BucketEncryption.S3_MANAGED == props.encryption){
             encryptionMethod = 'AES-256'
         }
