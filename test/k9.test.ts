@@ -3,6 +3,7 @@ import * as cdk from '@aws-cdk/core';
 import {RemovalPolicy} from '@aws-cdk/core';
 import * as kms from '@aws-cdk/aws-kms';
 import * as s3 from '@aws-cdk/aws-s3';
+import {BucketEncryption} from '@aws-cdk/aws-s3';
 import {AccessCapability, AccessSpec} from '../lib/k9policy';
 import {K9BucketPolicyProps, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD} from "../lib/s3";
 import {K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE} from "../lib/kms";
@@ -32,7 +33,7 @@ const app = new cdk.App();
 
 const stack = new cdk.Stack(app, 'K9PolicyTest');
 
-test('K9BucketPolicy', () => {
+test('K9BucketPolicy - typical usage', () => {
 
     const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
@@ -78,6 +79,74 @@ test('K9BucketPolicy', () => {
     expectCDK(stack).to(haveResource("AWS::S3::Bucket"));
     expectCDK(stack).to(haveResource("AWS::S3::BucketPolicy"));
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+});
+
+test('K9BucketPolicy - specify encryption method - KMS', () => {
+    const localstack = new cdk.Stack(app, 'K9BucketPolicyWithEncryptionMethodKMS');
+    const bucket = new s3.Bucket(localstack, 'TestBucketWithEncryptionMethodKMS', {});
+
+    const k9BucketPolicyProps: K9BucketPolicyProps = {
+        bucket: bucket,
+        k9DesiredAccess: new Array<AccessSpec>(
+            {
+                accessCapabilities: AccessCapability.AdministerResource,
+                allowPrincipalArns: administerResourceArns,
+            }
+        ),
+        encryption: BucketEncryption.KMS,
+    };
+    let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "BucketPolicyWithEncryptionMethodKMS", k9BucketPolicyProps);
+    expect(bucket.policy).toBeDefined();
+
+    let policyStr = stringifyPolicy(bucket.policy?.document);
+    console.log("bucket.policy?.document: " + policyStr);
+    expect(bucket.policy?.document).toBeDefined();
+
+    assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+    let policyObj = JSON.parse(policyStr)
+    let actualPolicyStatements = policyObj['Statement'];
+    expect(actualPolicyStatements).toBeDefined();
+
+    for (let stmt of actualPolicyStatements) {
+        if(SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid){
+            expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('aws:kms');
+        }
+    }
+
+})
+
+test('K9BucketPolicy - specify encryption method - S3_MANAGED', () => {
+    const localstack = new cdk.Stack(app, 'K9BucketPolicyAlternateEncryptionMethod');
+    const bucket = new s3.Bucket(localstack, 'TestBucketWithAlternateEncryptionMethod', {});
+
+    const k9BucketPolicyProps: K9BucketPolicyProps = {
+        bucket: bucket,
+        k9DesiredAccess: new Array<AccessSpec>(
+            {
+                accessCapabilities: AccessCapability.AdministerResource,
+                allowPrincipalArns: administerResourceArns,
+            }
+        ),
+        encryption: BucketEncryption.S3_MANAGED,
+    };
+    let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "BucketPolicyWithAlternateEncryptionMethod", k9BucketPolicyProps);
+    expect(bucket.policy).toBeDefined();
+
+    let policyStr = stringifyPolicy(bucket.policy?.document);
+    console.log("bucket.policy?.document: " + policyStr);
+    expect(bucket.policy?.document).toBeDefined();
+
+    assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+    let policyObj = JSON.parse(policyStr)
+    let actualPolicyStatements = policyObj['Statement'];
+    expect(actualPolicyStatements).toBeDefined();
+
+    for (let stmt of actualPolicyStatements) {
+        if(SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid){
+            expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('AES-256');
+        }
+    }
+
 });
 
 test('K9BucketPolicy - AccessSpec with set of capabilities', () => {

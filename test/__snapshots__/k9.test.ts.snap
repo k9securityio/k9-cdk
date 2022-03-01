@@ -426,7 +426,7 @@ Object {
 }
 `;
 
-exports[`K9BucketPolicy 1`] = `
+exports[`K9BucketPolicy - typical usage 1`] = `
 Object {
   "Resources": Object {
     "S3BucketPolicy189C1E8E": Object {
@@ -1333,6 +1333,708 @@ Object {
                           "AutoDeleteBucket93E032C1",
                           "Arn",
                         ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "BucketPolicyWithAlternateEncryptionMethodPolicy0BA38F4B": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputRefTestBucketWithAlternateEncryptionMethodF9AD985C29FC2EE9",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucketWebsite",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutAnalyticsConfiguration",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
+                "s3:PutBucketObjectLockConfiguration",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketRequestPayment",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutInventoryConfiguration",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutMetricsConfiguration",
+                "s3:PutObjectAcl",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectVersionAcl",
+                "s3:PutReplicationConfiguration",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted administer-resource",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetAnalyticsConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetInventoryConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetMetricsConfiguration",
+                "s3:GetObjectAcl",
+                "s3:GetObjectLegalHold",
+                "s3:GetObjectRetention",
+                "s3:GetObjectTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListBucketVersions",
+                "s3:ListMultipartUploadParts",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-config",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionTorrent",
+                "s3:ListBucket",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:AbortMultipartUpload",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted write-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObjectVersionTagging",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted delete-data",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": false,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "Null": Object {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "StringNotEquals": Object {
+                  "s3:x-amz-server-side-encryption": "AES-256",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnexpectedEncryptionMethod",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "BucketPolicyWithEncryptionMethodKMSPolicy8EA8A63A": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputRefTestBucketWithEncryptionMethodKMSC063B9007C32753A",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucketWebsite",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutAnalyticsConfiguration",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
+                "s3:PutBucketObjectLockConfiguration",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketRequestPayment",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutInventoryConfiguration",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutMetricsConfiguration",
+                "s3:PutObjectAcl",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectVersionAcl",
+                "s3:PutReplicationConfiguration",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted administer-resource",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetAnalyticsConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetInventoryConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetMetricsConfiguration",
+                "s3:GetObjectAcl",
+                "s3:GetObjectLegalHold",
+                "s3:GetObjectRetention",
+                "s3:GetObjectTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListBucketVersions",
+                "s3:ListMultipartUploadParts",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-config",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionTorrent",
+                "s3:ListBucket",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:AbortMultipartUpload",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted write-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObjectVersionTagging",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted delete-data",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": false,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "Null": Object {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "StringNotEquals": Object {
+                  "s3:x-amz-server-side-encryption": "aws:kms",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnexpectedEncryptionMethod",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
                       },
                       "/*",
                     ],
@@ -2773,6 +3475,708 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "BucketPolicyWithAlternateEncryptionMethodPolicy0BA38F4B": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputRefTestBucketWithAlternateEncryptionMethodF9AD985C29FC2EE9",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucketWebsite",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutAnalyticsConfiguration",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
+                "s3:PutBucketObjectLockConfiguration",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketRequestPayment",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutInventoryConfiguration",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutMetricsConfiguration",
+                "s3:PutObjectAcl",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectVersionAcl",
+                "s3:PutReplicationConfiguration",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted administer-resource",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetAnalyticsConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetInventoryConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetMetricsConfiguration",
+                "s3:GetObjectAcl",
+                "s3:GetObjectLegalHold",
+                "s3:GetObjectRetention",
+                "s3:GetObjectTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListBucketVersions",
+                "s3:ListMultipartUploadParts",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-config",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionTorrent",
+                "s3:ListBucket",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:AbortMultipartUpload",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted write-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObjectVersionTagging",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted delete-data",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": false,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "Null": Object {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "StringNotEquals": Object {
+                  "s3:x-amz-server-side-encryption": "AES-256",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnexpectedEncryptionMethod",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "BucketPolicyWithEncryptionMethodKMSPolicy8EA8A63A": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputRefTestBucketWithEncryptionMethodKMSC063B9007C32753A",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucketWebsite",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutAnalyticsConfiguration",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
+                "s3:PutBucketObjectLockConfiguration",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketRequestPayment",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutInventoryConfiguration",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutMetricsConfiguration",
+                "s3:PutObjectAcl",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectVersionAcl",
+                "s3:PutReplicationConfiguration",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted administer-resource",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetAnalyticsConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetInventoryConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetMetricsConfiguration",
+                "s3:GetObjectAcl",
+                "s3:GetObjectLegalHold",
+                "s3:GetObjectRetention",
+                "s3:GetObjectTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListBucketVersions",
+                "s3:ListMultipartUploadParts",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-config",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionTorrent",
+                "s3:ListBucket",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:AbortMultipartUpload",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted write-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObjectVersionTagging",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted delete-data",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": false,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "Null": Object {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "StringNotEquals": Object {
+                  "s3:x-amz-server-side-encryption": "aws:kms",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnexpectedEncryptionMethod",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": Object {
       "DependsOn": Array [
         "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
@@ -3941,6 +5345,708 @@ Object {
                           "AutoDeleteBucket93E032C1",
                           "Arn",
                         ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "BucketPolicyWithAlternateEncryptionMethodPolicy0BA38F4B": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputRefTestBucketWithAlternateEncryptionMethodF9AD985C29FC2EE9",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucketWebsite",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutAnalyticsConfiguration",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
+                "s3:PutBucketObjectLockConfiguration",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketRequestPayment",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutInventoryConfiguration",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutMetricsConfiguration",
+                "s3:PutObjectAcl",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectVersionAcl",
+                "s3:PutReplicationConfiguration",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted administer-resource",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetAnalyticsConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetInventoryConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetMetricsConfiguration",
+                "s3:GetObjectAcl",
+                "s3:GetObjectLegalHold",
+                "s3:GetObjectRetention",
+                "s3:GetObjectTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListBucketVersions",
+                "s3:ListMultipartUploadParts",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-config",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionTorrent",
+                "s3:ListBucket",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:AbortMultipartUpload",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted write-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObjectVersionTagging",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted delete-data",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": false,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "Null": Object {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "StringNotEquals": Object {
+                  "s3:x-amz-server-side-encryption": "AES-256",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnexpectedEncryptionMethod",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyAlternateEncryptionMethod:ExportsOutputFnGetAttTestBucketWithAlternateEncryptionMethodF9AD985CArn042A2492",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "BucketPolicyWithEncryptionMethodKMSPolicy8EA8A63A": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputRefTestBucketWithEncryptionMethodKMSC063B9007C32753A",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucketWebsite",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutAnalyticsConfiguration",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
+                "s3:PutBucketObjectLockConfiguration",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketRequestPayment",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutInventoryConfiguration",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutMetricsConfiguration",
+                "s3:PutObjectAcl",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectVersionAcl",
+                "s3:PutReplicationConfiguration",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted administer-resource",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetAnalyticsConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetInventoryConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetMetricsConfiguration",
+                "s3:GetObjectAcl",
+                "s3:GetObjectLegalHold",
+                "s3:GetObjectRetention",
+                "s3:GetObjectTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionTagging",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListBucketVersions",
+                "s3:ListMultipartUploadParts",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-config",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionTorrent",
+                "s3:ListBucket",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:AbortMultipartUpload",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted write-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObjectVersionTagging",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted delete-data",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": false,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "Null": Object {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "StringNotEquals": Object {
+                  "s3:x-amz-server-side-encryption": "aws:kms",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnexpectedEncryptionMethod",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::ImportValue": "K9BucketPolicyWithEncryptionMethodKMS:ExportsOutputFnGetAttTestBucketWithEncryptionMethodKMSC063B900ArnD6399430",
                       },
                       "/*",
                     ],

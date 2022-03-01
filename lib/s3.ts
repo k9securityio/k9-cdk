@@ -1,4 +1,5 @@
 import * as s3 from "@aws-cdk/aws-s3";
+import {BucketEncryption} from "@aws-cdk/aws-s3";
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 import * as cdk from "@aws-cdk/core";
 import {AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
@@ -7,7 +8,7 @@ import * as aws_iam_utils from "./aws-iam-utils";
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
     readonly bucket: s3.Bucket
-    readonly encryptionMethod?: string
+    readonly encryption?: BucketEncryption
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -87,7 +88,15 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
         {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
 
-    const encryptionMethod = props.encryptionMethod ? props.encryptionMethod : 'aws:kms';
+    // default encryption methdo to SSE-KMS,
+    // allow override to SSE-S3 (AES256)
+    let encryptionMethod = 'aws:kms'
+    if(props.encryption){
+        //if(BucketEncryption.S3_MANAGED.valueOf() == props.encryption.valueOf()){
+        if(BucketEncryption.S3_MANAGED == props.encryption){
+            encryptionMethod = 'AES-256'
+        }
+    }
     k9Statements.push(
         new PolicyStatement({
             sid: 'DenyInsecureCommunications',
