@@ -1,4 +1,5 @@
 import * as s3 from "@aws-cdk/aws-s3";
+import {BucketEncryption} from "@aws-cdk/aws-s3";
 import {AccessCapability, AccessSpec, K9PolicyFactory} from "./k9policy";
 import * as cdk from "@aws-cdk/core";
 import {AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
@@ -7,6 +8,7 @@ import * as aws_iam_utils from "./aws-iam-utils";
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
     readonly bucket: s3.Bucket
+    readonly encryption?: BucketEncryption
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -16,6 +18,8 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
     AccessCapability.WriteData,
     AccessCapability.DeleteData,
 );
+
+export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMethod';
 
 /**
  * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities
@@ -84,6 +88,14 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
     denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
         {'aws:PrincipalArn': [...allAllowedPrincipalArns]});
 
+    // default encryption method to SSE-KMS,
+    // allow override to SSE-S3 (AES256)
+    let encryptionMethod = 'aws:kms'
+    if(props.encryption){
+        if(BucketEncryption.S3_MANAGED == props.encryption){
+            encryptionMethod = 'AES-256'
+        }
+    }
     k9Statements.push(
         new PolicyStatement({
             sid: 'DenyInsecureCommunications',
@@ -106,13 +118,13 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
             },
         }),
         new PolicyStatement({
-            sid: 'DenyStorageWithoutKMSEncryption',
+            sid: SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
             effect: Effect.DENY,
             principals: [new AnyPrincipal()],
             actions: ['s3:PutObject', 's3:ReplicateObject'],
             resources: resourceArns,
             conditions: {
-                'StringNotEquals': {'s3:x-amz-server-side-encryption': 'aws:kms'},
+                'StringNotEquals': {'s3:x-amz-server-side-encryption': encryptionMethod},
             },
         }),
         denyEveryoneElseStatement,
