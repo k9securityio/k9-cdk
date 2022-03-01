@@ -47,7 +47,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -113,7 +115,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -155,7 +159,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -200,7 +206,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -240,7 +248,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -273,7 +283,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -309,7 +321,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -345,7 +359,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -473,7 +489,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -537,7 +555,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -580,7 +600,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -625,7 +647,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -665,7 +689,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -698,7 +724,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -734,7 +762,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -770,7 +800,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -893,7 +925,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted administer-resource",
             },
@@ -920,7 +954,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted read-config",
             },
@@ -938,7 +974,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted read-data",
             },
@@ -963,7 +1001,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted write-data",
             },
@@ -980,7 +1020,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted delete-data",
             },
@@ -1144,7 +1186,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted administer-resource",
             },
@@ -1171,7 +1215,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted read-config",
             },
@@ -1189,7 +1235,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted read-data",
             },
@@ -1214,7 +1262,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted write-data",
             },
@@ -1231,7 +1281,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": "*",
               "Sid": "Allow Restricted delete-data",
             },
@@ -1288,22 +1340,30 @@ Object {
 exports[`k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObjects 1`] = `
 Object {
   "Parameters": Object {
-    "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392ArtifactHashE56CD69A": Object {
-      "Description": "Artifact hash for asset \\"4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392\\"",
+    "AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538ArtifactHash154EE95B": Object {
+      "Description": "Artifact hash for asset \\"15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538\\"",
       "Type": "String",
     },
-    "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3BucketBF7A7F3F": Object {
-      "Description": "S3 bucket for asset \\"4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392\\"",
+    "AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3BucketB021608E": Object {
+      "Description": "S3 bucket for asset \\"15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538\\"",
       "Type": "String",
     },
-    "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3VersionKeyFAF93626": Object {
-      "Description": "S3 key for asset version \\"4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392\\"",
+    "AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3VersionKeyC73B105A": Object {
+      "Description": "S3 key for asset version \\"15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538\\"",
       "Type": "String",
     },
   },
   "Resources": Object {
     "AutoDeleteBucket93E032C1": Object {
       "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true",
+          },
+        ],
+      },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Delete",
     },
@@ -1335,7 +1395,6 @@ Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
@@ -1409,7 +1468,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -1473,7 +1534,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -1513,7 +1576,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -1556,7 +1621,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -1596,7 +1663,9 @@ Object {
                 },
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -1629,7 +1698,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -1665,7 +1736,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -1701,7 +1774,9 @@ Object {
                 },
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": Object {
+                "AWS": "*",
+              },
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -1786,7 +1861,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3BucketBF7A7F3F",
+            "Ref": "AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3BucketB021608E",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1799,7 +1874,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3VersionKeyFAF93626",
+                          "Ref": "AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3VersionKeyC73B105A",
                         },
                       ],
                     },
@@ -1812,7 +1887,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3VersionKeyFAF93626",
+                          "Ref": "AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3VersionKeyC73B105A",
                         },
                       ],
                     },
