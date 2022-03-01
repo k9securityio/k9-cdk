@@ -31,10 +31,8 @@ const deleteDataArns = [
 
 const app = new cdk.App();
 
-const stack = new cdk.Stack(app, 'K9PolicyTest');
-
 test('K9BucketPolicy - typical usage', () => {
-
+    const stack = new cdk.Stack(app, 'K9PolicyTestTypicalUsage');
     const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
     const k9BucketPolicyProps: K9BucketPolicyProps = {
@@ -82,8 +80,8 @@ test('K9BucketPolicy - typical usage', () => {
 });
 
 test('K9BucketPolicy - specify encryption method - KMS', () => {
-    const localstack = new cdk.Stack(app, 'K9BucketPolicyWithEncryptionMethodKMS');
-    const bucket = new s3.Bucket(localstack, 'TestBucketWithEncryptionMethodKMS', {});
+    const stack = new cdk.Stack(app, 'K9BucketPolicyWithEncryptionMethodKMS');
+    const bucket = new s3.Bucket(stack, 'TestBucketWithEncryptionMethodKMS', {});
 
     const k9BucketPolicyProps: K9BucketPolicyProps = {
         bucket: bucket,
@@ -116,8 +114,8 @@ test('K9BucketPolicy - specify encryption method - KMS', () => {
 })
 
 test('K9BucketPolicy - specify encryption method - S3_MANAGED', () => {
-    const localstack = new cdk.Stack(app, 'K9BucketPolicyAlternateEncryptionMethod');
-    const bucket = new s3.Bucket(localstack, 'TestBucketWithAlternateEncryptionMethod', {});
+    const stack = new cdk.Stack(app, 'K9BucketPolicyAlternateEncryptionMethod');
+    const bucket = new s3.Bucket(stack, 'TestBucketWithAlternateEncryptionMethod', {});
 
     const k9BucketPolicyProps: K9BucketPolicyProps = {
         bucket: bucket,
@@ -187,7 +185,7 @@ test('K9BucketPolicy - AccessSpec with set of capabilities', () => {
 });
 
 test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObjects', () => {
-
+    const stack = new cdk.Stack(app, 'ManagePermissionsForAutoDeleteObjects');
     const bucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
         autoDeleteObjects: true,
         removalPolicy: RemovalPolicy.DESTROY
@@ -243,6 +241,7 @@ describe('K9KeyPolicy', () => {
         },
     );
     test('Without Allow root user and Identity policies', () => {
+        const stack = new cdk.Stack(app, 'WithoutRootAndIdentityPolicies');
         const k9KeyPolicyProps: K9KeyPolicyProps = {
             k9DesiredAccess: desiredAccess
         };
@@ -277,7 +276,7 @@ describe('K9KeyPolicy', () => {
     });
     
     test('Allow root user and Identity policies', () => {
-
+        const stack = new cdk.Stack(app, 'WithRootAndIdentityPolicies');
         const k9KeyPolicyProps: K9KeyPolicyProps = {
             k9DesiredAccess: desiredAccess,
             trustAccountIdentities: true
