@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as cdk from "@aws-cdk/core";
-import {RemovalPolicy} from "@aws-cdk/core";
+import {RemovalPolicy, Tags} from "@aws-cdk/core";
 import * as kms from "@aws-cdk/aws-kms";
 import * as s3 from "@aws-cdk/aws-s3";
 
@@ -104,8 +104,9 @@ const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
 const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
 // Set CDK preference @aws-cdk/aws-kms:defaultKeyPolicies to true in cdk.json
-new kms.Key(stack, 'KMSKey', {
+const key = new kms.Key(stack, 'KMSKey', {
     alias: 'k9-cdk-integration-test',
     policy: keyPolicy,
 });
 
+Tags.of(key).add('k9security:analysis', 'include');
