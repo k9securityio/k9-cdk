@@ -7,7 +7,6 @@ import {BucketEncryption} from '@aws-cdk/aws-s3';
 import {AccessCapability, AccessSpec} from '../lib/k9policy';
 import {
     K9BucketPolicyProps,
-    PublicAccessProps,
     SID_ALLOW_PUBLIC_READ_ACCESS,
     SID_DENY_UNEXPECTED_ENCRYPTION_METHOD
 } from "../lib/s3";
@@ -167,7 +166,7 @@ test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-rea
             }
         ),
         encryption: BucketEncryption.S3_MANAGED,
-        grantPublicReadAccess: true // or could accept PublicAccessProps and developers could use a constant s3.PUBLIC_READ_ACCESS_PROPS
+        publicReadAccess: true
     };
 
     let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "BucketPolicyForPublicWebsite", k9BucketPolicyProps);

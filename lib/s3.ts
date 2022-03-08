@@ -5,22 +5,11 @@ import * as cdk from "@aws-cdk/core";
 import {AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
 import * as aws_iam_utils from "./aws-iam-utils";
 
-export interface PublicAccessProps {
-    //could mimic signature used by CDK: https://github.com/aws/aws-cdk/blob/master/packages/%40aws-cdk/aws-s3/lib/bucket.ts#L807
-    keyPrefix: string
-    allowedActions: string[]
-}
-
-export const PUBLIC_READ_ACCESS_PROPS: PublicAccessProps = {
-    keyPrefix: '*',
-    allowedActions: ['s3:GetObject']
-} 
-
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
     readonly bucket: s3.Bucket
     readonly encryption?: BucketEncryption
-    readonly grantPublicReadAccess?: boolean
+    readonly publicReadAccess?: boolean
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
