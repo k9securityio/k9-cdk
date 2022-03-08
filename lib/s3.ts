@@ -5,10 +5,17 @@ import * as cdk from "@aws-cdk/core";
 import {AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement} from "@aws-cdk/aws-iam";
 import * as aws_iam_utils from "./aws-iam-utils";
 
+// export interface PublicAccessProps {
+//     //could mimic signature used by CDK: https://github.com/aws/aws-cdk/blob/master/packages/%40aws-cdk/aws-s3/lib/bucket.ts#L807
+//     keyPrefix: string
+//     allowedActions: string[]
+// }
+
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
     readonly bucket: s3.Bucket
     readonly encryption?: BucketEncryption
+    readonly grantPublicReadAccess?: boolean
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -20,6 +27,7 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 );
 
 export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMethod';
+export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
 
 /**
  * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities
