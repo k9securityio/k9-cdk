@@ -72,6 +72,18 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
         props.k9DesiredAccess,
         resourceArns);
 
+    if (props.publicReadAccess) {
+        k9Statements.push(
+            new PolicyStatement({
+                sid: SID_ALLOW_PUBLIC_READ_ACCESS,
+                effect: Effect.ALLOW,
+                principals: [new AnyPrincipal()],
+                actions: ['s3:GetObject'],
+                resources: [`${props.bucket.arnForObjects('*')}`]
+            })
+        );
+    }
+
     // Make Deny Statements
     const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
         'ArnNotLike' :
