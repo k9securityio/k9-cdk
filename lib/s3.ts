@@ -93,7 +93,7 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
     let encryptionMethod = 'aws:kms'
     if(props.encryption){
         if(BucketEncryption.S3_MANAGED == props.encryption){
-            encryptionMethod = 'AES-256'
+            encryptionMethod = 'AES256'
         }
     }
     k9Statements.push(

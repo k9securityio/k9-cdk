@@ -141,7 +141,7 @@ test('K9BucketPolicy - specify encryption method - S3_MANAGED', () => {
 
     for (let stmt of actualPolicyStatements) {
         if(SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid){
-            expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('AES-256');
+            expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('AES256');
         }
     }
 
