@@ -184,7 +184,7 @@ test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-rea
             expect(stmt.Principal).toEqual({"AWS": "*"})
             expect(stmt.Action).toEqual('s3:GetObject')
         } else if(SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid){
-            expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('AES-256');
+            expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('AES256');
         }
     }
 
