@@ -84,17 +84,29 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
         );
     }
 
-    // Make Deny Statements
+    // Make Deny Statement
     const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
         'ArnNotLike' :
         'ArnNotEquals';
-    const denyEveryoneElseStatement = new PolicyStatement({
-                sid: 'DenyEveryoneElse',
-                effect: Effect.DENY,
-                principals: policyFactory.makeDenyEveryoneElsePrincipals(),
-                actions: ['s3:*'],
-                resources: resourceArns
-            });
+    let denyEveryoneElseStatement: PolicyStatement;
+
+    if (props.publicReadAccess) {
+        denyEveryoneElseStatement = new PolicyStatement({
+            sid: 'DenyEveryoneElse',
+            effect: Effect.DENY,
+            principals: policyFactory.makeDenyEveryoneElsePrincipals(),
+            notActions: ['s3:GetObject'],
+            resources: resourceArns
+        });
+    } else {
+        denyEveryoneElseStatement = new PolicyStatement({
+            sid: 'DenyEveryoneElse',
+            effect: Effect.DENY,
+            principals: policyFactory.makeDenyEveryoneElsePrincipals(),
+            actions: ['s3:*'],
+            resources: resourceArns
+        });
+    }
     const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
     for (let origAWSPrincipal of origAllowedAWSPrincipals){
         allAllowedPrincipalArns.add(origAWSPrincipal);
