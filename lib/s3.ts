@@ -73,7 +73,7 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
         resourceArns);
 
     if (props.publicReadAccess) {
-        k9Statements.push(
+        k9Statements.unshift( // very important statement; put at beginning.
             new PolicyStatement({
                 sid: SID_ALLOW_PUBLIC_READ_ACCESS,
                 effect: Effect.ALLOW,
