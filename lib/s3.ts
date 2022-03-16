@@ -9,6 +9,7 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
     readonly k9DesiredAccess: Array<AccessSpec>
     readonly bucket: s3.Bucket
     readonly encryption?: BucketEncryption
+    readonly publicReadAccess?: boolean
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -20,6 +21,7 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 );
 
 export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMethod';
+export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
 
 /**
  * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities
@@ -70,17 +72,41 @@ export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, p
         props.k9DesiredAccess,
         resourceArns);
 
-    // Make Deny Statements
+    if (props.publicReadAccess) {
+        k9Statements.unshift( // very important statement; put at beginning.
+            new PolicyStatement({
+                sid: SID_ALLOW_PUBLIC_READ_ACCESS,
+                effect: Effect.ALLOW,
+                principals: [new AnyPrincipal()],
+                actions: ['s3:GetObject'],
+                resources: [`${props.bucket.arnForObjects('*')}`]
+            })
+        );
+    }
+
+    // Make Deny Statement
     const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
         'ArnNotLike' :
         'ArnNotEquals';
-    const denyEveryoneElseStatement = new PolicyStatement({
-                sid: 'DenyEveryoneElse',
-                effect: Effect.DENY,
-                principals: policyFactory.makeDenyEveryoneElsePrincipals(),
-                actions: ['s3:*'],
-                resources: resourceArns
-            });
+    let denyEveryoneElseStatement: PolicyStatement;
+
+    if (props.publicReadAccess) {
+        denyEveryoneElseStatement = new PolicyStatement({
+            sid: 'DenyEveryoneElse',
+            effect: Effect.DENY,
+            principals: policyFactory.makeDenyEveryoneElsePrincipals(),
+            notActions: ['s3:GetObject'],
+            resources: resourceArns
+        });
+    } else {
+        denyEveryoneElseStatement = new PolicyStatement({
+            sid: 'DenyEveryoneElse',
+            effect: Effect.DENY,
+            principals: policyFactory.makeDenyEveryoneElsePrincipals(),
+            actions: ['s3:*'],
+            resources: resourceArns
+        });
+    }
     const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
     for (let origAWSPrincipal of origAllowedAWSPrincipals){
         allAllowedPrincipalArns.add(origAWSPrincipal);

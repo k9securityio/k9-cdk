@@ -5,7 +5,7 @@ import * as kms from '@aws-cdk/aws-kms';
 import * as s3 from '@aws-cdk/aws-s3';
 import {BucketEncryption} from '@aws-cdk/aws-s3';
 import {AccessCapability, AccessSpec} from '../lib/k9policy';
-import {K9BucketPolicyProps, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD} from "../lib/s3";
+import {K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD} from "../lib/s3";
 import {K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE} from "../lib/kms";
 import * as k9 from "../lib";
 import {AddToResourcePolicyResult} from "@aws-cdk/aws-iam";
@@ -141,6 +141,49 @@ test('K9BucketPolicy - specify encryption method - S3_MANAGED', () => {
 
     for (let stmt of actualPolicyStatements) {
         if(SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid){
+            expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('AES256');
+        }
+    }
+
+});
+
+//public bucket use case: generate a policy that says sse-s3 is required and read-data by public is ok
+//but write-data is protected for example.
+test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-read + restricted-write ', () => {
+    const stack = new cdk.Stack(app, 'K9BucketPolicyPublicWebsite');
+    const bucket = new s3.Bucket(stack, 'TestBucketForPublicWebsite', {});
+
+    const k9BucketPolicyProps: K9BucketPolicyProps = {
+        bucket: bucket,
+        k9DesiredAccess: new Array<AccessSpec>(
+            {
+                accessCapabilities: AccessCapability.AdministerResource,
+                allowPrincipalArns: administerResourceArns,
+            }
+        ),
+        encryption: BucketEncryption.S3_MANAGED,
+        publicReadAccess: true
+    };
+
+    let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "BucketPolicyForPublicWebsite", k9BucketPolicyProps);
+    expect(bucket.policy).toBeDefined();
+
+    let policyStr = stringifyPolicy(bucket.policy?.document);
+    console.log("bucket.policy?.document: " + policyStr);
+    expect(bucket.policy?.document).toBeDefined();
+
+    assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults, k9BucketPolicyProps);
+    let policyObj = JSON.parse(policyStr)
+    let actualPolicyStatements = policyObj['Statement'];
+    expect(actualPolicyStatements).toBeDefined();
+
+    assertContainsStatementWithId(SID_ALLOW_PUBLIC_READ_ACCESS, actualPolicyStatements);
+
+    for (let stmt of actualPolicyStatements) {
+        if(SID_ALLOW_PUBLIC_READ_ACCESS == stmt.Sid){
+            expect(stmt.Principal).toEqual({"AWS": "*"})
+            expect(stmt.Action).toEqual('s3:GetObject')
+        } else if(SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid){
             expect(stmt.Condition['StringNotEquals']['s3:x-amz-server-side-encryption']).toEqual('AES256');
         }
     }
@@ -345,8 +388,24 @@ describe('K9KeyPolicy', () => {
 
 });
 
-function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: AddToResourcePolicyResult[]) {
-    expect(addToResourcePolicyResults.length).toEqual(9);
+function assertContainsStatementWithId(expectStmtId:string, statements:any){
+    let foundStmt = false;
+    console.log(`looking for statement id: ${expectStmtId}`)
+    for (let stmt of statements) {
+        if(expectStmtId == stmt.Sid){
+          foundStmt = true;
+          break;
+        }
+    }
+    expect(foundStmt).toBeTruthy();
+}
+
+function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: AddToResourcePolicyResult[], k9BucketPolicyProps?: K9BucketPolicyProps) {
+    let numExpectedStatements = 9;
+    if(k9BucketPolicyProps && k9BucketPolicyProps.publicReadAccess){
+        numExpectedStatements += 1;
+    }
+    expect(addToResourcePolicyResults.length).toEqual(numExpectedStatements);
     for (let result of addToResourcePolicyResults) {
         expect(result.statementAdded).toBeTruthy();
     }

@@ -4,6 +4,7 @@ import * as cdk from "@aws-cdk/core";
 import {RemovalPolicy, Tags} from "@aws-cdk/core";
 import * as kms from "@aws-cdk/aws-kms";
 import * as s3 from "@aws-cdk/aws-s3";
+import {BucketEncryption} from "@aws-cdk/aws-s3";
 
 import * as k9 from "../lib";
 
@@ -25,6 +26,8 @@ const readConfigArns = administerResourceArns.concat(
 
 const readWriteDataArns = [
     "arn:aws:iam::123456789012:role/app-backend",
+    "arn:aws:iam::139710491120:role/k9-dev-appeng",
+    "arn:aws:sts::139710491120:assumed-role/k9-dev-appeng/console",
 ];
 
 const readDataArns = [
@@ -37,7 +40,10 @@ const app = new cdk.App(
 );
 
 const stack = new cdk.Stack(app, 'K9PolicyLibIntegrationTest');
-const bucket = new s3.Bucket(stack, 'TestBucket', {});
+const bucket = new s3.Bucket(stack, 'TestBucket', {
+    bucketName: 'k9-cdk-internal-bucket-test',
+    removalPolicy: RemovalPolicy.DESTROY,
+});
 
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: bucket,
@@ -66,6 +72,21 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 };
 
 k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
+
+const websiteBucket = new s3.Bucket(stack, 'WebsiteBucket', {
+    bucketName: 'k9-cdk-public-website-test',
+    removalPolicy: RemovalPolicy.DESTROY,
+    encryption: BucketEncryption.S3_MANAGED,
+});
+
+const websiteK9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
+    bucket: websiteBucket,
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess.concat([]),
+    publicReadAccess: true,
+    encryption: BucketEncryption.S3_MANAGED,
+};
+
+k9.s3.grantAccessViaResourcePolicy(stack, "S3PublicWebsite", websiteK9BucketPolicyProps);
 
 const autoDeleteBucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
     bucketName: 'k9-cdk-auto-delete-test',
@@ -109,4 +130,6 @@ const key = new kms.Key(stack, 'KMSKey', {
     policy: keyPolicy,
 });
 
-Tags.of(key).add('k9security:analysis', 'include');
+for(let construct of [bucket, websiteBucket, autoDeleteBucket, key]){
+    Tags.of(construct).add('k9security:analysis', 'include');
+}
