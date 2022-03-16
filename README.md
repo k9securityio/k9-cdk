@@ -103,6 +103,11 @@ KMS Key Policy:
 * [Templatized Key Policy](examples/generated.key-policy.json)
 * [KeyPolicy attribute of Key resource in CFn template](examples/K9Example.template.json)
 
+## Specialized Use Cases
+
+k9-cdk can be configured to support specialized use cases, including:
+* [Public Bucket](docs/use-case-public-bucket.md) - Publicaly readable objects, least privilege for all other actions 
+
 ## Local Development and Testing
 
 The high level build commands for this project are driven by `make`:
