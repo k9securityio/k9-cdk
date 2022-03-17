@@ -120,7 +120,8 @@ console.log(`k9 autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
 // Now create a Key policy that grants access the same access
 const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
     k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess,
-    trustAccountIdentities: true  // the effective default
+    //trustAccountIdentities: true  // the effective default
+    trustAccountIdentities: false
 };
 const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 

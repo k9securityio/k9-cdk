@@ -48,13 +48,15 @@
               "Condition": {
                 "ArnEquals": {
                   "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:user/ci",
-                    "arn:aws:iam::12345678910:user/person1"
+                    "arn:aws:iam::123456789012:user/ci",
+                    "arn:aws:iam::123456789012:user/person1"
                   ]
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": [
                 {
                   "Fn::GetAtt": [
@@ -115,14 +117,16 @@
               "Condition": {
                 "ArnEquals": {
                   "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:role/k9-auditor",
-                    "arn:aws:iam::12345678910:user/ci",
-                    "arn:aws:iam::12345678910:user/person1"
+                    "arn:aws:iam::123456789012:user/ci",
+                    "arn:aws:iam::123456789012:user/person1",
+                    "arn:aws:iam::123456789012:role/k9-auditor"
                   ]
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": [
                 {
                   "Fn::GetAtt": [
@@ -159,13 +163,15 @@
               "Condition": {
                 "ArnEquals": {
                   "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service"
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service"
                   ]
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": [
                 {
                   "Fn::GetAtt": [
@@ -205,12 +211,14 @@
               "Condition": {
                 "ArnEquals": {
                   "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:role/app-backend"
+                    "arn:aws:iam::123456789012:role/app-backend"
                   ]
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": [
                 {
                   "Fn::GetAtt": [
@@ -248,7 +256,9 @@
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": [
                 {
                   "Fn::GetAtt": [
@@ -281,7 +291,9 @@
                 }
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": [
                 {
                   "Fn::GetAtt": [
@@ -317,7 +329,9 @@
                 }
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": [
                 {
                   "Fn::GetAtt": [
@@ -353,7 +367,9 @@
                 }
               },
               "Effect": "Deny",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": [
                 {
                   "Fn::GetAtt": [
@@ -376,18 +392,18 @@
                   ]
                 }
               ],
-              "Sid": "DenyStorageWithoutKMSEncryption"
+              "Sid": "DenyUnexpectedEncryptionMethod"
             },
             {
               "Action": "s3:*",
               "Condition": {
                 "ArnNotEquals": {
                   "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:user/ci",
-                    "arn:aws:iam::12345678910:user/person1",
-                    "arn:aws:iam::12345678910:role/k9-auditor",
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service"
+                    "arn:aws:iam::123456789012:user/ci",
+                    "arn:aws:iam::123456789012:user/person1",
+                    "arn:aws:iam::123456789012:role/k9-auditor",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service"
                   ]
                 }
               },
@@ -462,13 +478,15 @@
               "Condition": {
                 "ArnEquals": {
                   "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:user/ci",
-                    "arn:aws:iam::12345678910:user/person1"
+                    "arn:aws:iam::123456789012:user/ci",
+                    "arn:aws:iam::123456789012:user/person1"
                   ]
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": "*",
               "Sid": "Allow Restricted administer-resource"
             },
@@ -489,11 +507,16 @@
               ],
               "Condition": {
                 "ArnEquals": {
-                  "aws:PrincipalArn": []
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:user/ci",
+                    "arn:aws:iam::123456789012:user/person1"
+                  ]
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": "*",
               "Sid": "Allow Restricted read-config"
             },
@@ -505,13 +528,15 @@
               "Condition": {
                 "ArnEquals": {
                   "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service"
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service"
                   ]
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": "*",
               "Sid": "Allow Restricted read-data"
             },
@@ -531,12 +556,14 @@
               "Condition": {
                 "ArnEquals": {
                   "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:role/app-backend"
+                    "arn:aws:iam::123456789012:role/app-backend"
                   ]
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": "*",
               "Sid": "Allow Restricted write-data"
             },
@@ -551,60 +578,11 @@
                 }
               },
               "Effect": "Allow",
-              "Principal": "*",
+              "Principal": {
+                "AWS": "*"
+              },
               "Resource": "*",
               "Sid": "Allow Restricted delete-data"
-            },
-            {
-              "Action": "kms:*",
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":root"
-                    ]
-                  ]
-                }
-              },
-              "Resource": "*",
-              "Sid": "AllowRootUserToAdministerKey"
-            },
-            {
-              "Action": "kms:*",
-              "Condition": {
-                "Bool": {
-                  "aws:PrincipalIsAWSService": [
-                    "false"
-                  ]
-                },
-                "ArnNotEquals": {
-                  "aws:PrincipalArn": [
-                    "arn:aws:iam::12345678910:user/ci",
-                    "arn:aws:iam::12345678910:user/person1",
-                    "arn:aws:iam::12345678910:role/app-backend",
-                    "arn:aws:iam::12345678910:role/customer-service"
-                  ]
-                }
-              },
-              "Effect": "Deny",
-              "Principal": {
-                "AWS": [
-                  "*",
-                  "*"
-                ]
-              },
-              "Resource": "*",
-              "Sid": "DenyEveryoneElse"
             },
             {
               "Action": [
@@ -658,7 +636,7 @@
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Analytics": "v2:deflate64:H4sIAAAAAAAAE0WLSwrCMBCGz9J9OrU+EHdil26knqBMRkhjM5BJFAm5u20juPr+ZwunA2yr8/CWGrVtErInSPcwoFUdOwk+YlDdw/UkHD3SoudCm2DYZbUck+wgXSJaWpc/VXDjp8HPPy4+KzsJpCutzYycs3KsCUZpXu0e2iNsqlGMqX10wUwEfeEX/mH+tLEAAAA="
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WOwQrCMBBEv8V7ujVY8Cr26EXqF5TNCmlsFrJJRUL+3aYVPL3ZmVkYDbo7w/FwGd/SoHFtRg4E+RFHdKpnLzEkjKp/+oGEU0Cqeg2MjZZ9UfUxywnyNaGjrflTO+78svj52/tdlJsF8o22ZEUpRXk2BJO0i+5A11WTWNuE5KOdCYadX7HXqu2yAAAA"
       },
       "Metadata": {
         "aws:cdk:path": "K9Example/CDKMetadata/Default"

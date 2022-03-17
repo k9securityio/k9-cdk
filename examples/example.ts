@@ -57,7 +57,10 @@ writeFileSync('generated.bucket-policy.json',
 const keyPolicyProps: k9.kms.K9KeyPolicyProps = {
     k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
         {
-            accessCapabilities: k9.k9policy.AccessCapability.AdministerResource,
+            accessCapabilities: [
+                k9.k9policy.AccessCapability.AdministerResource,
+                k9.k9policy.AccessCapability.ReadConfig
+            ],
             allowPrincipalArns: administerResourceArns,
         },
         {

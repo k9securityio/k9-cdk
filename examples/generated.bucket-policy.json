@@ -32,16 +32,18 @@
       "Condition": {
         "ArnEquals": {
           "aws:PrincipalArn": [
-            "arn:aws:iam::12345678910:user/ci",
-            "arn:aws:iam::12345678910:user/person1"
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1"
           ]
         }
       },
       "Effect": "Allow",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "*"
+      },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted administer-resource"
     },
@@ -81,17 +83,19 @@
       "Condition": {
         "ArnEquals": {
           "aws:PrincipalArn": [
-            "arn:aws:iam::12345678910:role/k9-auditor",
-            "arn:aws:iam::12345678910:user/ci",
-            "arn:aws:iam::12345678910:user/person1"
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1",
+            "arn:aws:iam::123456789012:role/k9-auditor"
           ]
         }
       },
       "Effect": "Allow",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "*"
+      },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted read-config"
     },
@@ -107,16 +111,18 @@
       "Condition": {
         "ArnEquals": {
           "aws:PrincipalArn": [
-            "arn:aws:iam::12345678910:role/app-backend",
-            "arn:aws:iam::12345678910:role/customer-service"
+            "arn:aws:iam::123456789012:role/app-backend",
+            "arn:aws:iam::123456789012:role/customer-service"
           ]
         }
       },
       "Effect": "Allow",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "*"
+      },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted read-data"
     },
@@ -135,15 +141,17 @@
       "Condition": {
         "ArnEquals": {
           "aws:PrincipalArn": [
-            "arn:aws:iam::12345678910:role/app-backend"
+            "arn:aws:iam::123456789012:role/app-backend"
           ]
         }
       },
       "Effect": "Allow",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "*"
+      },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted write-data"
     },
@@ -160,10 +168,12 @@
         }
       },
       "Effect": "Allow",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "*"
+      },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted delete-data"
     },
@@ -175,10 +185,12 @@
         }
       },
       "Effect": "Deny",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "*"
+      },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "DenyInsecureCommunications"
     },
@@ -193,10 +205,12 @@
         }
       },
       "Effect": "Deny",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "*"
+      },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "DenyUnencryptedStorage"
     },
@@ -211,23 +225,25 @@
         }
       },
       "Effect": "Deny",
-      "Principal": "*",
+      "Principal": {
+        "AWS": "*"
+      },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
-      "Sid": "DenyStorageWithoutKMSEncryption"
+      "Sid": "DenyUnexpectedEncryptionMethod"
     },
     {
       "Action": "s3:*",
       "Condition": {
         "ArnNotEquals": {
           "aws:PrincipalArn": [
-            "arn:aws:iam::12345678910:user/ci",
-            "arn:aws:iam::12345678910:user/person1",
-            "arn:aws:iam::12345678910:role/k9-auditor",
-            "arn:aws:iam::12345678910:role/app-backend",
-            "arn:aws:iam::12345678910:role/customer-service"
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1",
+            "arn:aws:iam::123456789012:role/k9-auditor",
+            "arn:aws:iam::123456789012:role/app-backend",
+            "arn:aws:iam::123456789012:role/customer-service"
           ]
         }
       },
@@ -239,8 +255,8 @@
         ]
       },
       "Resource": [
-        "${Token[TOKEN.27]}",
-        "${Token[TOKEN.27]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "DenyEveryoneElse"
     }
