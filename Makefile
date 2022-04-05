@@ -59,6 +59,7 @@ init:
 	@npm install
 
 lint:
+	# Consider linting with https://github.com/cdklabs/cdk-nag
 	@echo "linting (TODO)"
 
 build:
