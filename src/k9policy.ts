@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-import { stringify } from 'querystring';
 import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps } from 'aws-cdk-lib/aws-iam';
 
 export type ArnEqualsTest = 'ArnEquals'
@@ -56,7 +55,7 @@ export class K9PolicyFactory {
       //ok, user has specified a test at some point; ensure this desiredAccessSpec.test matches
       if (target.test != addition.test) {
         let msg = 'Cannot merge AccessSpecs; test attributes do not match:' +
-                    `\n${stringify(target)}\n${stringify(addition)}`;
+                    `\n${JSON.stringify(target)}\n${JSON.stringify(addition)}`;
         throw Error(msg);
       }
     } else {

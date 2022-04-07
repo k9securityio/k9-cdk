@@ -1,7 +1,7 @@
+import { IConstruct } from 'constructs';
 import { AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
-import * as cdk from 'aws-cdk-lib/core';
 import * as aws_iam_utils from './aws-iam-utils';
 import { AccessCapability, AccessSpec, K9PolicyFactory } from './k9policy';
 
@@ -44,7 +44,7 @@ export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
  *
  * @return an array of AddToResourcePolicyResult
  */
-export function grantAccessViaResourcePolicy(scope: cdk.Construct, id: string, props: K9BucketPolicyProps): AddToResourcePolicyResult[] {
+export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, props: K9BucketPolicyProps): AddToResourcePolicyResult[] {
   const policyFactory = new K9PolicyFactory();
   // If the bucket already has a policy, use it.  Maintaining the existing policy instance
   // is important because other CDK features like S3 autoDeleteObjects may have expressed dependencies
