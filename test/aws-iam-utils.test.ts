@@ -1,5 +1,5 @@
 import { PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { getAllowedPrincipalArns } from '../lib/aws-iam-utils';
+import { getAllowedPrincipalArns } from '../src/aws-iam-utils';
 
 test('getAllowedPrincipalArns should return empty when Policy has no statements', () => {
   expect(getAllowedPrincipalArns(new PolicyDocument())).toEqual(new Set<string>());

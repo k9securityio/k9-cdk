@@ -1,14 +1,15 @@
-import { expect as expectCDK, haveResource, SynthUtils } from 'aws-cdk-lib/assert';
+import { expect as expectCDK, haveResource, SynthUtils } from '@aws-cdk/assert';
 import { AddToResourcePolicyResult } from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
-import * as k9 from '../lib';
-import { AccessCapability, AccessSpec } from '../lib/k9policy';
-import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
-import { K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD } from '../lib/s3';
+import * as k9 from '../src';
+import { AccessCapability, AccessSpec } from '../src/k9policy';
+import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../src/kms';
+import { K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD } from '../src/s3';
+// @ts-ignore
 import { stringifyPolicy } from './helpers';
 
 // Test the primary public interface to k9 cdk
@@ -375,7 +376,7 @@ describe('K9KeyPolicy', () => {
 
         let k9KeyPolicyProps: K9KeyPolicyProps = {
           k9DesiredAccess: desiredAccess,
-          trustAccountIdentities: true,
+          trustAccountIdentities: trustAccountIdentities,
         };
 
         expect(() => k9.kms.makeKeyPolicy(k9KeyPolicyProps))

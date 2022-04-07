@@ -51,6 +51,7 @@ test('K9PolicyFactory#getAllowedPrincipalArns', () => {
 });
 
 // noinspection JSUnusedLocalSymbols
+// @ts-ignore
 function logStatement(stmt: PolicyStatement) {
   let statementJsonStr = stringifyStatement(stmt);
   console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);

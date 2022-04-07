@@ -17,12 +17,15 @@ const project = new awscdk.AwsCdkConstructLibrary({
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
 
+  testdir: "test",
+
   npmDistTag: 'latest',
 
   // deps: [],                /* Runtime dependencies of this module. */
   /* devDeps contains Build dependencies for this module. */
   devDeps: [
-    'yarn'
+    'yarn',
+    '@aws-cdk/assert'
   ],
 });
 
