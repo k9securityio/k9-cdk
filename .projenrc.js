@@ -17,7 +17,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
 
-  testdir: "test",
+  testdir: 'test',
 
   npmDistTag: 'latest',
 
@@ -25,7 +25,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   /* devDeps contains Build dependencies for this module. */
   devDeps: [
     'yarn',
-    '@aws-cdk/assert'
+    '@aws-cdk/assert',
   ],
 });
 
