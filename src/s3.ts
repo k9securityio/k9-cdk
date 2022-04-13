@@ -1,7 +1,7 @@
-import { IConstruct } from 'constructs';
 import { AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
+import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
 import { AccessCapability, AccessSpec, K9PolicyFactory } from './k9policy';
 
