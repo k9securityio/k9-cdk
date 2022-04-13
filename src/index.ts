@@ -1,3 +1,3 @@
-export import k9policy = require('./k9policy');
-export import kms = require('./kms');
-export import s3 = require('./s3');
+export * from './k9policy';
+export * from './kms';
+export * from './s3';
