@@ -1,4 +1,3 @@
-import { readFileSync } from 'fs';
 import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps } from 'aws-cdk-lib/aws-iam';
 
 export type ArnEqualsTest = 'ArnEquals'
@@ -29,7 +28,7 @@ export class K9PolicyFactory {
     'S3',
     'KMS',
   ]);
-  _K9CapabilityMapJSON: Object = JSON.parse(readFileSync(`${__dirname}/capability_summary.json`).toString());
+  _K9CapabilityMapJSON: Object = require('../resources/capability_summary.json');
   K9CapabilityMapByService: Map<string, Object> = new Map(Object.entries(this._K9CapabilityMapJSON));
 
   getActions(service: string, accessCapability: AccessCapability): Array<string> {
