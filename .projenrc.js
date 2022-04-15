@@ -28,6 +28,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
     'yarn',
     '@aws-cdk/assert',
   ],
+
+  docgen: false,
 });
 
 project.synth();
