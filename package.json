@@ -31,9 +31,9 @@
     "projen": "npx projen"
   },
   "author": {
-    "name": "K9 Security",
+    "name": "k9 Security",
     "email": "hello@k9security.io",
-    "organization": false
+    "organization": true
   },
   "devDependencies": {
     "@aws-cdk/assert": "^2.20.0",

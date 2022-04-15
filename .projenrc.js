@@ -10,7 +10,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   packageName: '@k9securityio/k9-cdk', /* The "name" in package.json. */
   repositoryUrl: 'https://github.com/k9securityio/k9-cdk.git',
 
-  author: 'K9 Security',
+  author: 'k9 Security',
+  authorOrganization: true,
   authorAddress: 'hello@k9security.io',
 
   cdkVersion: '2.1.0',
