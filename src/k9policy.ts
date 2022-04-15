@@ -17,9 +17,9 @@ export enum AccessCapability {
 }
 
 export interface AccessSpec {
-  accessCapabilities: Array<AccessCapability> | AccessCapability;
-  allowPrincipalArns: Array<string>;
-  test?: ArnConditionTest;
+  readonly accessCapabilities: Array<AccessCapability> | AccessCapability;
+  readonly allowPrincipalArns: Array<string>;
+  readonly test?: ArnConditionTest;
 }
 
 export class K9PolicyFactory {
