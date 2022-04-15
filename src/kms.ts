@@ -1,9 +1,9 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { AccessCapability, IAccessSpec, K9PolicyFactory } from './k9policy';
+import { AccessCapability, AccessSpec, K9PolicyFactory } from './k9policy';
 
 export interface K9KeyPolicyProps {
-  readonly k9DesiredAccess: Array<IAccessSpec>;
+  readonly k9DesiredAccess: Array<AccessSpec>;
   readonly trustAccountIdentities?: boolean;
 }
 
@@ -18,7 +18,7 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_ALLOW_ROOT_AND_IDENTITY_POLICIES = 'Allow Root User to Administer Key And Identity Policies';
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
-function canPrincipalsCanManageKey(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
+function canPrincipalsCanManageKey(accessSpecsByCapability: Map<AccessCapability, AccessSpec>) {
   let adminSpec = accessSpecsByCapability.get(AccessCapability.AdministerResource);
   let readConfigSpec = accessSpecsByCapability.get(AccessCapability.ReadConfig);
 
@@ -39,7 +39,7 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
 
   const resourceArns = ['*'];
 
-  let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = policyFactory.mergeDesiredAccessSpecsByCapability(SUPPORTED_CAPABILITIES, props.k9DesiredAccess);
+  let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = policyFactory.mergeDesiredAccessSpecsByCapability(SUPPORTED_CAPABILITIES, props.k9DesiredAccess);
 
   if (!canPrincipalsCanManageKey(accessSpecsByCapability)) {
     throw Error('At least one principal must be able to administer and read-config for keys' +
