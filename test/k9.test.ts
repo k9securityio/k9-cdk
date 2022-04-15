@@ -6,7 +6,7 @@ import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
 import * as k9 from '../src';
-import { AccessCapability, AccessSpec } from '../src/k9policy';
+import { AccessCapability, IAccessSpec } from '../src/k9policy';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../src/kms';
 import { K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD } from '../src/s3';
 // @ts-ignore
@@ -38,7 +38,7 @@ test('K9BucketPolicy - typical usage', () => {
 
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<AccessSpec>(
+    k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: AccessCapability.AdministerResource,
         allowPrincipalArns: administerResourceArns,
@@ -86,7 +86,7 @@ test('K9BucketPolicy - specify encryption method - KMS', () => {
 
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<AccessSpec>(
+    k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: AccessCapability.AdministerResource,
         allowPrincipalArns: administerResourceArns,
@@ -120,7 +120,7 @@ test('K9BucketPolicy - specify encryption method - S3_MANAGED', () => {
 
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<AccessSpec>(
+    k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: AccessCapability.AdministerResource,
         allowPrincipalArns: administerResourceArns,
@@ -156,7 +156,7 @@ test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-rea
 
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<AccessSpec>(
+    k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: AccessCapability.AdministerResource,
         allowPrincipalArns: administerResourceArns,
@@ -191,13 +191,13 @@ test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-rea
 
 });
 
-test('K9BucketPolicy - AccessSpec with set of capabilities', () => {
+test('K9BucketPolicy - IAccessSpec with set of capabilities', () => {
   const localstack = new cdk.Stack(app, 'K9BucketPolicyMultiAccessCapa');
   const bucket = new s3.Bucket(localstack, 'TestBucketWithMultiAccessSpec', {});
 
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<AccessSpec>(
+    k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: [
           AccessCapability.AdministerResource,
@@ -241,7 +241,7 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
 
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<AccessSpec>(
+    k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: AccessCapability.AdministerResource,
         allowPrincipalArns: administerResourceArns,
@@ -263,7 +263,7 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
 });
 
 describe('K9KeyPolicy', () => {
-  const desiredAccess = new Array<AccessSpec>(
+  const desiredAccess = new Array<IAccessSpec>(
     {
       accessCapabilities: [
         AccessCapability.AdministerResource,
@@ -367,7 +367,7 @@ describe('K9KeyPolicy', () => {
 
     for (let trustAccountIdentities of [true, false]) {
       for (let unmanageableAccessCapabilities of unmanageableCapabilityCombos) {
-        let desiredAccess = new Array<AccessSpec>(
+        let desiredAccess = new Array<IAccessSpec>(
           {
             accessCapabilities: unmanageableAccessCapabilities,
             allowPrincipalArns: administerResourceArns,

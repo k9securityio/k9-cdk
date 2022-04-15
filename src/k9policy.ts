@@ -16,7 +16,7 @@ export enum AccessCapability {
   DeleteData = 'delete-data',
 }
 
-export interface AccessSpec {
+export interface IAccessSpec {
   accessCapabilities: Array<AccessCapability> | AccessCapability;
   allowPrincipalArns: Array<string>;
   test?: ArnConditionTest;
@@ -48,7 +48,7 @@ export class K9PolicyFactory {
     }
   }
 
-  _mergeAccessSpecs(target: AccessSpec, addition: AccessSpec) {
+  _mergeAccessSpecs(target: IAccessSpec, addition: IAccessSpec) {
     target.allowPrincipalArns.push(...addition.allowPrincipalArns);
     if (target.test) {
       //ok, user has specified a test at some point; ensure this desiredAccessSpec.test matches
@@ -67,9 +67,9 @@ export class K9PolicyFactory {
   }
 
   mergeDesiredAccessSpecsByCapability(supportedCapabilities: Array<AccessCapability>,
-    desiredAccess: Array<AccessSpec>): Map<AccessCapability, AccessSpec> {
+    desiredAccess: Array<IAccessSpec>): Map<AccessCapability, IAccessSpec> {
 
-    let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
+    let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = new Map<AccessCapability, IAccessSpec>();
     // 1. populate accessSpecsByCapability with fresh AccessSpecs for each supported capability
     // 2. iterate through desiredAccess specs and merge data into what we'll use
     //    important: detect mismatched test types
@@ -80,7 +80,7 @@ export class K9PolicyFactory {
 
     for (let supportedCapability of supportedCapabilities) {
       //generate a default access spec for each of the service's supported capabilities
-      let effectiveAccessSpec: AccessSpec = {
+      let effectiveAccessSpec: IAccessSpec = {
         accessCapabilities: supportedCapability,
         allowPrincipalArns: new Array<string>(),
         // leave 'test' property unset; will populate from user-provided data
@@ -109,15 +109,15 @@ export class K9PolicyFactory {
 
   makeAllowStatements(serviceName: string,
     supportedCapabilities: Array<AccessCapability>,
-    desiredAccess: Array<AccessSpec>,
+    desiredAccess: Array<IAccessSpec>,
     resourceArns: Array<string>): Array<PolicyStatement> {
     let policyStatements = new Array<PolicyStatement>();
-    let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = this.mergeDesiredAccessSpecsByCapability(supportedCapabilities, desiredAccess);
+    let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = this.mergeDesiredAccessSpecsByCapability(supportedCapabilities, desiredAccess);
 
     // ok, time to actually make Allow Statements from our AccessSpecs
     for (let supportedCapability of supportedCapabilities) {
 
-      let accessSpec: AccessSpec = accessSpecsByCapability.get(supportedCapability) ||
+      let accessSpec: IAccessSpec = accessSpecsByCapability.get(supportedCapability) ||
                 { //satisfy compiler; should never happen, because we populate at the beginning.
                   //generate a default access spec if none was provided
                   accessCapabilities: [supportedCapability],
@@ -174,7 +174,7 @@ export class K9PolicyFactory {
     return statement;
   }
 
-  wasLikeUsed(accessSpecs: AccessSpec[]): boolean {
+  wasLikeUsed(accessSpecs: IAccessSpec[]): boolean {
     for (let accessSpec of accessSpecs) {
       if ('ArnLike' == accessSpec.test) {
         return true;
@@ -183,7 +183,7 @@ export class K9PolicyFactory {
     return false;
   }
 
-  getAllowedPrincipalArns(accessSpecs: AccessSpec[]): Set<string> {
+  getAllowedPrincipalArns(accessSpecs: IAccessSpec[]): Set<string> {
     let allowedPrincipalArns = new Set<string>();
     for (let accessSpec of accessSpecs) {
       accessSpec.allowPrincipalArns.forEach(function (value) {
