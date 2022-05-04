@@ -24,19 +24,23 @@ export interface AccessSpec {
 
 export class K9PolicyFactory {
 
-  SUPPORTED_SERVICES = new Set<string>([
+  /** @internal */
+  _SUPPORTED_SERVICES = new Set<string>([
     'S3',
     'KMS',
   ]);
+  
+  /** @internal */
   _K9CapabilityMapJSON: Object = require('../resources/capability_summary.json');
-  K9CapabilityMapByService: Map<string, Object> = new Map(Object.entries(this._K9CapabilityMapJSON));
+  /** @internal */
+  _K9CapabilityMapByService: Map<string, Object> = new Map(Object.entries(this._K9CapabilityMapJSON));
 
   getActions(service: string, accessCapability: AccessCapability): Array<string> {
-    if (!this.SUPPORTED_SERVICES.has(service) && this.K9CapabilityMapByService.has(service)) {
+    if (!this._SUPPORTED_SERVICES.has(service) && this._K9CapabilityMapByService.has(service)) {
       throw Error(`unsupported service: ${service}`);
     }
 
-    let serviceCapabilitiesObj: Object = this.K9CapabilityMapByService.get(service) || {};
+    let serviceCapabilitiesObj: Object = this._K9CapabilityMapByService.get(service) || {};
     let serviceCapabilitiesMap = new Map<string, Array<string>>(Object.entries(serviceCapabilitiesObj));
 
     let accessCapabilityName = accessCapability.toString();
@@ -48,6 +52,7 @@ export class K9PolicyFactory {
     }
   }
 
+  /** @internal */
   _mergeAccessSpecs(target: AccessSpec, addition: AccessSpec) {
     target.allowPrincipalArns.push(...addition.allowPrincipalArns);
     if (target.test) {
