@@ -758,14 +758,6 @@
   resolved "https://registry.npmjs.org/@types/color-name/-/color-name-1.1.1.tgz"
   integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
 
-"@types/glob@*":
-  version "7.2.0"
-  resolved "https://registry.npmjs.org/@types/glob/-/glob-7.2.0.tgz"
-  integrity sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==
-  dependencies:
-    "@types/minimatch" "*"
-    "@types/node" "*"
-
 "@types/graceful-fs@^4.1.2":
   version "4.1.5"
   resolved "https://registry.npmjs.org/@types/graceful-fs/-/graceful-fs-4.1.5.tgz"
@@ -809,11 +801,6 @@
   version "0.0.29"
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
-
-"@types/minimatch@*":
-  version "3.0.5"
-  resolved "https://registry.npmjs.org/@types/minimatch/-/minimatch-3.0.5.tgz"
-  integrity sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==
 
 "@types/minimist@^1.2.0":
   version "1.2.2"
@@ -3005,13 +2992,6 @@ glob-parent@^6.0.1:
   dependencies:
     is-glob "^4.0.3"
 
-glob-promise@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.npmjs.org/glob-promise/-/glob-promise-3.4.0.tgz"
-  integrity sha512-q08RJ6O+eJn+dVanerAndJwIcumgbDdYiUT7zFQl3Wm1xD6fBKtah7H8ZJChj4wP+8C+QfeVy8xautR7rdmKEw==
-  dependencies:
-    "@types/glob" "*"
-
 glob@^7, glob@^7.0.0, glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@^7.1.4, glob@^7.2.0:
   version "7.2.0"
   resolved "https://registry.npmjs.org/glob/-/glob-7.2.0.tgz"
@@ -4234,21 +4214,6 @@ jsii-diff@^1.55.1:
     jsii-reflect "^1.55.1"
     log4js "^6.4.2"
     typescript "~3.9.10"
-    yargs "^16.2.0"
-
-jsii-docgen@^6.3.1:
-  version "6.3.1"
-  resolved "https://registry.npmjs.org/jsii-docgen/-/jsii-docgen-6.3.1.tgz"
-  integrity sha512-Te01AMnUYWkXYZFArgKQncBEOI2En/WdWmNwr+r/dS9vF7Znzv6tEvGcKPsA4hm2//368s3dUWr90mxCkJ8HDA==
-  dependencies:
-    "@jsii/spec" "^1.55.1"
-    case "^1.6.3"
-    fs-extra "^10.0.1"
-    glob "^7.2.0"
-    glob-promise "^3.4.0"
-    jsii-reflect "^1.55.1"
-    jsii-rosetta "^1.55.1"
-    semver "^7.3.5"
     yargs "^16.2.0"
 
 jsii-pacmak@^1.55.1:
