@@ -6,9 +6,9 @@ import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
 import * as k9 from '../lib';
-import { AccessCapability, IAccessSpec } from '../lib';
-import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../src/kms';
-import { K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD } from '../src/s3';
+import { AccessCapability, IAccessSpec } from '../lib/k9policy';
+import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
+import { K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD } from '../lib/s3';
 // @ts-ignore
 import { stringifyPolicy } from './helpers';
 

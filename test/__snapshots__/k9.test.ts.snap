@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`K9BucketPolicy - AccessSpec with set of capabilities 1`] = `
+exports[`K9BucketPolicy - IAccessSpec with set of capabilities 1`] = `
 Object {
   "Resources": Object {
     "S3BucketMultiAccessSpecPolicyE07423DB": Object {
@@ -41,9 +41,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::139710491120:user/ci",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -109,9 +107,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::139710491120:user/ci",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -153,9 +149,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::123456789012:role/app-backend",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -200,9 +194,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::123456789012:role/app-backend",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -242,9 +234,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::123456789012:role/app-backend",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -483,9 +473,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::139710491120:user/ci",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -593,10 +581,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::123456789012:role/app-backend",
-                    "arn:aws:iam::123456789012:role/customer-service",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -641,9 +626,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::123456789012:role/app-backend",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -683,9 +666,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::139710491120:user/super-admin",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -1370,9 +1351,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::139710491120:user/ci",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
@@ -1565,9 +1544,7 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [
-                    "arn:aws:iam::139710491120:user/super-admin",
-                  ],
+                  "aws:PrincipalArn": Array [],
                 },
               },
               "Effect": "Allow",
