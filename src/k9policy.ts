@@ -1,4 +1,4 @@
-import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps } from 'aws-cdk-lib/aws-iam';
+import {AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps} from 'aws-cdk-lib/aws-iam';
 
 export type ArnEqualsTest = 'ArnEquals'
 
@@ -72,7 +72,7 @@ export class K9PolicyFactory {
   }
 
   mergeDesiredAccessSpecsByCapability(supportedCapabilities: Array<AccessCapability>,
-    desiredAccess: Array<AccessSpec>): Map<AccessCapability, AccessSpec> {
+    desiredAccess: Array<AccessSpec>): Record<string, AccessSpec> {
 
     let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map<AccessCapability, AccessSpec>();
     // 1. populate accessSpecsByCapability with fresh AccessSpecs for each supported capability
@@ -109,7 +109,20 @@ export class K9PolicyFactory {
         }
       }
     }
-    return accessSpecsByCapability;
+    /**
+     * function changeAllPeriods(metrics: Record<string, IMetric>, period: cdk.Duration): Record<string, IMetric> {
+     *   const ret: Record<string, IMetric> = {};
+     *   for (const [id, metric] of Object.entries(metrics)) {
+     *     ret[id] = changePeriod(metric, period);
+     *   }
+     *   return ret;
+     * }
+     */
+    const ret: Record<string, AccessSpec> = {};
+    for (const [capability, spec] of Object.entries(accessSpecsByCapability)) {
+      ret[capability] = spec;
+    }
+    return ret;
   }
 
   makeAllowStatements(serviceName: string,
@@ -117,7 +130,12 @@ export class K9PolicyFactory {
     desiredAccess: Array<AccessSpec>,
     resourceArns: Array<string>): Array<PolicyStatement> {
     let policyStatements = new Array<PolicyStatement>();
-    let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = this.mergeDesiredAccessSpecsByCapability(supportedCapabilities, desiredAccess);
+    let accessSpecsByCapabilityRecs = this.mergeDesiredAccessSpecsByCapability(supportedCapabilities, desiredAccess);
+    let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map();
+
+    for (let [capabilityStr, accessSpec] of Object.entries(accessSpecsByCapabilityRecs)) {
+      accessSpecsByCapability.set((<any>AccessCapability)[capabilityStr], accessSpec);
+    }
 
     // ok, time to actually make Allow Statements from our AccessSpecs
     for (let supportedCapability of supportedCapabilities) {

@@ -39,7 +39,12 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
 
   const resourceArns = ['*'];
 
-  let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = policyFactory.mergeDesiredAccessSpecsByCapability(SUPPORTED_CAPABILITIES, props.k9DesiredAccess);
+  let accessSpecsByCapabilityRecs = policyFactory.mergeDesiredAccessSpecsByCapability(SUPPORTED_CAPABILITIES, props.k9DesiredAccess);
+  let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map();
+
+  for (let [capabilityStr, accessSpec] of Object.entries(accessSpecsByCapabilityRecs)) {
+    accessSpecsByCapability.set((<any>AccessCapability)[capabilityStr], accessSpec);
+  }
 
   if (!canPrincipalsCanManageKey(accessSpecsByCapability)) {
     throw Error('At least one principal must be able to administer and read-config for keys' +
