@@ -188,14 +188,14 @@ export class K9PolicyFactory {
     return false;
   }
 
-  getAllowedPrincipalArns(accessSpecs: AccessSpec[]): Set<string> {
+  getAllowedPrincipalArns(accessSpecs: AccessSpec[]): Array<string> {
     let allowedPrincipalArns = new Set<string>();
     for (let accessSpec of accessSpecs) {
       accessSpec.allowPrincipalArns.forEach(function (value) {
         allowedPrincipalArns.add(value);
       });
     }
-    return allowedPrincipalArns;
+    return Array.from(allowedPrincipalArns);
   }
 
   /**

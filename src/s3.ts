@@ -1,9 +1,9 @@
-import { AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import {AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement} from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
-import { IConstruct } from 'constructs';
+import {BucketEncryption} from 'aws-cdk-lib/aws-s3';
+import {IConstruct} from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
-import { AccessCapability, AccessSpec, K9PolicyFactory } from './k9policy';
+import {AccessCapability, AccessSpec, K9PolicyFactory} from './k9policy';
 
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
   readonly k9DesiredAccess: Array<AccessSpec>;
@@ -107,7 +107,7 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
       resources: resourceArns,
     });
   }
-  const allAllowedPrincipalArns = policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess);
+  const allAllowedPrincipalArns = new Set<string>(policyFactory.getAllowedPrincipalArns(props.k9DesiredAccess));
   for (let origAWSPrincipal of origAllowedAWSPrincipals) {
     allAllowedPrincipalArns.add(origAWSPrincipal);
   }
