@@ -7,7 +7,6 @@ import {AccessCapability, IAccessSpec, K9PolicyFactory} from './k9policy';
 
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
   readonly k9DesiredAccess: Array<IAccessSpec>;
-  readonly bucket: s3.Bucket;
   readonly encryption?: BucketEncryption;
   readonly publicReadAccess?: boolean;
 }
