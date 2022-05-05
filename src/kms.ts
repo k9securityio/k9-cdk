@@ -1,9 +1,9 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { AccessCapability, AccessSpec, K9PolicyFactory } from './k9policy';
+import { AccessCapability, IAccessSpec, K9PolicyFactory } from './k9policy';
 
 export interface K9KeyPolicyProps {
-  readonly k9DesiredAccess: Array<AccessSpec>;
+  readonly k9DesiredAccess: Array<IAccessSpec>;
   readonly trustAccountIdentities?: boolean;
 }
 
@@ -18,7 +18,7 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_ALLOW_ROOT_AND_IDENTITY_POLICIES = 'Allow Root User to Administer Key And Identity Policies';
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
-function canPrincipalsCanManageKey(accessSpecsByCapability: Map<AccessCapability, AccessSpec>) {
+function canPrincipalsCanManageKey(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
   let adminSpec = accessSpecsByCapability.get(AccessCapability.AdministerResource);
   let readConfigSpec = accessSpecsByCapability.get(AccessCapability.ReadConfig);
 
@@ -40,7 +40,7 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
   const resourceArns = ['*'];
 
   let accessSpecsByCapabilityRecs = policyFactory.mergeDesiredAccessSpecsByCapability(SUPPORTED_CAPABILITIES, props.k9DesiredAccess);
-  let accessSpecsByCapability: Map<AccessCapability, AccessSpec> = new Map();
+  let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = new Map();
 
   for (let [capabilityStr, accessSpec] of Object.entries(accessSpecsByCapabilityRecs)) {
     accessSpecsByCapability.set((<any>AccessCapability)[capabilityStr], accessSpec);
