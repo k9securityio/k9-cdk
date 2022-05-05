@@ -9,11 +9,11 @@ export type ArnConditionTest =
     | ArnLikeTest;
 
 export enum AccessCapability {
-  AdministerResource = 'administer-resource',
-  ReadConfig = 'read-config',
-  ReadData = 'read-data',
-  WriteData = 'write-data',
-  DeleteData = 'delete-data',
+  ADMINISTER_RESOURCE = 'administer-resource',
+  READ_CONFIG = 'read-config',
+  READ_DATA = 'read-data',
+  WRITE_DATA = 'write-data',
+  DELETE_DATA = 'delete-data',
 }
 
 export interface IAccessSpec {

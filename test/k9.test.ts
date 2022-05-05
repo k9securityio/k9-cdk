@@ -5,8 +5,8 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
-import * as k9 from '../src';
-import { AccessCapability, IAccessSpec } from '../src/k9policy';
+import * as k9 from '../lib';
+import { AccessCapability, IAccessSpec } from '../lib';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../src/kms';
 import { K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD } from '../src/s3';
 // @ts-ignore
@@ -40,19 +40,19 @@ test('K9BucketPolicy - typical usage', () => {
     bucket: bucket,
     k9DesiredAccess: new Array<IAccessSpec>(
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: administerResourceArns,
       },
       {
-        accessCapabilities: AccessCapability.WriteData,
+        accessCapabilities: AccessCapability.WRITE_DATA,
         allowPrincipalArns: writeDataArns,
       },
       {
-        accessCapabilities: AccessCapability.ReadData,
+        accessCapabilities: AccessCapability.READ_DATA,
         allowPrincipalArns: readDataArns,
       },
       {
-        accessCapabilities: AccessCapability.DeleteData,
+        accessCapabilities: AccessCapability.DELETE_DATA,
         allowPrincipalArns: deleteDataArns,
       },
     ),
@@ -88,7 +88,7 @@ test('K9BucketPolicy - specify encryption method - KMS', () => {
     bucket: bucket,
     k9DesiredAccess: new Array<IAccessSpec>(
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: administerResourceArns,
       },
     ),
@@ -122,7 +122,7 @@ test('K9BucketPolicy - specify encryption method - S3_MANAGED', () => {
     bucket: bucket,
     k9DesiredAccess: new Array<IAccessSpec>(
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: administerResourceArns,
       },
     ),
@@ -158,7 +158,7 @@ test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-rea
     bucket: bucket,
     k9DesiredAccess: new Array<IAccessSpec>(
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: administerResourceArns,
       },
     ),
@@ -200,16 +200,16 @@ test('K9BucketPolicy - IAccessSpec with set of capabilities', () => {
     k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: [
-          AccessCapability.AdministerResource,
-          AccessCapability.ReadConfig,
+          AccessCapability.ADMINISTER_RESOURCE,
+          AccessCapability.READ_CONFIG,
         ],
         allowPrincipalArns: administerResourceArns,
       },
       {
         accessCapabilities: [
-          AccessCapability.ReadData,
-          AccessCapability.WriteData,
-          AccessCapability.DeleteData,
+          AccessCapability.READ_DATA,
+          AccessCapability.WRITE_DATA,
+          AccessCapability.DELETE_DATA,
         ],
         allowPrincipalArns: writeDataArns,
       },
@@ -243,11 +243,11 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
     bucket: bucket,
     k9DesiredAccess: new Array<IAccessSpec>(
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: administerResourceArns,
       },
       {
-        accessCapabilities: AccessCapability.DeleteData,
+        accessCapabilities: AccessCapability.DELETE_DATA,
         allowPrincipalArns: deleteDataArns,
       },
     ),
@@ -266,21 +266,21 @@ describe('K9KeyPolicy', () => {
   const desiredAccess = new Array<IAccessSpec>(
     {
       accessCapabilities: [
-        AccessCapability.AdministerResource,
-        AccessCapability.ReadConfig,
+        AccessCapability.ADMINISTER_RESOURCE,
+        AccessCapability.READ_CONFIG,
       ],
       allowPrincipalArns: administerResourceArns,
     },
     {
-      accessCapabilities: AccessCapability.WriteData,
+      accessCapabilities: AccessCapability.WRITE_DATA,
       allowPrincipalArns: writeDataArns,
     },
     {
-      accessCapabilities: AccessCapability.ReadData,
+      accessCapabilities: AccessCapability.READ_DATA,
       allowPrincipalArns: readDataArns,
     },
     {
-      accessCapabilities: AccessCapability.DeleteData,
+      accessCapabilities: AccessCapability.DELETE_DATA,
       allowPrincipalArns: deleteDataArns,
     },
   );
@@ -360,9 +360,9 @@ describe('K9KeyPolicy', () => {
 
     const unmanageableCapabilityCombos = [
       [],
-      [AccessCapability.AdministerResource],
-      [AccessCapability.ReadConfig],
-      [AccessCapability.AdministerResource, AccessCapability.WriteData],
+      [AccessCapability.ADMINISTER_RESOURCE],
+      [AccessCapability.READ_CONFIG],
+      [AccessCapability.ADMINISTER_RESOURCE, AccessCapability.WRITE_DATA],
     ];
 
     for (let trustAccountIdentities of [true, false]) {

@@ -8,19 +8,19 @@ export interface K9KeyPolicyProps {
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
-  AccessCapability.AdministerResource,
-  AccessCapability.ReadConfig,
-  AccessCapability.ReadData,
-  AccessCapability.WriteData,
-  AccessCapability.DeleteData,
+  AccessCapability.ADMINISTER_RESOURCE,
+  AccessCapability.READ_CONFIG,
+  AccessCapability.READ_DATA,
+  AccessCapability.WRITE_DATA,
+  AccessCapability.DELETE_DATA,
 );
 
 export const SID_ALLOW_ROOT_AND_IDENTITY_POLICIES = 'Allow Root User to Administer Key And Identity Policies';
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
 function canPrincipalsCanManageKey(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
-  let adminSpec = accessSpecsByCapability.get(AccessCapability.AdministerResource);
-  let readConfigSpec = accessSpecsByCapability.get(AccessCapability.ReadConfig);
+  let adminSpec = accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE);
+  let readConfigSpec = accessSpecsByCapability.get(AccessCapability.READ_CONFIG);
 
   if ((adminSpec?.allowPrincipalArns && adminSpec.allowPrincipalArns.length > 0)
         && (readConfigSpec?.allowPrincipalArns && readConfigSpec.allowPrincipalArns.length > 0)) {
@@ -49,8 +49,8 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
   if (!canPrincipalsCanManageKey(accessSpecsByCapability)) {
     throw Error('At least one principal must be able to administer and read-config for keys' +
             ' so encrypted data remains accessible; found:\n' +
-            `administer-resource: '${accessSpecsByCapability.get(AccessCapability.AdministerResource)?.allowPrincipalArns}'` +
-            `read-config: '${accessSpecsByCapability.get(AccessCapability.ReadConfig)?.allowPrincipalArns}'`,
+            `administer-resource: '${accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE)?.allowPrincipalArns}'` +
+            `read-config: '${accessSpecsByCapability.get(AccessCapability.READ_CONFIG)?.allowPrincipalArns}'`,
     );
   }
 

@@ -1,13 +1,13 @@
 import { AnyPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { AccessCapability, AccessSpec, K9PolicyFactory } from '../lib/k9policy';
+import {AccessCapability, IAccessSpec, K9PolicyFactory} from '../lib/';
 import { stringifyStatement } from './helpers';
 
 const S3_SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
-  AccessCapability.AdministerResource,
-  AccessCapability.ReadConfig,
-  AccessCapability.ReadData,
-  AccessCapability.WriteData,
-  AccessCapability.DeleteData,
+  AccessCapability.ADMINISTER_RESOURCE,
+  AccessCapability.READ_CONFIG,
+  AccessCapability.READ_DATA,
+  AccessCapability.WRITE_DATA,
+  AccessCapability.DELETE_DATA,
 );
 
 test('K9PolicyFactory#wasLikeUsed', () => {
@@ -15,7 +15,7 @@ test('K9PolicyFactory#wasLikeUsed', () => {
   expect(k9PolicyFactory.wasLikeUsed([])).toBeFalsy();
   expect(k9PolicyFactory.wasLikeUsed([
     {
-      accessCapabilities: AccessCapability.AdministerResource,
+      accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
       allowPrincipalArns: [],
       test: 'ArnEquals',
     },
@@ -23,7 +23,7 @@ test('K9PolicyFactory#wasLikeUsed', () => {
 
   expect(k9PolicyFactory.wasLikeUsed([
     {
-      accessCapabilities: AccessCapability.AdministerResource,
+      accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
       allowPrincipalArns: [],
       test: 'ArnLike',
     },
@@ -32,14 +32,14 @@ test('K9PolicyFactory#wasLikeUsed', () => {
 
 test('K9PolicyFactory#getAllowedPrincipalArns', () => {
   let k9PolicyFactory = new K9PolicyFactory();
-  let accessSpecs:Array<AccessSpec> = [
+  let accessSpecs:Array<IAccessSpec> = [
     {
-      accessCapabilities: AccessCapability.AdministerResource,
+      accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
       allowPrincipalArns: ['arn1', 'arn2'],
       test: 'ArnEquals',
     },
     {
-      accessCapabilities: AccessCapability.ReadData,
+      accessCapabilities: AccessCapability.READ_DATA,
       allowPrincipalArns: ['arn2', 'arn3'],
       test: 'ArnLike',
     },
@@ -66,20 +66,20 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
   test('single access capability specs', () => {
     const readerPrincipalArns = ['arn2', 'arn3'];
 
-    let accessSpecs: Array<AccessSpec> = [
+    let accessSpecs: Array<IAccessSpec> = [
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: adminPrincipalArns,
         test: 'ArnEquals',
       },
       {
-        accessCapabilities: AccessCapability.ReadData,
+        accessCapabilities: AccessCapability.READ_DATA,
         allowPrincipalArns: readerPrincipalArns,
         test: 'ArnLike',
       },
 
     ];
-    let supportedCapabilities = [AccessCapability.AdministerResource, AccessCapability.ReadData];
+    let supportedCapabilities = [AccessCapability.ADMINISTER_RESOURCE, AccessCapability.READ_DATA];
     let actualPolicyStatements = k9PolicyFactory.makeAllowStatements('S3',
       supportedCapabilities,
       accessSpecs,
@@ -115,14 +115,14 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
   test('mixed single and multi access capability specs', () => {
     const readWritePrincipalArns = ['arn2', 'arn4'];
 
-    let accessSpecs: Array<AccessSpec> = [
+    let accessSpecs: Array<IAccessSpec> = [
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: adminPrincipalArns,
         test: 'ArnEquals',
       },
       {
-        accessCapabilities: [AccessCapability.ReadData, AccessCapability.WriteData],
+        accessCapabilities: [AccessCapability.READ_DATA, AccessCapability.WRITE_DATA],
         allowPrincipalArns: readWritePrincipalArns,
         test: 'ArnLike',
       },
@@ -170,14 +170,14 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 
   test('multi access capability specs', () => {
     let readWritePrincipalArns = ['arn2', 'arn3'];
-    let accessSpecs: Array<AccessSpec> = [
+    let accessSpecs: Array<IAccessSpec> = [
       {
-        accessCapabilities: [AccessCapability.AdministerResource, AccessCapability.ReadConfig],
+        accessCapabilities: [AccessCapability.ADMINISTER_RESOURCE, AccessCapability.READ_CONFIG],
         allowPrincipalArns: adminPrincipalArns,
         test: 'ArnEquals',
       },
       {
-        accessCapabilities: [AccessCapability.ReadData, AccessCapability.WriteData],
+        accessCapabilities: [AccessCapability.READ_DATA, AccessCapability.WRITE_DATA],
         allowPrincipalArns: readWritePrincipalArns,
         test: 'ArnLike',
       },
@@ -226,15 +226,15 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
 
   test('multiple access specs for a single capability - read-config', () => {
     let addlConfigReaders = ['_internal-tool', 'auditor', 'observability'];
-    let accessSpecs: Array<AccessSpec> = [
+    let accessSpecs: Array<IAccessSpec> = [
       {
-        accessCapabilities: [AccessCapability.AdministerResource, AccessCapability.ReadConfig],
+        accessCapabilities: [AccessCapability.ADMINISTER_RESOURCE, AccessCapability.READ_CONFIG],
         allowPrincipalArns: adminPrincipalArns,
         test: 'ArnEquals',
       },
 
       {
-        accessCapabilities: [AccessCapability.ReadConfig],
+        accessCapabilities: [AccessCapability.READ_CONFIG],
         allowPrincipalArns: addlConfigReaders,
         test: 'ArnEquals',
       },
@@ -279,19 +279,19 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
   });
 
   test('throws an Error when ArnConditionTest mismatches between AccessSpecs', () => {
-    let accessSpecs: Array<AccessSpec> = [
+    let accessSpecs: Array<IAccessSpec> = [
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: adminPrincipalArns,
         test: 'ArnEquals',
       },
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: ['more-admin-roles*'],
         test: 'ArnLike',
       },
     ];
-    let supportedCapabilities = [AccessCapability.AdministerResource];
+    let supportedCapabilities = [AccessCapability.ADMINISTER_RESOURCE];
 
     expect(() => k9PolicyFactory.makeAllowStatements('S3',
       supportedCapabilities,
@@ -303,13 +303,13 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
   test('uses unique set of principals', () => {
     const duplicatedPrincipals = adminPrincipalArns.concat(adminPrincipalArns);
 
-    let accessSpecs: Array<AccessSpec> = [
+    let accessSpecs: Array<IAccessSpec> = [
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: duplicatedPrincipals,
       },
     ];
-    let supportedCapabilities = [AccessCapability.AdministerResource];
+    let supportedCapabilities = [AccessCapability.ADMINISTER_RESOURCE];
     let actualPolicyStatements = k9PolicyFactory.makeAllowStatements('S3',
       supportedCapabilities,
       accessSpecs,
@@ -334,13 +334,13 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
   });
 
   test('defaults ArnConditionTest to ArnEquals', () => {
-    let accessSpecs: Array<AccessSpec> = [
+    let accessSpecs: Array<IAccessSpec> = [
       {
-        accessCapabilities: AccessCapability.AdministerResource,
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
         allowPrincipalArns: adminPrincipalArns,
       },
     ];
-    let supportedCapabilities = [AccessCapability.AdministerResource];
+    let supportedCapabilities = [AccessCapability.ADMINISTER_RESOURCE];
     let actualPolicyStatements = k9PolicyFactory.makeAllowStatements('S3',
       supportedCapabilities,
       accessSpecs,

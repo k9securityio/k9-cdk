@@ -12,11 +12,11 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
-  AccessCapability.AdministerResource,
-  AccessCapability.ReadConfig,
-  AccessCapability.ReadData,
-  AccessCapability.WriteData,
-  AccessCapability.DeleteData,
+  AccessCapability.ADMINISTER_RESOURCE,
+  AccessCapability.READ_CONFIG,
+  AccessCapability.READ_DATA,
+  AccessCapability.WRITE_DATA,
+  AccessCapability.DELETE_DATA,
 );
 
 export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMethod';
