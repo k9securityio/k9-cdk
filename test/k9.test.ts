@@ -367,7 +367,7 @@ describe('K9KeyPolicy', () => {
 
     for (let trustAccountIdentities of [true, false]) {
       for (let unmanageableAccessCapabilities of unmanageableCapabilityCombos) {
-        let desiredAccess = new Array<IAccessSpec>(
+        let localDesiredAccess = new Array<IAccessSpec>(
           {
             accessCapabilities: unmanageableAccessCapabilities,
             allowPrincipalArns: administerResourceArns,
@@ -375,7 +375,7 @@ describe('K9KeyPolicy', () => {
         );
 
         let k9KeyPolicyProps: K9KeyPolicyProps = {
-          k9DesiredAccess: desiredAccess,
+          k9DesiredAccess: localDesiredAccess,
           trustAccountIdentities: trustAccountIdentities,
         };
 
