@@ -1,6 +1,6 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { AccessCapability, IAccessSpec, K9PolicyFactory } from './k9policy';
+import {AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory} from './k9policy';
 
 export interface K9KeyPolicyProps {
   readonly k9DesiredAccess: Array<IAccessSpec>;
@@ -43,13 +43,13 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
   let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = new Map();
 
   for (let [capabilityStr, accessSpec] of Object.entries(accessSpecsByCapabilityRecs)) {
-    accessSpecsByCapability.set((<any>AccessCapability)[capabilityStr], accessSpec);
+    accessSpecsByCapability.set(getAccessCapabilityFromValue(capabilityStr), accessSpec);
   }
 
   if (!canPrincipalsCanManageKey(accessSpecsByCapability)) {
     throw Error('At least one principal must be able to administer and read-config for keys' +
             ' so encrypted data remains accessible; found:\n' +
-            `administer-resource: '${accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE)?.allowPrincipalArns}'` +
+            `administer-resource: '${accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE)?.allowPrincipalArns}'\n` +
             `read-config: '${accessSpecsByCapability.get(AccessCapability.READ_CONFIG)?.allowPrincipalArns}'`,
     );
   }

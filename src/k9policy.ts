@@ -16,6 +16,20 @@ export enum AccessCapability {
   DELETE_DATA = 'delete-data',
 }
 
+export function getAccessCapabilityFromValue(accessCapabilityStr: string): AccessCapability {
+  //https://blog.logrocket.com/typescript-string-enums-guide/
+  for (let key of Object.keys(AccessCapability)) {
+    // @ts-ignore
+    if (AccessCapability[key] == accessCapabilityStr) {
+      // https://stackoverflow.com/questions/17380845/how-do-i-convert-a-string-to-enum-in-typescript
+      let typedKey = <keyof typeof AccessCapability>key;
+      return AccessCapability[typedKey];
+    }
+  }
+
+  throw Error(`Could not get AccessCapability from value: ${accessCapabilityStr}`);
+}
+
 export interface IAccessSpec {
   accessCapabilities: Array<AccessCapability> | AccessCapability;
   allowPrincipalArns: Array<string>;
@@ -109,20 +123,12 @@ export class K9PolicyFactory {
         }
       }
     }
-    /**
-     * function changeAllPeriods(metrics: Record<string, IMetric>, period: cdk.Duration): Record<string, IMetric> {
-     *   const ret: Record<string, IMetric> = {};
-     *   for (const [id, metric] of Object.entries(metrics)) {
-     *     ret[id] = changePeriod(metric, period);
-     *   }
-     *   return ret;
-     * }
-     */
-    const ret: Record<string, IAccessSpec> = {};
-    for (const [capability, spec] of Object.entries(accessSpecsByCapability)) {
-      ret[capability] = spec;
-    }
-    return ret;
+
+    const records: Record<string, IAccessSpec> = {};
+    accessSpecsByCapability.forEach(function (value, key) {
+      records[key] = value;
+    });
+    return records;
   }
 
   makeAllowStatements(serviceName: string,
