@@ -1,6 +1,6 @@
-import {AnyPrincipal, PolicyStatement} from 'aws-cdk-lib/aws-iam';
-import {AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory} from '../lib/k9policy';
-import {stringifyStatement} from './helpers';
+import { AnyPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory } from '../lib/k9policy';
+import { stringifyStatement } from './helpers';
 
 const S3_SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
   AccessCapability.ADMINISTER_RESOURCE,
@@ -11,18 +11,18 @@ const S3_SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 );
 
 test('getAccessCapabilityFromValue resolves defined capabilities', () => {
-  expect(getAccessCapabilityFromValue("administer-resource"))
-      .toEqual(AccessCapability.ADMINISTER_RESOURCE);
-  expect(getAccessCapabilityFromValue("read-data"))
-      .toEqual(AccessCapability.READ_DATA);
-  expect(getAccessCapabilityFromValue("read-config"))
-      .toEqual(AccessCapability.READ_CONFIG);
+  expect(getAccessCapabilityFromValue('administer-resource'))
+    .toEqual(AccessCapability.ADMINISTER_RESOURCE);
+  expect(getAccessCapabilityFromValue('read-data'))
+    .toEqual(AccessCapability.READ_DATA);
+  expect(getAccessCapabilityFromValue('read-config'))
+    .toEqual(AccessCapability.READ_CONFIG);
 });
 
 test('getAccessCapabilityFromValue throws error for undefined capabilities', () => {
   expect(() => {
-    getAccessCapabilityFromValue("unknown-capability")
-  }).toThrow(`Could not get AccessCapability from value: unknown-capability`);
+    getAccessCapabilityFromValue('unknown-capability');
+  }).toThrow('Could not get AccessCapability from value: unknown-capability');
 });
 
 test('K9PolicyFactory#wasLikeUsed', () => {

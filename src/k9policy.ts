@@ -1,4 +1,4 @@
-import {AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps} from 'aws-cdk-lib/aws-iam';
+import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps } from 'aws-cdk-lib/aws-iam';
 
 export type ArnEqualsTest = 'ArnEquals'
 
@@ -43,7 +43,7 @@ export class K9PolicyFactory {
     'S3',
     'KMS',
   ]);
-  
+
   /** @internal */
   _K9CapabilityMapJSON: Object = require('../resources/capability_summary.json');
   /** @internal */

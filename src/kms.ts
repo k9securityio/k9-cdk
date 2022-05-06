@@ -1,6 +1,6 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import {AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory} from './k9policy';
+import { AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory } from './k9policy';
 
 export interface K9KeyPolicyProps {
   readonly k9DesiredAccess: Array<IAccessSpec>;

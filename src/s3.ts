@@ -1,9 +1,9 @@
-import {AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement} from 'aws-cdk-lib/aws-iam';
+import { AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import {BucketEncryption} from 'aws-cdk-lib/aws-s3';
-import {IConstruct} from 'constructs';
+import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
+import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
-import {AccessCapability, IAccessSpec, K9PolicyFactory} from './k9policy';
+import { AccessCapability, IAccessSpec, K9PolicyFactory } from './k9policy';
 
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
   readonly k9DesiredAccess: Array<IAccessSpec>;
