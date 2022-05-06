@@ -60,7 +60,7 @@ test('K9PolicyFactory#getAllowedPrincipalArns', () => {
     },
 
   ];
-  expect(k9PolicyFactory.getAllowedPrincipalArns([])).toEqual(new Set<string>());
+  expect(k9PolicyFactory.getAllowedPrincipalArns([])).toEqual(new Array<string>());
   expect(k9PolicyFactory.getAllowedPrincipalArns(accessSpecs))
     .toEqual(new Set<string>(['arn1', 'arn2', 'arn3']));
 });
