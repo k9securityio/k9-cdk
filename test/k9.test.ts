@@ -401,7 +401,8 @@ function assertContainsStatementWithId(expectStmtId:string, statements:any) {
   expect(foundStmt).toBeTruthy();
 }
 
-function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: AddToResourcePolicyResult[], k9BucketPolicyProps?: K9BucketPolicyProps) {
+function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: AddToResourcePolicyResult[],
+  k9BucketPolicyProps?: K9BucketPolicyProps) {
   let numExpectedStatements = 9;
   if (k9BucketPolicyProps && k9BucketPolicyProps.publicReadAccess) {
     numExpectedStatements += 1;
