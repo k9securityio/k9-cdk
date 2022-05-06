@@ -41,7 +41,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -107,7 +109,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -149,7 +153,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -194,7 +200,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -234,7 +242,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -473,7 +483,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -581,7 +593,10 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -626,7 +641,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -666,7 +683,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -1351,7 +1370,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
                 },
               },
               "Effect": "Allow",
@@ -1544,7 +1565,9 @@ Object {
               ],
               "Condition": Object {
                 "ArnEquals": Object {
-                  "aws:PrincipalArn": Array [],
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
                 },
               },
               "Effect": "Allow",
