@@ -140,7 +140,7 @@ export class K9PolicyFactory {
     let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = new Map();
 
     for (let [capabilityStr, accessSpec] of Object.entries(accessSpecsByCapabilityRecs)) {
-      accessSpecsByCapability.set((<any>AccessCapability)[capabilityStr], accessSpec);
+      accessSpecsByCapability.set(getAccessCapabilityFromValue(capabilityStr), accessSpec);
     }
 
     // ok, time to actually make Allow Statements from our AccessSpecs
