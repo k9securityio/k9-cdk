@@ -64,7 +64,7 @@ export class K9PolicyFactory {
   ]);
 
   /** @internal */
-  _K9CapabilityMapJSON: Object = require('../resources/capability_summary.json');
+  _K9CapabilityMapJSON: Object = require('../resources/capability_summary.json'); // eslint-disable-line @typescript-eslint/no-require-imports
   /** @internal */
   _K9CapabilityMapByService: Map<string, Object> = new Map(Object.entries(this._K9CapabilityMapJSON));
 
