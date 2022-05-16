@@ -58,19 +58,10 @@ init:
 	@set -e
 	@npm install
 
-lint:
-	# Consider linting with https://github.com/cdklabs/cdk-nag
-	@echo "linting (TODO)"
-
 build:
 	@echo "building k9 policy library"
 	@set -e
-	@npm run build
-
-unit-test:
-	@echo "unit testing k9 policy library"
-	@set -e
-	@npm run test
+	@npx projen build
 
 converge:
 	@echo "converging integration test stack"
@@ -82,17 +73,6 @@ destroy:
 	@set -e
 	@cdk destroy --force;
 
-verify:
-	@echo "verifying integration test stack (TODO)"
+quick: build
 
-publish:
-	@echo "publishing to npmjs"
-	npm publish
-
-quick: init lint build unit-test
-
-all: init lint build unit-test converge verify
-
-circleci-build:
-	@circleci build \
-	$(AWS_OPTS)
+all: init build converge

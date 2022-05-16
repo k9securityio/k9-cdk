@@ -26,6 +26,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   /* devDeps contains Build dependencies for this module. */
   devDeps: [
     'yarn',
+    'aws-cdk',
     '@aws-cdk/assert',
   ],
 

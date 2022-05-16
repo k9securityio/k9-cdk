@@ -1,6 +1,5 @@
 {
   "app": "npx ts-node bin/k9-cdk.ts",
   "context": {
-    "@aws-cdk/aws-kms:defaultKeyPolicies": true
   }
 }

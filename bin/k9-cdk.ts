@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import * as cdk from "@aws-cdk/core";
-import {RemovalPolicy, Tags} from "@aws-cdk/core";
-import * as kms from "@aws-cdk/aws-kms";
-import * as s3 from "@aws-cdk/aws-s3";
-import {BucketEncryption} from "@aws-cdk/aws-s3";
+import * as cdk from "aws-cdk-lib";
+import {RemovalPolicy, Tags} from "aws-cdk-lib";
+import * as kms from "aws-cdk-lib/aws-kms";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import {BucketEncryption} from "aws-cdk-lib/aws-s3";
 
 import * as k9 from "../lib";
 
@@ -39,32 +39,32 @@ const app = new cdk.App(
     // https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_core.AppProps.html
 );
 
-const stack = new cdk.Stack(app, 'K9PolicyLibIntegrationTest');
+const stack = new cdk.Stack(app, 'K9PolicyLibV2IntegrationTest');
 const bucket = new s3.Bucket(stack, 'TestBucket', {
-    bucketName: 'k9-cdk-internal-bucket-test',
+    bucketName: 'k9-cdk-v2-internal-bucket-test',
     removalPolicy: RemovalPolicy.DESTROY,
 });
 
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
         {
-            accessCapabilities: k9.k9policy.AccessCapability.AdministerResource,
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
             allowPrincipalArns: administerResourceArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.ReadConfig,
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
             allowPrincipalArns: readConfigArns,
         },
         {
             accessCapabilities: [
-                k9.k9policy.AccessCapability.ReadData,
-                k9.k9policy.AccessCapability.WriteData
+                k9.k9policy.AccessCapability.READ_DATA,
+                k9.k9policy.AccessCapability.WRITE_DATA
                 ],
             allowPrincipalArns: readWriteDataArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.ReadData,
+            accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
             allowPrincipalArns: readDataArns,
         }
         // omit access spec for delete-data because it is unneeded
@@ -74,7 +74,7 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
 
 const websiteBucket = new s3.Bucket(stack, 'WebsiteBucket', {
-    bucketName: 'k9-cdk-public-website-test',
+    bucketName: 'k9-cdk-v2-public-website-test',
     removalPolicy: RemovalPolicy.DESTROY,
     encryption: BucketEncryption.S3_MANAGED,
 });
@@ -89,7 +89,7 @@ const websiteK9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 k9.s3.grantAccessViaResourcePolicy(stack, "S3PublicWebsite", websiteK9BucketPolicyProps);
 
 const autoDeleteBucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
-    bucketName: 'k9-cdk-auto-delete-test',
+    bucketName: 'k9-cdk-v2-auto-delete-test',
     removalPolicy: RemovalPolicy.DESTROY,
     autoDeleteObjects: true,
 });
@@ -97,17 +97,17 @@ const autoDeleteBucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
 console.log(`original autoDeleteBucket.policy: ${autoDeleteBucket.policy}`);
 const k9AutoDeleteBucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: autoDeleteBucket,
-    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
         {
-            accessCapabilities: k9.k9policy.AccessCapability.AdministerResource,
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
             allowPrincipalArns: administerResourceArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.ReadConfig,
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
             allowPrincipalArns: readConfigArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.WriteData,
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
             allowPrincipalArns: readWriteDataArns,
         }
     )
