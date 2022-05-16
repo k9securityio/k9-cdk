@@ -1,5 +1,6 @@
 import { AnyPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory } from '../lib/k9policy';
+// @ts-ignore
 import { stringifyStatement } from './helpers';
 
 const S3_SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
