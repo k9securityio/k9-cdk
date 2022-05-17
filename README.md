@@ -1,6 +1,6 @@
 # k9 AWS CDK policy library #
 
-k9 Security's `k9-cdk` makes strong security usable and helps you provision best practice AWS security policies 
+k9 Security's `k9-cdk` for CDKv2 makes strong security usable and helps you provision best practice AWS security policies 
 defined using the simplified [k9 access capability model](https://k9security.io/docs/k9-access-capability-model/) and
 safe defaults.  In CDK terms, this library provides [Curated (L2) constructs](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html) that wrap core CloudFormation resources (L1) to simplify security.
 
@@ -21,8 +21,8 @@ For example, the following code will:
 5. allow the `app-backend` and `customer-service` role to read data in the bucket
 
 ```typescript
-import * as cdk from "@aws-cdk/core";
-import * as s3 from "@aws-cdk/aws-s3";
+import * as cdk from "aws-cdk-lib";
+import * as s3 from "aws-cdk-lib/aws-s3";
 import * as k9 from "@k9securityio/k9-cdk";
 
 // Define which principals may access the bucket and what capabilities they should have
@@ -42,26 +42,26 @@ const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
          {   // declare access capabilities individually
-             accessCapability: k9.k9policy.AccessCapability.AdministerResource,
+             accessCapability: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
              allowPrincipalArns: administerResourceArns,
          },
          {
-             accessCapability: k9.k9policy.AccessCapability.ReadConfig,
+             accessCapability: k9.k9policy.AccessCapability.READ_CONFIG,
              allowPrincipalArns: readConfigArns,
          },
         {  // or declare multiple access capabilities at once
             accessCapabilities: [
-                k9.k9policy.AccessCapability.ReadData,
-                k9.k9policy.AccessCapability.WriteData
+                k9.k9policy.AccessCapability.READ_DATA,
+                k9.k9policy.AccessCapability.WRITE_DATA
                 ],
             allowPrincipalArns: [
                 "arn:aws:iam::123456789012:role/app-backend",
             ],
         },
          {
-             accessCapability: k9.k9policy.AccessCapability.ReadData,
+             accessCapability: k9.k9policy.AccessCapability.READ_DATA,
              allowPrincipalArns: [
                  "arn:aws:iam::123456789012:role/customer-service"
              ],
@@ -77,8 +77,8 @@ Granting access to a KMS key is similar, but the custom resource policy is creat
 so it can be set via `props` per CDK convention:
  
 ```typescript
-import * as kms from "@aws-cdk/aws-kms"; 
-import {PolicyDocument} from "@aws-cdk/aws-iam";
+import * as kms from "aws-cdk-lib/aws-kms"; 
+import {PolicyDocument} from "aws-cdk-lib/aws-iam";
 
 const k9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
     k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess
@@ -90,8 +90,6 @@ new kms.Key(stack, 'KMSKey', {
     policy: keyPolicy
 }); 
 ```
-
-Note: You must enable the `@aws-cdk/aws-kms:defaultKeyPolicies` feature ([example](cdk.json)) so that k9's policy is accepted unchanged by the KMS CDK construct. 
 
 The example stack demonstrates full use of the k9 S3 and KMS policy generators.  Generated policies:
 
@@ -114,16 +112,12 @@ The high level build commands for this project are driven by `make`:
 
 * `make all` - build library, run tests, and deploy 
 * `make build` - build the library 
-* `make unit-test` - run unit tests for the library
 * `make converge` - deploy the integration test resources
 * `make destroy` - destroy the integration test resources
-* `make publish` - publish the package to npmjs
 
 The low level build commands for this project are:
 
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
+* `npx projen build`   compile typescript to js, lint, transpile with JSII, execute tests
+* `cdk synth`       emits the synthesized CloudFormation template
+* `cdk deploy`      deploy this stack to your default AWS account/region
+* `cdk diff`        compare deployed stack with current state
