@@ -54,22 +54,23 @@ deps:
 	fi;
 
 init:
-	@echo "installing package dependencies"
+	@echo "installing package dependencies - k9-cdk v2"
 	@set -e
 	@npm install
 
 build:
-	@echo "building k9 policy library"
+	@echo "building k9 policy library - k9-cdk v2"
 	@set -e
 	@npx projen build
 
 converge:
-	@echo "converging integration test stack"
+	@echo "converging integration test stack - k9-cdk v2"
 	@set -e
 	@cdk synth; \
 	cdk deploy --require-approval never --force
 
 destroy:
+	@echo "destroying integration test stack - k9-cdk v2"
 	@set -e
 	@cdk destroy --force;
 
