@@ -39,9 +39,9 @@ const app = new cdk.App(
     // https://docs.aws.amazon.com/cdk/api/latest/docs/@aws-cdk_core.AppProps.html
 );
 
-const stack = new cdk.Stack(app, 'K9PolicyLibIntegrationTest');
+const stack = new cdk.Stack(app, 'K9PolicyLibV1IntegrationTest');
 const bucket = new s3.Bucket(stack, 'TestBucket', {
-    bucketName: 'k9-cdk-internal-bucket-test',
+    bucketName: 'k9-cdk-v1-internal-bucket-test',
     removalPolicy: RemovalPolicy.DESTROY,
 });
 
@@ -74,7 +74,7 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
 
 const websiteBucket = new s3.Bucket(stack, 'WebsiteBucket', {
-    bucketName: 'k9-cdk-public-website-test',
+    bucketName: 'k9-cdk-v1-public-website-test',
     removalPolicy: RemovalPolicy.DESTROY,
     encryption: BucketEncryption.S3_MANAGED,
 });
@@ -89,7 +89,7 @@ const websiteK9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 k9.s3.grantAccessViaResourcePolicy(stack, "S3PublicWebsite", websiteK9BucketPolicyProps);
 
 const autoDeleteBucket = new s3.Bucket(stack, 'AutoDeleteBucket', {
-    bucketName: 'k9-cdk-auto-delete-test',
+    bucketName: 'k9-cdk-v1-auto-delete-test',
     removalPolicy: RemovalPolicy.DESTROY,
     autoDeleteObjects: true,
 });
@@ -127,7 +127,7 @@ const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
 // Set CDK preference @aws-cdk/aws-kms:defaultKeyPolicies to true in cdk.json
 const key = new kms.Key(stack, 'KMSKey', {
-    alias: 'k9-cdk-integration-test',
+    alias: 'k9-cdk-v1-integration-test',
     policy: keyPolicy,
 });
 
