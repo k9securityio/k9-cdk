@@ -9,6 +9,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   description: 'Provision strong AWS security policies easily using the AWS CDK.',
   packageName: '@k9securityio/k9-cdk', /* The "name" in package.json. */
   repositoryUrl: 'https://github.com/k9securityio/k9-cdk.git',
+  keywords: ['IAM', 'Security', 'Utilities', 'Policy', 'IAM Policy', 'k9-cdk'],
 
   author: 'k9 Security',
   authorOrganization: true,

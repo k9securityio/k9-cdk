@@ -65,7 +65,13 @@
     "constructs": "^10.0.5"
   },
   "keywords": [
-    "cdk"
+    "IAM",
+    "IAM Policy",
+    "Policy",
+    "Security",
+    "Utilities",
+    "cdk",
+    "k9-cdk"
   ],
   "main": "lib/index.js",
   "license": "Apache-2.0",
