@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import {writeFileSync} from 'fs';
-import * as cdk from "@aws-cdk/core";
-import * as s3 from "@aws-cdk/aws-s3";
+import * as cdk from "aws-cdk-lib";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as kms from "aws-cdk-lib/aws-kms";
 import * as k9 from "@k9securityio/k9-cdk";
-import * as kms from "@aws-cdk/aws-kms";
 
 const administerResourceArns = [
     "arn:aws:iam::123456789012:user/ci",
@@ -28,21 +28,21 @@ const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
     bucket: bucket,
-    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
         {
-            accessCapabilities: k9.k9policy.AccessCapability.AdministerResource,
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
             allowPrincipalArns: administerResourceArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.ReadConfig,
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
             allowPrincipalArns: readConfigArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.WriteData,
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
             allowPrincipalArns: writeDataArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.ReadData,
+            accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
             allowPrincipalArns: readDataArns,
         }
         // omit access spec for delete-data because it is unneeded
@@ -55,20 +55,20 @@ writeFileSync('generated.bucket-policy.json',
 
 
 const keyPolicyProps: k9.kms.K9KeyPolicyProps = {
-    k9DesiredAccess: new Array<k9.k9policy.AccessSpec>(
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
         {
             accessCapabilities: [
-                k9.k9policy.AccessCapability.AdministerResource,
-                k9.k9policy.AccessCapability.ReadConfig
+                k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+                k9.k9policy.AccessCapability.READ_CONFIG
             ],
             allowPrincipalArns: administerResourceArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.WriteData,
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
             allowPrincipalArns: writeDataArns,
         },
         {
-            accessCapabilities: k9.k9policy.AccessCapability.ReadData,
+            accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
             allowPrincipalArns: readDataArns,
         }
         // omit access spec for delete-data because it is unneeded
