@@ -8,8 +8,8 @@
         "id": "Tree",
         "path": "Tree",
         "constructInfo": {
-          "fqn": "@aws-cdk/core.Construct",
-          "version": "1.147.0"
+          "fqn": "constructs.Construct",
+          "version": "10.1.8"
         }
       },
       "K9Example": {
@@ -20,6 +20,14 @@
             "id": "TestBucket",
             "path": "K9Example/TestBucket",
             "children": {
+              "Notifications": {
+                "id": "Notifications",
+                "path": "K9Example/TestBucket/Notifications",
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.1.8"
+                }
+              },
               "Resource": {
                 "id": "Resource",
                 "path": "K9Example/TestBucket/Resource",
@@ -28,14 +36,14 @@
                   "aws:cdk:cloudformation:props": {}
                 },
                 "constructInfo": {
-                  "fqn": "@aws-cdk/aws-s3.CfnBucket",
-                  "version": "1.147.0"
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.1.0"
                 }
               }
             },
             "constructInfo": {
-              "fqn": "@aws-cdk/aws-s3.Bucket",
-              "version": "1.147.0"
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.1.0"
             }
           },
           "S3BucketPolicy": {
@@ -481,14 +489,14 @@
                   }
                 },
                 "constructInfo": {
-                  "fqn": "@aws-cdk/aws-s3.CfnBucketPolicy",
-                  "version": "1.147.0"
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucketPolicy",
+                  "version": "2.1.0"
                 }
               }
             },
             "constructInfo": {
-              "fqn": "@aws-cdk/aws-s3.BucketPolicy",
-              "version": "1.147.0"
+              "fqn": "aws-cdk-lib.aws_s3.BucketPolicy",
+              "version": "2.1.0"
             }
           },
           "TestKey": {
@@ -635,45 +643,6 @@
                           },
                           "Resource": "*",
                           "Sid": "Allow Restricted delete-data"
-                        },
-                        {
-                          "Action": [
-                            "kms:Create*",
-                            "kms:Describe*",
-                            "kms:Enable*",
-                            "kms:List*",
-                            "kms:Put*",
-                            "kms:Update*",
-                            "kms:Revoke*",
-                            "kms:Disable*",
-                            "kms:Get*",
-                            "kms:Delete*",
-                            "kms:ScheduleKeyDeletion",
-                            "kms:CancelKeyDeletion",
-                            "kms:GenerateDataKey",
-                            "kms:TagResource",
-                            "kms:UntagResource"
-                          ],
-                          "Effect": "Allow",
-                          "Principal": {
-                            "AWS": {
-                              "Fn::Join": [
-                                "",
-                                [
-                                  "arn:",
-                                  {
-                                    "Ref": "AWS::Partition"
-                                  },
-                                  ":iam::",
-                                  {
-                                    "Ref": "AWS::AccountId"
-                                  },
-                                  ":root"
-                                ]
-                              ]
-                            }
-                          },
-                          "Resource": "*"
                         }
                       ],
                       "Version": "2012-10-17"
@@ -681,14 +650,14 @@
                   }
                 },
                 "constructInfo": {
-                  "fqn": "@aws-cdk/aws-kms.CfnKey",
-                  "version": "1.147.0"
+                  "fqn": "aws-cdk-lib.aws_kms.CfnKey",
+                  "version": "2.1.0"
                 }
               }
             },
             "constructInfo": {
-              "fqn": "@aws-cdk/aws-kms.Key",
-              "version": "1.147.0"
+              "fqn": "aws-cdk-lib.aws_kms.Key",
+              "version": "2.1.0"
             }
           },
           "CDKMetadata": {
@@ -699,34 +668,34 @@
                 "id": "Default",
                 "path": "K9Example/CDKMetadata/Default",
                 "constructInfo": {
-                  "fqn": "@aws-cdk/core.CfnResource",
-                  "version": "1.147.0"
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.1.0"
                 }
               },
               "Condition": {
                 "id": "Condition",
                 "path": "K9Example/CDKMetadata/Condition",
                 "constructInfo": {
-                  "fqn": "@aws-cdk/core.CfnCondition",
-                  "version": "1.147.0"
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.1.0"
                 }
               }
             },
             "constructInfo": {
-              "fqn": "@aws-cdk/core.Construct",
-              "version": "1.147.0"
+              "fqn": "constructs.Construct",
+              "version": "10.1.8"
             }
           }
         },
         "constructInfo": {
-          "fqn": "@aws-cdk/core.Stack",
-          "version": "1.147.0"
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.1.0"
         }
       }
     },
     "constructInfo": {
-      "fqn": "@aws-cdk/core.App",
-      "version": "1.147.0"
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.1.0"
     }
   }
 }

@@ -583,45 +583,6 @@
               },
               "Resource": "*",
               "Sid": "Allow Restricted delete-data"
-            },
-            {
-              "Action": [
-                "kms:Create*",
-                "kms:Describe*",
-                "kms:Enable*",
-                "kms:List*",
-                "kms:Put*",
-                "kms:Update*",
-                "kms:Revoke*",
-                "kms:Disable*",
-                "kms:Get*",
-                "kms:Delete*",
-                "kms:ScheduleKeyDeletion",
-                "kms:CancelKeyDeletion",
-                "kms:GenerateDataKey",
-                "kms:TagResource",
-                "kms:UntagResource"
-              ],
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":iam::",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":root"
-                    ]
-                  ]
-                }
-              },
-              "Resource": "*"
             }
           ],
           "Version": "2012-10-17"
@@ -636,7 +597,7 @@
     "CDKMetadata": {
       "Type": "AWS::CDK::Metadata",
       "Properties": {
-        "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WOwQrCMBBEv8V7ujVY8Cr26EXqF5TNCmlsFrJJRUL+3aYVPL3ZmVkYDbo7w/FwGd/SoHFtRg4E+RFHdKpnLzEkjKp/+oGEU0Cqeg2MjZZ9UfUxywnyNaGjrflTO+78svj52/tdlJsF8o22ZEUpRXk2BJO0i+5A11WTWNuE5KOdCYadX7HXqu2yAAAA"
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WJQQ6CMBBFz8K+HS0aDyBLNwYOQLAdk6HQJkyrIU3vLlgTV+/992tQcKyGN0ttrJzoAakLg7ZiS33iE6Rr1BaDaJ7uZwV3P5Fe/7nsLOzMkG74fTbkvEuL7OOicffGO0OBvMvCeYMw8uGlLqDOUFcjE8klukAzQlv4ARZMD8OiAAAA"
       },
       "Metadata": {
         "aws:cdk:path": "K9Example/CDKMetadata/Default"
@@ -834,6 +795,40 @@
               ]
             }
           ]
+        }
+      ]
+    }
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
         }
       ]
     }

@@ -16,14 +16,15 @@
     "example": "bin/example.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "ts-node --transpileOnly example.ts",
     "watch": "tsc -w",
     "cdk": "cdk"
   },
   "devDependencies": {
     "aws-cdk-lib": "2.1.0",
-    "ts-node": "^8.1.0",
-    "typescript": "^3.9.10"
+    "ts-node": "^10.8.0",
+    "typescript": "^3.9.10",
+    "aws-cdk": "^2.24.1"
   },
   "dependencies": {
     "aws-cdk-lib": "2.1.0",

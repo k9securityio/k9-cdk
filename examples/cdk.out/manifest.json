@@ -1,5 +1,5 @@
 {
-  "version": "16.0.0",
+  "version": "15.0.0",
   "artifacts": {
     "Tree": {
       "type": "cdk:tree",
@@ -7,150 +7,73 @@
         "file": "tree.json"
       }
     },
+    "K9Example.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "K9Example.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
     "K9Example": {
       "type": "aws:cloudformation:stack",
       "environment": "aws://unknown-account/unknown-region",
       "properties": {
         "templateFile": "K9Example.template.json",
-        "validateOnSynth": false
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/3efb5cac695c89feb8bc9c2929df66fb934d1c9e223c548979132999d8fb31e3.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "K9Example.assets"
+        ]
       },
+      "dependencies": [
+        "K9Example.assets"
+      ],
       "metadata": {
         "/K9Example/TestBucket/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "TestBucket560B80BC",
-            "trace": [
-              "new Bucket (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/aws-s3/lib/bucket.ts:1664:22)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/example.ts:27:16)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Module.m._compile (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:858:23)",
-              "Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Object.require.extensions.<computed> [as .ts] (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:861:12)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "main (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:227:14)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:513:3)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "/Users/skuenzli/.nvm/versions/node/v14.17.0/lib/node_modules/npm/node_modules/libnpx/index.js:268:14"
-            ]
+            "data": "TestBucket560B80BC"
           }
         ],
         "/K9Example/S3BucketPolicy/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "S3BucketPolicy189C1E8E",
-            "trace": [
-              "new BucketPolicy (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/aws-s3/lib/bucket-policy.ts:53:21)",
-              "Object.grantAccessViaResourcePolicy (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@k9securityio/k9-cdk/lib/s3.ts:53:31)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/example.ts:52:7)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Module.m._compile (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:858:23)",
-              "Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Object.require.extensions.<computed> [as .ts] (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:861:12)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "main (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:227:14)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:513:3)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "/Users/skuenzli/.nvm/versions/node/v14.17.0/lib/node_modules/npm/node_modules/libnpx/index.js:268:14"
-            ]
+            "data": "S3BucketPolicy189C1E8E"
           }
         ],
         "/K9Example/TestKey/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "TestKey4CACAF33",
-            "trace": [
-              "new Key (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/aws-kms/lib/key.ts:652:22)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/example.ts:83:1)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Module.m._compile (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:858:23)",
-              "Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Object.require.extensions.<computed> [as .ts] (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:861:12)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "main (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:227:14)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:513:3)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "/Users/skuenzli/.nvm/versions/node/v14.17.0/lib/node_modules/npm/node_modules/libnpx/index.js:268:14"
-            ]
+            "data": "TestKey4CACAF33"
           }
         ],
         "/K9Example/CDKMetadata/Default": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "CDKMetadata",
-            "trace": [
-              "new MetadataResource (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/metadata-resource.ts:22:24)",
-              "/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:166:5",
-              "visit (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:231:5)",
-              "visit (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:227:5)",
-              "injectMetadataResources (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:157:3)",
-              "Object.synthesize (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:18:3)",
-              "App.synth (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/stage.ts:180:23)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/example.ts:85:5)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Module.m._compile (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:858:23)",
-              "Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Object.require.extensions.<computed> [as .ts] (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:861:12)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "main (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:227:14)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:513:3)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "/Users/skuenzli/.nvm/versions/node/v14.17.0/lib/node_modules/npm/node_modules/libnpx/index.js:268:14"
-            ]
+            "data": "CDKMetadata"
           }
         ],
         "/K9Example/CDKMetadata/Condition": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "CDKMetadataAvailable",
-            "trace": [
-              "new MetadataResource (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/metadata-resource.ts:31:27)",
-              "/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:166:5",
-              "visit (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:231:5)",
-              "visit (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:227:5)",
-              "injectMetadataResources (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:157:3)",
-              "Object.synthesize (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/private/synthesis.ts:18:3)",
-              "App.synth (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/@aws-cdk/core/lib/stage.ts:180:23)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/example.ts:85:5)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Module.m._compile (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:858:23)",
-              "Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Object.require.extensions.<computed> [as .ts] (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/index.ts:861:12)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "main (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:227:14)",
-              "Object.<anonymous> (/Users/skuenzli/dev/k9security/k9-cdk/examples/node_modules/ts-node/src/bin.ts:513:3)",
-              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
-              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
-              "Module.load (internal/modules/cjs/loader.js:933:32)",
-              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
-              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
-              "/Users/skuenzli/.nvm/versions/node/v14.17.0/lib/node_modules/npm/node_modules/libnpx/index.js:268:14"
-            ]
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/K9Example/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/K9Example/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
           }
         ]
       },
