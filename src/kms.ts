@@ -60,11 +60,11 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     resourceArns);
   policy.addStatements(...allowStatements);
 
-  console.log(`trustAccountIdentities: ${props.trustAccountIdentities}`);
+  //console.log(`trustAccountIdentities: ${props.trustAccountIdentities}`);
 
   // Allow root user and control access via Identity policy by aligning to Key's behavior:
   if (props.trustAccountIdentities) {
-    console.log('Adding Allow root and DenyEveryoneElse statements');
+    //console.log('Adding Allow root and DenyEveryoneElse statements');
     const denyEveryoneElseStatement = new PolicyStatement({
       sid: SID_DENY_EVERYONE_ELSE,
       effect: Effect.DENY,
@@ -115,7 +115,7 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     //  though you can use them in combination with a key policy."
     //
 
-    console.log('Omitting Allow root and DenyEveryoneElse statements');
+    //console.log('Omitting Allow root and DenyEveryoneElse statements');
   }
 
   policy.validateForResourcePolicy();
