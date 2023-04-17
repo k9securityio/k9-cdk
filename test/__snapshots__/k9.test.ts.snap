@@ -764,44 +764,6 @@ Object {
               "Sid": "DenyInsecureCommunications",
             },
             Object {
-              "Action": Array [
-                "s3:PutObject",
-                "s3:ReplicateObject",
-              ],
-              "Condition": Object {
-                "Null": Object {
-                  "s3:x-amz-server-side-encryption": true,
-                },
-              },
-              "Effect": "Deny",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "TestBucketNoKMSEnforcement64B0442F",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "TestBucketNoKMSEnforcement64B0442F",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-              "Sid": "DenyUnencryptedStorage",
-            },
-            Object {
               "Action": "s3:*",
               "Condition": Object {
                 "ArnNotEquals": Object {

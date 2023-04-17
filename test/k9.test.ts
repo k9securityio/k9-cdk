@@ -9,7 +9,12 @@ import { fail, stringifyPolicy } from './helpers';
 import * as k9 from '../lib';
 import { AccessCapability, IAccessSpec } from '../lib/k9policy';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
-import { K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD } from '../lib/s3';
+import {
+  K9BucketPolicyProps,
+  SID_ALLOW_PUBLIC_READ_ACCESS,
+  SID_DENY_UNENCRYPTED_STORAGE,
+  SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
+} from '../lib/s3';
 // @ts-ignore
 
 // Test the primary public interface to k9 cdk
@@ -87,7 +92,7 @@ test('K9BucketPolicy - do not enforce KMS encryption at rest when configured off
 
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
-    disableEncryptionAtRestMethodCondition: true,
+    disableEncryptionAtRestConditions: true,
     k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
@@ -123,6 +128,9 @@ test('K9BucketPolicy - do not enforce KMS encryption at rest when configured off
   for (let stmt of actualPolicyStatements) {
     if (SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid) {
       fail(`should not have a '${SID_DENY_UNEXPECTED_ENCRYPTION_METHOD}' statement`);
+    }
+    if (SID_DENY_UNENCRYPTED_STORAGE == stmt.Sid) {
+      fail(`should not have a '${SID_DENY_UNENCRYPTED_STORAGE}' statement`);
     }
   }
 
@@ -458,8 +466,8 @@ function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: A
   if (k9BucketPolicyProps && k9BucketPolicyProps.publicReadAccess) {
     numExpectedStatements += 1;
   }
-  if (k9BucketPolicyProps && k9BucketPolicyProps.disableEncryptionAtRestMethodCondition == true) {
-    numExpectedStatements -= 1;
+  if (k9BucketPolicyProps && k9BucketPolicyProps.disableEncryptionAtRestConditions == true) {
+    numExpectedStatements -= 2;
   }
   expect(addToResourcePolicyResults.length).toEqual(numExpectedStatements);
   for (let result of addToResourcePolicyResults) {
