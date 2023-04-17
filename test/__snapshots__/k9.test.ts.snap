@@ -448,6 +448,417 @@ Object {
 }
 `;
 
+exports[`K9BucketPolicy - do not enforce KMS encryption at rest when configured off 1`] = `
+Object {
+  "Resources": Object {
+    "S3BucketPolicy189C1E8E": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "TestBucketNoKMSEnforcement64B0442F",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucketWebsite",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutAnalyticsConfiguration",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
+                "s3:PutBucketObjectLockConfiguration",
+                "s3:PutBucketOwnershipControls",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketRequestPayment",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutIntelligentTieringConfiguration",
+                "s3:PutInventoryConfiguration",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutMetricsConfiguration",
+                "s3:PutObjectAcl",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectVersionAcl",
+                "s3:PutReplicationConfiguration",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucketNoKMSEnforcement64B0442F",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucketNoKMSEnforcement64B0442F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted administer-resource",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetAnalyticsConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetIntelligentTieringConfiguration",
+                "s3:GetInventoryConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetMetricsConfiguration",
+                "s3:GetObjectAcl",
+                "s3:GetObjectAttributes",
+                "s3:GetObjectLegalHold",
+                "s3:GetObjectRetention",
+                "s3:GetObjectTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionAttributes",
+                "s3:GetObjectVersionTagging",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListBucketVersions",
+                "s3:ListMultipartUploadParts",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucketNoKMSEnforcement64B0442F",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucketNoKMSEnforcement64B0442F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-config",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionTorrent",
+                "s3:ListBucket",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucketNoKMSEnforcement64B0442F",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucketNoKMSEnforcement64B0442F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:AbortMultipartUpload",
+                "s3:InitiateReplication",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucketNoKMSEnforcement64B0442F",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucketNoKMSEnforcement64B0442F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted write-data",
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObjectVersionTagging",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucketNoKMSEnforcement64B0442F",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucketNoKMSEnforcement64B0442F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted delete-data",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": false,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucketNoKMSEnforcement64B0442F",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucketNoKMSEnforcement64B0442F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": Object {
+                "Null": Object {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucketNoKMSEnforcement64B0442F",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucketNoKMSEnforcement64B0442F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "ArnNotEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": Array [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "TestBucketNoKMSEnforcement64B0442F",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "TestBucketNoKMSEnforcement64B0442F",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "TestBucketNoKMSEnforcement64B0442F": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;
+
 exports[`K9BucketPolicy - typical usage 1`] = `
 Object {
   "Resources": Object {

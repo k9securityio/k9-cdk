@@ -8,6 +8,7 @@ import { AccessCapability, IAccessSpec, K9PolicyFactory } from './k9policy';
 export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
   readonly k9DesiredAccess: Array<IAccessSpec>;
   readonly encryption?: BucketEncryption;
+  readonly disableEncryptionAtRestMethodCondition?: boolean;
   readonly publicReadAccess?: boolean;
 }
 
@@ -141,19 +142,25 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
       conditions: {
         Null: { 's3:x-amz-server-side-encryption': true },
       },
-    }),
-    new PolicyStatement({
-      sid: SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
-      effect: Effect.DENY,
-      principals: [new AnyPrincipal()],
-      actions: ['s3:PutObject', 's3:ReplicateObject'],
-      resources: resourceArns,
-      conditions: {
-        StringNotEquals: { 's3:x-amz-server-side-encryption': encryptionMethod },
+    },
+    ));
+
+  if (!props.disableEncryptionAtRestMethodCondition) {
+    k9Statements.push(
+      new PolicyStatement({
+        sid: SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
+        effect: Effect.DENY,
+        principals: [new AnyPrincipal()],
+        actions: ['s3:PutObject', 's3:ReplicateObject'],
+        resources: resourceArns,
+        conditions: {
+          StringNotEquals: { 's3:x-amz-server-side-encryption': encryptionMethod },
+        },
       },
-    }),
-    denyEveryoneElseStatement,
-  );
+      ));
+  }
+
+  k9Statements.push(denyEveryoneElseStatement);
 
   for (let statement of k9Statements) {
     let addToResourcePolicyResult = props.bucket.addToResourcePolicy(statement);
