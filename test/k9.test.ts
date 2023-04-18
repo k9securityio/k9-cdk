@@ -5,11 +5,16 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
-import { stringifyPolicy } from './helpers';
+import { fail, stringifyPolicy } from './helpers';
 import * as k9 from '../lib';
 import { AccessCapability, IAccessSpec } from '../lib/k9policy';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
-import { K9BucketPolicyProps, SID_ALLOW_PUBLIC_READ_ACCESS, SID_DENY_UNEXPECTED_ENCRYPTION_METHOD } from '../lib/s3';
+import {
+  K9BucketPolicyProps,
+  SID_ALLOW_PUBLIC_READ_ACCESS,
+  SID_DENY_UNENCRYPTED_STORAGE,
+  SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
+} from '../lib/s3';
 // @ts-ignore
 
 // Test the primary public interface to k9 cdk
@@ -72,6 +77,59 @@ test('K9BucketPolicy - typical usage', () => {
   for (let stmt of actualPolicyStatements) {
     if (SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid) {
       expect(stmt.Condition.StringNotEquals['s3:x-amz-server-side-encryption']).toEqual('aws:kms');
+    }
+  }
+
+  expectCDK(stack).to(haveResource('AWS::S3::Bucket'));
+  expectCDK(stack).to(haveResource('AWS::S3::BucketPolicy'));
+  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+});
+
+
+test('K9BucketPolicy - do not enforce KMS encryption at rest when configured off', () => {
+  const stack = new cdk.Stack(app, 'K9PolicyTestNoKMSEnforcement');
+  const bucket = new s3.Bucket(stack, 'TestBucketNoKMSEnforcement', {});
+
+  const k9BucketPolicyProps: K9BucketPolicyProps = {
+    bucket: bucket,
+    enforceEncryptionAtRest: false,
+    k9DesiredAccess: new Array<IAccessSpec>(
+      {
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
+        allowPrincipalArns: administerResourceArns,
+      },
+      {
+        accessCapabilities: AccessCapability.WRITE_DATA,
+        allowPrincipalArns: writeDataArns,
+      },
+      {
+        accessCapabilities: AccessCapability.READ_DATA,
+        allowPrincipalArns: readDataArns,
+      },
+      {
+        accessCapabilities: AccessCapability.DELETE_DATA,
+        allowPrincipalArns: deleteDataArns,
+      },
+    ),
+  };
+  let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'S3Bucket', k9BucketPolicyProps);
+  expect(bucket.policy).toBeDefined();
+
+  let policyStr = stringifyPolicy(bucket.policy?.document);
+  console.log('bucket.policy?.document: ' + policyStr);
+  expect(bucket.policy?.document).toBeDefined();
+
+  assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults, k9BucketPolicyProps);
+  let policyObj = JSON.parse(policyStr);
+  let actualPolicyStatements = policyObj.Statement;
+  expect(actualPolicyStatements).toBeDefined();
+
+  for (let stmt of actualPolicyStatements) {
+    if (SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid) {
+      fail(`should not have a '${SID_DENY_UNEXPECTED_ENCRYPTION_METHOD}' statement`);
+    }
+    if (SID_DENY_UNENCRYPTED_STORAGE == stmt.Sid) {
+      fail(`should not have a '${SID_DENY_UNENCRYPTED_STORAGE}' statement`);
     }
   }
 
@@ -406,6 +464,9 @@ function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: A
   let numExpectedStatements = 9;
   if (k9BucketPolicyProps && k9BucketPolicyProps.publicReadAccess) {
     numExpectedStatements += 1;
+  }
+  if (k9BucketPolicyProps && !(k9BucketPolicyProps.enforceEncryptionAtRest ?? true)) {
+    numExpectedStatements -= 2;
   }
   expect(addToResourcePolicyResults.length).toEqual(numExpectedStatements);
   for (let result of addToResourcePolicyResults) {
