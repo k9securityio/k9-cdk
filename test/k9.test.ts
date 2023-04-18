@@ -92,7 +92,7 @@ test('K9BucketPolicy - do not enforce KMS encryption at rest when configured off
 
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
-    disableEncryptionAtRestConditions: true,
+    enforceEncryptionAtRest: false,
     k9DesiredAccess: new Array<IAccessSpec>(
       {
         accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
@@ -112,15 +112,14 @@ test('K9BucketPolicy - do not enforce KMS encryption at rest when configured off
       },
     ),
   };
-  //let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'S3Bucket', k9BucketPolicyProps);
-  k9.s3.grantAccessViaResourcePolicy(stack, 'S3Bucket', k9BucketPolicyProps);
+  let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'S3Bucket', k9BucketPolicyProps);
   expect(bucket.policy).toBeDefined();
 
   let policyStr = stringifyPolicy(bucket.policy?.document);
   console.log('bucket.policy?.document: ' + policyStr);
   expect(bucket.policy?.document).toBeDefined();
 
-  //assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+  assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults, k9BucketPolicyProps);
   let policyObj = JSON.parse(policyStr);
   let actualPolicyStatements = policyObj.Statement;
   expect(actualPolicyStatements).toBeDefined();
@@ -466,7 +465,7 @@ function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: A
   if (k9BucketPolicyProps && k9BucketPolicyProps.publicReadAccess) {
     numExpectedStatements += 1;
   }
-  if (k9BucketPolicyProps && k9BucketPolicyProps.disableEncryptionAtRestConditions == true) {
+  if (k9BucketPolicyProps && !(k9BucketPolicyProps.enforceEncryptionAtRest ?? true)) {
     numExpectedStatements -= 2;
   }
   expect(addToResourcePolicyResults.length).toEqual(numExpectedStatements);
