@@ -250,13 +250,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-cdk/assert,aws-cdk,eslint-import-resolver-typescript,eslint-plugin-import,jsii-diff,jsii-pacmak,projen,typescript,yarn"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-cdk/assert,@types/jest,aws-cdk,eslint-import-resolver-typescript,eslint-plugin-import,jest,jsii-diff,jsii-pacmak,projen,ts-jest,typescript,yarn"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-cdk/assert @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk eslint-import-resolver-typescript eslint-plugin-import eslint jest-junit jest jsii-diff jsii-pacmak jsii-rosetta jsii projen standard-version ts-jest typescript yarn aws-cdk-lib constructs"
+          "exec": "yarn upgrade @aws-cdk/assert @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit jsii-diff jsii-pacmak jsii-rosetta jsii projen standard-version ts-jest typescript yarn aws-cdk-lib constructs"
         },
         {
           "exec": "npx projen"
