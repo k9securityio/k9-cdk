@@ -15,6 +15,7 @@ import {
   SID_DENY_UNENCRYPTED_STORAGE,
   SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
 } from '../lib/s3';
+import { SID_ALLOW_CLOUDFRONT_READ_ACCESS } from '../src/s3';
 // @ts-ignore
 
 // Test the primary public interface to k9 cdk
@@ -249,6 +250,46 @@ test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-rea
 
 });
 
+test('K9BucketPolicy - allow CloudFront OAC', () => {
+  const stack = new cdk.Stack(app, 'K9BucketPolicyCloudFrontOAC');
+  const bucket = new s3.Bucket(stack, 'TestBucketForCloudFrontOAC', {});
+
+  const k9BucketPolicyProps: K9BucketPolicyProps = {
+    bucket: bucket,
+    k9DesiredAccess: new Array<IAccessSpec>(
+      {
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
+        allowPrincipalArns: administerResourceArns,
+      },
+    ),
+    encryption: BucketEncryption.S3_MANAGED,
+    allowCloudFrontOACReadAccess: true,
+  };
+
+  let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'K9BucketPolicyCloudFrontOAC', k9BucketPolicyProps);
+  expect(bucket.policy).toBeDefined();
+
+  let policyStr = stringifyPolicy(bucket.policy?.document);
+  console.log('bucket.policy?.document: ' + policyStr);
+  expect(bucket.policy?.document).toBeDefined();
+
+  assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults, k9BucketPolicyProps);
+  let policyObj = JSON.parse(policyStr);
+  let actualPolicyStatements = policyObj.Statement;
+  expect(actualPolicyStatements).toBeDefined();
+
+  assertContainsStatementWithId(SID_ALLOW_CLOUDFRONT_READ_ACCESS, actualPolicyStatements);
+
+  for (let stmt of actualPolicyStatements) {
+    if (SID_DENY_EVERYONE_ELSE == stmt.Sid) {
+      expect(stmt.Condition.StringNotEqualsIfExists['aws:PrincipalServiceName']).toEqual('cloudfront.amazonaws.com');
+      expect(stmt.Condition.ArnNotEquals['aws:PrincipalArn']).toBeTruthy();
+    }
+  }
+
+});
+
+
 test('K9BucketPolicy - IAccessSpec with set of capabilities', () => {
   const localstack = new cdk.Stack(app, 'K9BucketPolicyMultiAccessCapa');
   const bucket = new s3.Bucket(localstack, 'TestBucketWithMultiAccessSpec', {});
@@ -463,6 +504,9 @@ function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: A
   k9BucketPolicyProps?: K9BucketPolicyProps) {
   let numExpectedStatements = 9;
   if (k9BucketPolicyProps && k9BucketPolicyProps.publicReadAccess) {
+    numExpectedStatements += 1;
+  }
+  if (k9BucketPolicyProps && k9BucketPolicyProps.allowCloudFrontOACReadAccess) {
     numExpectedStatements += 1;
   }
   if (k9BucketPolicyProps && !(k9BucketPolicyProps.enforceEncryptionAtRest ?? true)) {

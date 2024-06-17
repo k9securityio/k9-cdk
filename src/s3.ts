@@ -1,4 +1,4 @@
-import { AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
@@ -36,6 +36,13 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
    * @default false
    */
   readonly publicReadAccess?: boolean;
+
+  /**
+   * Allow CloudFront OAC read access to the bucket.
+   *
+   * @default false
+   */
+  readonly allowCloudFrontOACReadAccess?: boolean;
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -49,6 +56,7 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMethod';
 export const SID_DENY_UNENCRYPTED_STORAGE = 'DenyUnencryptedStorage';
 export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
+export const SID_ALLOW_CLOUDFRONT_READ_ACCESS = 'AllowCloudFrontReadAccess';
 
 /**
  * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities
@@ -110,6 +118,17 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
       }),
     );
   }
+  if (props.allowCloudFrontOACReadAccess) {
+    k9Statements.unshift( // very important statement; put at beginning.
+      new PolicyStatement({
+        sid: SID_ALLOW_CLOUDFRONT_READ_ACCESS,
+        effect: Effect.ALLOW,
+        principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
+        actions: ['s3:GetObject'],
+        resources: [`${props.bucket.arnForObjects('*')}`],
+      }),
+    );
+  }
 
   // Make Deny Statement
   const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
@@ -140,6 +159,12 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
   }
   denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
     { 'aws:PrincipalArn': [...allAllowedPrincipalArns] });
+
+  if (props.allowCloudFrontOACReadAccess) {
+    denyEveryoneElseStatement.addCondition('StringNotEqualsIfExists',
+      { 'aws:PrincipalServiceName': 'cloudfront.amazonaws.com' },
+    );
+  }
 
   // default encryption method to SSE-KMS,
   // allow override to SSE-S3 (AES256)
