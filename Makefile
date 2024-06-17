@@ -56,7 +56,7 @@ deps:
 init:
 	@echo "installing package dependencies - k9-cdk v2"
 	@set -e
-	@npm install
+	@yarn install
 
 build:
 	@echo "building k9 policy library - k9-cdk v2"
