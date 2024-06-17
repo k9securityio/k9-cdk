@@ -12,10 +12,10 @@ import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYO
 import {
   K9BucketPolicyProps,
   SID_ALLOW_PUBLIC_READ_ACCESS,
+  SID_ALLOW_CLOUDFRONT_READ_ACCESS,
   SID_DENY_UNENCRYPTED_STORAGE,
   SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
 } from '../lib/s3';
-import { SID_ALLOW_CLOUDFRONT_READ_ACCESS } from '../src/s3';
 // @ts-ignore
 
 // Test the primary public interface to k9 cdk
