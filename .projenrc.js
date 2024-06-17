@@ -15,7 +15,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   authorOrganization: true,
   authorAddress: 'hello@k9security.io',
 
-  cdkVersion: '2.1.0',
+  cdkVersion: '2.80.0',
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
 
