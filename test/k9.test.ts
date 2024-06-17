@@ -12,7 +12,7 @@ import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYO
 import {
   K9BucketPolicyProps,
   SID_ALLOW_PUBLIC_READ_ACCESS,
-  SID_ALLOW_CLOUDFRONT_READ_ACCESS,
+  SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
   SID_DENY_UNENCRYPTED_STORAGE,
   SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
 } from '../lib/s3';
@@ -263,7 +263,7 @@ test('K9BucketPolicy - allow CloudFront OAC', () => {
       },
     ),
     encryption: BucketEncryption.S3_MANAGED,
-    allowCloudFrontOACReadAccess: true,
+    allowCloudFrontDistributionReadAccess: 'arn:aws:cloudfront::123456789012:distribution/DIST_ID_1234',
   };
 
   let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'K9BucketPolicyCloudFrontOAC', k9BucketPolicyProps);
@@ -278,12 +278,14 @@ test('K9BucketPolicy - allow CloudFront OAC', () => {
   let actualPolicyStatements = policyObj.Statement;
   expect(actualPolicyStatements).toBeDefined();
 
-  assertContainsStatementWithId(SID_ALLOW_CLOUDFRONT_READ_ACCESS, actualPolicyStatements);
+  assertContainsStatementWithId(SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS, actualPolicyStatements);
 
   for (let stmt of actualPolicyStatements) {
     if (SID_DENY_EVERYONE_ELSE == stmt.Sid) {
       expect(stmt.Condition.StringNotEqualsIfExists['aws:PrincipalServiceName']).toEqual('cloudfront.amazonaws.com');
       expect(stmt.Condition.ArnNotEquals['aws:PrincipalArn']).toBeTruthy();
+    } else if (SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS == stmt.Sid) {
+      expect(stmt.Condition.StringEquals['aws:SourceArn']).toEqual(k9BucketPolicyProps.allowCloudFrontDistributionReadAccess);
     }
   }
 
@@ -506,7 +508,7 @@ function assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults: A
   if (k9BucketPolicyProps && k9BucketPolicyProps.publicReadAccess) {
     numExpectedStatements += 1;
   }
-  if (k9BucketPolicyProps && k9BucketPolicyProps.allowCloudFrontOACReadAccess) {
+  if (k9BucketPolicyProps && k9BucketPolicyProps.allowCloudFrontDistributionReadAccess) {
     numExpectedStatements += 1;
   }
   if (k9BucketPolicyProps && !(k9BucketPolicyProps.enforceEncryptionAtRest ?? true)) {

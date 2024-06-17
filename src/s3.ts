@@ -16,7 +16,7 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
   readonly k9DesiredAccess: Array<IAccessSpec>;
 
   /**
-   * (Optionally) provide the BucketEncryption object for the Bucket to
+   * (Optionally) Provide the BucketEncryption object for the Bucket to
    * allow the policy generator to customize the policy for the Bucket's
    * configuration without handling, e.g. the encryption method options directly
    */
@@ -38,11 +38,11 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
   readonly publicReadAccess?: boolean;
 
   /**
-   * Allow CloudFront OAC read access to the bucket.
+   * (Optionally) Allow the specified CloudFront distribution read access to the bucket using CloudFront OAC.
    *
-   * @default false
+   * @default undefined
    */
-  readonly allowCloudFrontOACReadAccess?: boolean;
+  readonly allowCloudFrontDistributionReadAccess?: string;
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -56,7 +56,7 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMethod';
 export const SID_DENY_UNENCRYPTED_STORAGE = 'DenyUnencryptedStorage';
 export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
-export const SID_ALLOW_CLOUDFRONT_READ_ACCESS = 'AllowCloudFrontReadAccess';
+export const SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS = 'AllowCloudFrontOACReadAccess';
 
 /**
  * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities
@@ -118,14 +118,17 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
       }),
     );
   }
-  if (props.allowCloudFrontOACReadAccess) {
+  if (props.allowCloudFrontDistributionReadAccess) {
     k9Statements.unshift( // very important statement; put at beginning.
       new PolicyStatement({
-        sid: SID_ALLOW_CLOUDFRONT_READ_ACCESS,
+        sid: SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
         effect: Effect.ALLOW,
         principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
         actions: ['s3:GetObject'],
         resources: [`${props.bucket.arnForObjects('*')}`],
+        conditions: {
+          StringEquals: { 'aws:SourceArn': props.allowCloudFrontDistributionReadAccess },
+        },
       }),
     );
   }
@@ -160,7 +163,7 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
   denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
     { 'aws:PrincipalArn': [...allAllowedPrincipalArns] });
 
-  if (props.allowCloudFrontOACReadAccess) {
+  if (props.allowCloudFrontDistributionReadAccess) {
     denyEveryoneElseStatement.addCondition('StringNotEqualsIfExists',
       { 'aws:PrincipalServiceName': 'cloudfront.amazonaws.com' },
     );
