@@ -44,9 +44,9 @@ export interface IAccessSpec {
 }
 
 export interface IServiceAccessSpec {
-  servicePrincipal: string;
-  allowStatements: Array<PolicyStatement>;
-  denyEveryoneElseConditions: Conditions;
+  makeAllowStatements(): Array<PolicyStatement>;
+
+  makeConditionsToExceptFromDenyEveryoneElse(): Conditions;
 }
 
 export class K9PolicyFactory {

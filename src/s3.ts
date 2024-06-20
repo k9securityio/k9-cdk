@@ -1,9 +1,17 @@
-import { AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import {
+    AddToResourcePolicyResult,
+    AnyPrincipal,
+    Conditions,
+    Effect,
+    PolicyStatement,
+    ServicePrincipal
+} from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
 import { AccessCapability, IAccessSpec, IServiceAccessSpec, K9PolicyFactory } from './k9policy';
+import {IBucket} from "aws-cdk-lib/aws-s3/lib/bucket";
 
 /**
  * Configure the k9 Security S3 Bucket policy generator with the K9BucketPolicyProps.
@@ -59,6 +67,34 @@ export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMe
 export const SID_DENY_UNENCRYPTED_STORAGE = 'DenyUnencryptedStorage';
 export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
 export const SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS = 'AllowCloudFrontOACReadAccess';
+
+export class CloudFrontOACReadAccess implements IServiceAccessSpec {
+    readonly bucket: IBucket
+    readonly distributionArn: string
+
+    constructor(bucket: IBucket, distributionArn: string){
+        this.bucket = bucket;
+        this.distributionArn = distributionArn;
+    }
+
+    makeAllowStatements(): Array<PolicyStatement> {
+        return [new PolicyStatement({
+            sid: SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
+            effect: Effect.ALLOW,
+            principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
+            actions: ['s3:GetObject'],
+            resources: [`${this.bucket.arnForObjects('*')}`],
+            conditions: {
+                StringEquals: {'aws:SourceArn': this.distributionArn},
+            },
+        })]
+    }
+
+    makeConditionsToExceptFromDenyEveryoneElse(): Conditions {
+        // return  {"Operator": { "keyInRequestContext": "value" } }
+        return {StringNotEqualsIfExists: {'aws:PrincipalServiceName': 'cloudfront.amazonaws.com'}}
+    }
+}
 
 /**
  * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities

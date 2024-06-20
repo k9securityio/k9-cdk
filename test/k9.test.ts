@@ -7,14 +7,14 @@ import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
 import { fail, stringifyPolicy } from './helpers';
 import * as k9 from '../lib';
-import { AccessCapability, IAccessSpec } from '../lib/k9policy';
+import {AccessCapability, IAccessSpec, IServiceAccessSpec} from '../lib/k9policy';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
 import {
   K9BucketPolicyProps,
   SID_ALLOW_PUBLIC_READ_ACCESS,
   SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
   SID_DENY_UNENCRYPTED_STORAGE,
-  SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
+  SID_DENY_UNEXPECTED_ENCRYPTION_METHOD, CloudFrontOACReadAccess,
 } from '../lib/s3';
 // @ts-ignore
 
@@ -254,6 +254,7 @@ test('K9BucketPolicy - allow CloudFront OAC', () => {
   const stack = new cdk.Stack(app, 'K9BucketPolicyCloudFrontOAC');
   const bucket = new s3.Bucket(stack, 'TestBucketForCloudFrontOAC', {});
 
+  let expectDistributionArn = 'arn:aws:cloudfront::123456789012:distribution/DIST_ID_1234';
   const k9BucketPolicyProps: K9BucketPolicyProps = {
     bucket: bucket,
     k9DesiredAccess: new Array<IAccessSpec>(
@@ -263,7 +264,10 @@ test('K9BucketPolicy - allow CloudFront OAC', () => {
       },
     ),
     encryption: BucketEncryption.S3_MANAGED,
-    allowCloudFrontDistributionReadAccess: 'arn:aws:cloudfront::123456789012:distribution/DIST_ID_1234',
+
+    k9DesiredAWSServiceAccess: new Array<IServiceAccessSpec>(
+        new CloudFrontOACReadAccess(bucket, expectDistributionArn)
+    )
   };
 
   let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'K9BucketPolicyCloudFrontOAC', k9BucketPolicyProps);
