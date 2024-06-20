@@ -3,7 +3,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
-import { AccessCapability, IAccessSpec, K9PolicyFactory } from './k9policy';
+import { AccessCapability, IAccessSpec, IServiceAccessSpec, K9PolicyFactory } from './k9policy';
 
 /**
  * Configure the k9 Security S3 Bucket policy generator with the K9BucketPolicyProps.
@@ -43,6 +43,8 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
    * @default undefined
    */
   readonly allowCloudFrontDistributionReadAccess?: string;
+
+  readonly k9DesiredAWSServiceAccess?: Array<IServiceAccessSpec>;
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(

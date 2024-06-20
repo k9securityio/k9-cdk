@@ -1,4 +1,11 @@
-import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, PolicyStatementProps } from 'aws-cdk-lib/aws-iam';
+import {
+  AnyPrincipal,
+  ArnPrincipal,
+  Conditions,
+  Effect,
+  PolicyStatement,
+  PolicyStatementProps
+} from 'aws-cdk-lib/aws-iam';
 
 export type ArnEqualsTest = 'ArnEquals'
 
@@ -34,6 +41,12 @@ export interface IAccessSpec {
   accessCapabilities: Array<AccessCapability> | AccessCapability;
   allowPrincipalArns: Array<string>;
   test?: ArnConditionTest;
+}
+
+export interface IServiceAccessSpec {
+  servicePrincipal: string;
+  allowStatements: Array<PolicyStatement>;
+  denyEveryoneElseConditions: Conditions;
 }
 
 export class K9PolicyFactory {
