@@ -4,7 +4,7 @@ import {
   Conditions,
   Effect,
   PolicyStatement,
-  PolicyStatementProps
+  PolicyStatementProps,
 } from 'aws-cdk-lib/aws-iam';
 
 export type ArnEqualsTest = 'ArnEquals'

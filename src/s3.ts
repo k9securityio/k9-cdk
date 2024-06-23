@@ -1,17 +1,17 @@
 import {
-    AddToResourcePolicyResult,
-    AnyPrincipal,
-    Conditions,
-    Effect,
-    PolicyStatement,
-    ServicePrincipal
+  AddToResourcePolicyResult,
+  AnyPrincipal,
+  Conditions,
+  Effect,
+  PolicyStatement,
+  ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
+import { IBucket } from 'aws-cdk-lib/aws-s3/lib/bucket';
 import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
 import { AccessCapability, IAccessSpec, IServiceAccessSpec, K9PolicyFactory } from './k9policy';
-import {IBucket} from "aws-cdk-lib/aws-s3/lib/bucket";
 
 /**
  * Configure the k9 Security S3 Bucket policy generator with the K9BucketPolicyProps.
@@ -69,31 +69,31 @@ export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
 export const SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS = 'AllowCloudFrontOACReadAccess';
 
 export class CloudFrontOACReadAccess implements IServiceAccessSpec {
-    readonly bucket: IBucket
-    readonly distributionArn: string
+  readonly bucket: IBucket;
+  readonly distributionArn: string;
 
-    constructor(bucket: IBucket, distributionArn: string){
-        this.bucket = bucket;
-        this.distributionArn = distributionArn;
-    }
+  constructor(bucket: IBucket, distributionArn: string) {
+    this.bucket = bucket;
+    this.distributionArn = distributionArn;
+  }
 
-    makeAllowStatements(): Array<PolicyStatement> {
-        return [new PolicyStatement({
-            sid: SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
-            effect: Effect.ALLOW,
-            principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
-            actions: ['s3:GetObject'],
-            resources: [`${this.bucket.arnForObjects('*')}`],
-            conditions: {
-                StringEquals: {'aws:SourceArn': this.distributionArn},
-            },
-        })]
-    }
+  makeAllowStatements(): Array<PolicyStatement> {
+    return [new PolicyStatement({
+      sid: SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
+      actions: ['s3:GetObject'],
+      resources: [`${this.bucket.arnForObjects('*')}`],
+      conditions: {
+        StringEquals: { 'aws:SourceArn': this.distributionArn },
+      },
+    })];
+  }
 
-    makeConditionsToExceptFromDenyEveryoneElse(): Conditions {
-        // return  {"Operator": { "keyInRequestContext": "value" } }
-        return {StringNotEqualsIfExists: {'aws:PrincipalServiceName': 'cloudfront.amazonaws.com'}}
-    }
+  makeConditionsToExceptFromDenyEveryoneElse(): Conditions {
+    // return  {"Operator": { "keyInRequestContext": "value" } }
+    return { StringNotEqualsIfExists: { 'aws:PrincipalServiceName': 'cloudfront.amazonaws.com' } };
+  }
 }
 
 /**
@@ -156,19 +156,12 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
       }),
     );
   }
-  if (props.allowCloudFrontDistributionReadAccess) {
-    k9Statements.unshift( // very important statement; put at beginning.
-      new PolicyStatement({
-        sid: SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
-        effect: Effect.ALLOW,
-        principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
-        actions: ['s3:GetObject'],
-        resources: [`${props.bucket.arnForObjects('*')}`],
-        conditions: {
-          StringEquals: { 'aws:SourceArn': props.allowCloudFrontDistributionReadAccess },
-        },
-      }),
-    );
+
+  if (props.k9DesiredAWSServiceAccess) {
+    for (let serviceAccessSpec of props.k9DesiredAWSServiceAccess) {
+      let allowStatements:Array<PolicyStatement> = serviceAccessSpec.makeAllowStatements();
+      k9Statements.unshift(...allowStatements);
+    }
   }
 
   // Make Deny Statement
@@ -201,10 +194,14 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
   denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
     { 'aws:PrincipalArn': [...allAllowedPrincipalArns] });
 
-  if (props.allowCloudFrontDistributionReadAccess) {
-    denyEveryoneElseStatement.addCondition('StringNotEqualsIfExists',
-      { 'aws:PrincipalServiceName': 'cloudfront.amazonaws.com' },
-    );
+  if (props.k9DesiredAWSServiceAccess) {
+    for (let serviceAccessSpec of props.k9DesiredAWSServiceAccess) {
+      let conditionsToExceptFromDenyEveryoneElse = serviceAccessSpec.makeConditionsToExceptFromDenyEveryoneElse();
+      let conditionOps = Object.keys(conditionsToExceptFromDenyEveryoneElse) as Array<string>;
+      for (let conditionOp of conditionOps) {
+        denyEveryoneElseStatement.addCondition(conditionOp, conditionsToExceptFromDenyEveryoneElse[conditionOp]);
+      }
+    }
   }
 
   // default encryption method to SSE-KMS,
