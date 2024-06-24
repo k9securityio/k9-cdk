@@ -43,9 +43,21 @@ export interface IAccessSpec {
   test?: ArnConditionTest;
 }
 
+/**
+ * `IAWSServiceAccessGenerator` defines an interface that the k9 policy generators use to grant an AWS service
+ * access to a protected resource.
+ */
 export interface IAWSServiceAccessGenerator {
+  /**
+   * Make an array of PolicyStatement objects that allow an AWS service, e.g. CloudFront, to access to the
+   * protected AWS resource.
+   */
   makeAllowStatements(): Array<PolicyStatement>;
 
+  /**
+   * Make a Conditions object that creates an exception for an AWS service in a protected resource's `DenyEveryoneElse`
+   * statement.
+   */
   makeConditionsToExceptFromDenyEveryoneElse(): Conditions;
 }
 
