@@ -7,14 +7,14 @@ import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
 import { fail, stringifyPolicy } from './helpers';
 import * as k9 from '../lib';
-import { AccessCapability, IAccessSpec, IServiceAccessSpec } from '../lib/k9policy';
+import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator } from '../lib/k9policy';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
 import {
   K9BucketPolicyProps,
   SID_ALLOW_PUBLIC_READ_ACCESS,
-  SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
   SID_DENY_UNENCRYPTED_STORAGE,
-  SID_DENY_UNEXPECTED_ENCRYPTION_METHOD, CloudFrontOACReadAccess,
+  SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
+  CloudFrontOACReadAccessGenerator,
 } from '../lib/s3';
 // @ts-ignore
 
@@ -265,8 +265,8 @@ test('K9BucketPolicy - allow CloudFront OAC', () => {
     ),
     encryption: BucketEncryption.S3_MANAGED,
 
-    k9DesiredAWSServiceAccess: new Array<IServiceAccessSpec>(
-      new CloudFrontOACReadAccess(bucket, expectDistributionArn),
+    awsServiceAccessGenerators: new Array<IAWSServiceAccessGenerator>(
+      new CloudFrontOACReadAccessGenerator(bucket, expectDistributionArn),
     ),
   };
 
@@ -283,13 +283,14 @@ test('K9BucketPolicy - allow CloudFront OAC', () => {
   let actualPolicyStatements = policyObj.Statement;
   expect(actualPolicyStatements).toBeDefined();
 
-  assertContainsStatementWithId(SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS, actualPolicyStatements);
+  let expectAllowSid = CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS;
+  assertContainsStatementWithId(expectAllowSid, actualPolicyStatements);
 
   for (let stmt of actualPolicyStatements) {
     if (SID_DENY_EVERYONE_ELSE == stmt.Sid) {
       expect(stmt.Condition.ArnNotEquals['aws:PrincipalArn']).toBeTruthy();
       expect(stmt.Condition.StringNotEqualsIfExists['aws:PrincipalServiceName']).toEqual('cloudfront.amazonaws.com');
-    } else if (SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS == stmt.Sid) {
+    } else if (expectAllowSid == stmt.Sid) {
       expect(stmt.Condition.StringEquals['aws:SourceArn']).toEqual(expectDistributionArn);
     }
   }

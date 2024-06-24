@@ -11,7 +11,7 @@ import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { IBucket } from 'aws-cdk-lib/aws-s3/lib/bucket';
 import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
-import { AccessCapability, IAccessSpec, IServiceAccessSpec, K9PolicyFactory } from './k9policy';
+import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator, K9PolicyFactory } from './k9policy';
 
 /**
  * Configure the k9 Security S3 Bucket policy generator with the K9BucketPolicyProps.
@@ -46,13 +46,12 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
   readonly publicReadAccess?: boolean;
 
   /**
-   * (Optionally) Allow the specified CloudFront distribution read access to the bucket using CloudFront OAC.
+   * An (optional) array of IAWSServiceAccessGenerator instances which will generate statements to allow access to the
+   * bucket or bucket object(s) by an AWS service like CloudFront or Kinesis.
    *
    * @default undefined
    */
-  readonly allowCloudFrontDistributionReadAccess?: string;
-
-  readonly k9DesiredAWSServiceAccess?: Array<IServiceAccessSpec>;
+  readonly awsServiceAccessGenerators?: Array<IAWSServiceAccessGenerator>;
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -66,9 +65,11 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMethod';
 export const SID_DENY_UNENCRYPTED_STORAGE = 'DenyUnencryptedStorage';
 export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
-export const SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS = 'AllowCloudFrontOACReadAccess';
 
-export class CloudFrontOACReadAccess implements IServiceAccessSpec {
+export class CloudFrontOACReadAccessGenerator implements IAWSServiceAccessGenerator {
+
+  static readonly SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS = 'AllowCloudFrontOACReadAccess';
+
   readonly bucket: IBucket;
   readonly distributionArn: string;
 
@@ -79,7 +80,7 @@ export class CloudFrontOACReadAccess implements IServiceAccessSpec {
 
   makeAllowStatements(): Array<PolicyStatement> {
     return [new PolicyStatement({
-      sid: SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
+      sid: CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
       effect: Effect.ALLOW,
       principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
       actions: ['s3:GetObject'],
@@ -91,7 +92,8 @@ export class CloudFrontOACReadAccess implements IServiceAccessSpec {
   }
 
   makeConditionsToExceptFromDenyEveryoneElse(): Conditions {
-    // return  {"Operator": { "keyInRequestContext": "value" } }
+    // return a (TypeScript) Record of the form:
+    //     {"Operator": { "keyInRequestContext": "value" } }
     return { StringNotEqualsIfExists: { 'aws:PrincipalServiceName': 'cloudfront.amazonaws.com' } };
   }
 }
@@ -157,8 +159,8 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
     );
   }
 
-  if (props.k9DesiredAWSServiceAccess) {
-    for (let serviceAccessSpec of props.k9DesiredAWSServiceAccess) {
+  if (props.awsServiceAccessGenerators) {
+    for (let serviceAccessSpec of props.awsServiceAccessGenerators) {
       let allowStatements:Array<PolicyStatement> = serviceAccessSpec.makeAllowStatements();
       k9Statements.unshift(...allowStatements);
     }
@@ -194,8 +196,8 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
   denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
     { 'aws:PrincipalArn': [...allAllowedPrincipalArns] });
 
-  if (props.k9DesiredAWSServiceAccess) {
-    for (let serviceAccessSpec of props.k9DesiredAWSServiceAccess) {
+  if (props.awsServiceAccessGenerators) {
+    for (let serviceAccessSpec of props.awsServiceAccessGenerators) {
       let conditionsToExceptFromDenyEveryoneElse = serviceAccessSpec.makeConditionsToExceptFromDenyEveryoneElse();
       let conditionOps = Object.keys(conditionsToExceptFromDenyEveryoneElse) as Array<string>;
       for (let conditionOp of conditionOps) {

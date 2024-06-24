@@ -43,7 +43,7 @@ export interface IAccessSpec {
   test?: ArnConditionTest;
 }
 
-export interface IServiceAccessSpec {
+export interface IAWSServiceAccessGenerator {
   makeAllowStatements(): Array<PolicyStatement>;
 
   makeConditionsToExceptFromDenyEveryoneElse(): Conditions;
