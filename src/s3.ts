@@ -201,6 +201,9 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
       let conditionsToExceptFromDenyEveryoneElse = serviceAccessSpec.makeConditionsToExceptFromDenyEveryoneElse();
       let conditionOps = Object.keys(conditionsToExceptFromDenyEveryoneElse) as Array<string>;
       for (let conditionOp of conditionOps) {
+        // note: when you call PolicyStatement#addCondition with the same conditionOp (e.g. StringEquals)
+        // multiple times, addCondition will collect the values into an array.
+        // c.f. https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-iam/lib/policy-statement.ts#L364
         denyEveryoneElseStatement.addCondition(conditionOp, conditionsToExceptFromDenyEveryoneElse[conditionOp]);
       }
     }
