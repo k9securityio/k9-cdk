@@ -18,7 +18,7 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_ALLOW_ROOT_AND_IDENTITY_POLICIES = 'Allow Root User to Administer Key And Identity Policies';
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
-function canPrincipalsCanManageKey(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
+function canPrincipalsManageKey(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
   let adminSpec = accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE);
   let readConfigSpec = accessSpecsByCapability.get(AccessCapability.READ_CONFIG);
 
@@ -46,7 +46,7 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     accessSpecsByCapability.set(getAccessCapabilityFromValue(capabilityStr), accessSpec);
   }
 
-  if (!canPrincipalsCanManageKey(accessSpecsByCapability)) {
+  if (!canPrincipalsManageKey(accessSpecsByCapability)) {
     throw Error('At least one principal must be able to administer and read-config for keys' +
             ' so encrypted data remains accessible; found:\n' +
             `administer-resource: '${accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE)?.allowPrincipalArns}'\n` +
