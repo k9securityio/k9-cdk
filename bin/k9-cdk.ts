@@ -4,7 +4,7 @@ import * as cdk from "aws-cdk-lib";
 import {RemovalPolicy, Tags} from "aws-cdk-lib";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as s3 from "aws-cdk-lib/aws-s3";
-import {BucketEncryption} from "aws-cdk-lib/aws-s3";
+import {BlockPublicAccess, BucketEncryption} from "aws-cdk-lib/aws-s3";
 
 import * as k9 from "../lib";
 
@@ -12,9 +12,7 @@ const administerResourceArns = [
     // for development
     "arn:aws:iam::139710491120:user/ci",
     "arn:aws:iam::139710491120:user/skuenzli",
-    "arn:aws:sts::139710491120:federated-user/skuenzli",
     "arn:aws:iam::139710491120:role/k9-dev-appeng",
-    "arn:aws:sts::139710491120:assumed-role/k9-dev-appeng/console",
     "arn:aws:iam::139710491120:role/cdk-hnb659fds-cfn-exec-role-139710491120-us-east-1"
 ];
 
@@ -28,7 +26,6 @@ const readConfigArns = administerResourceArns.concat(
 const readWriteDataArns = [
     "arn:aws:iam::123456789012:role/app-backend",
     "arn:aws:iam::139710491120:role/k9-dev-appeng",
-    "arn:aws:sts::139710491120:assumed-role/k9-dev-appeng/console",
 ];
 
 const readDataArns = [
@@ -78,6 +75,9 @@ const websiteBucket = new s3.Bucket(stack, 'WebsiteBucket', {
     bucketName: 'k9-cdk-v2-public-website-test',
     removalPolicy: RemovalPolicy.DESTROY,
     encryption: BucketEncryption.S3_MANAGED,
+    blockPublicAccess: new BlockPublicAccess({
+        blockPublicPolicy: false
+    })
 });
 
 const websiteK9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
