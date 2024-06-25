@@ -1,10 +1,30 @@
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory } from './k9policy';
+import {
+  AccountRootPrincipal, AnyPrincipal,
+  Conditions,
+  Effect,
+  PolicyDocument,
+  PolicyStatement,
+  ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
+import {
+  AccessCapability,
+  getAccessCapabilityFromValue,
+  IAccessSpec,
+  IAWSServiceAccessGenerator,
+  K9PolicyFactory,
+} from './k9policy';
 
 export interface K9KeyPolicyProps {
   readonly k9DesiredAccess: Array<IAccessSpec>;
   readonly trustAccountIdentities?: boolean;
+  /**
+   * An (optional) array of IAWSServiceAccessGenerator instances which will generate statements to allow access to the
+   * key by an AWS service like CloudFront or Kinesis.
+   *
+   * @default undefined
+   */
+  readonly awsServiceAccessGenerators?: Array<IAWSServiceAccessGenerator>;
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -17,6 +37,58 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 
 export const SID_ALLOW_ROOT_AND_IDENTITY_POLICIES = 'Allow Root User to Administer Key And Identity Policies';
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
+
+/**
+ * Generate key policy statements to enable the CloudFront service to read encrypted S3 bucket object data (only)
+ * from within a <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html#sse-kms">CloudFront OAC integration</a>.
+ */
+export class CloudFrontOACReadAccessGenerator implements IAWSServiceAccessGenerator {
+
+  static readonly SID_ALLOW_CLOUDFRONT_SVC_READ_DATA = 'Allow CloudFront Service read-data';
+  static readonly SID_ALLOW_CLOUDFRONT_IAM_ROLE_READ_DATA = 'Allow CloudFront IAM role read-data';
+
+  readonly distributionArn: string;
+
+  constructor(distributionArn: string) {
+    this.distributionArn = distributionArn;
+  }
+
+  makeAllowStatements(): Array<PolicyStatement> {
+    return [new PolicyStatement({
+      sid: CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_SVC_READ_DATA,
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
+      actions: ['kms:Decrypt'],
+      resources: ['*'],
+      conditions: {
+        StringEquals: { 'aws:SourceArn': this.distributionArn },
+      },
+    }),
+    new PolicyStatement({
+      sid: CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_IAM_ROLE_READ_DATA,
+      effect: Effect.ALLOW,
+      principals: [new AnyPrincipal()],
+      actions: ['kms:Decrypt'],
+      resources: ['*'],
+      conditions: {
+        // use ArnEquals condition instead of a plain Principal element in case
+        // the CloudFront service recreates the role.
+        // conditions bind against the principal ARN at runtime.
+        // the principal element binds (once) to the principal's canonical userid at policy definition time.
+        ArnEquals: {
+          'aws:PrincipalArn': 'arn:aws:iam::856369053181:role/OriginAccessControlRole',
+        },
+      },
+    })];
+  }
+
+  makeConditionsToExceptFromDenyEveryoneElse(): Conditions {
+    // return a (TypeScript) Record of the form:
+    //     {"Operator": { "keyInRequestContext": "value" } }
+    return { StringNotEqualsIfExists: { 'aws:PrincipalServiceName': 'cloudfront.amazonaws.com' } };
+  }
+}
+
 
 function canPrincipalsManageKey(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
   let adminSpec = accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE);
@@ -59,6 +131,12 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     Array.from(accessSpecsByCapability.values()),
     resourceArns);
   policy.addStatements(...allowStatements);
+
+  if (props.awsServiceAccessGenerators) {
+    for (let serviceAccessSpec of props.awsServiceAccessGenerators) {
+      policy.addStatements(...serviceAccessSpec.makeAllowStatements());
+    }
+  }
 
   //console.log(`trustAccountIdentities: ${props.trustAccountIdentities}`);
 

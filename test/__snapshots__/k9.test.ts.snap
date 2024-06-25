@@ -1270,6 +1270,186 @@ Object {
 }
 `;
 
+exports[`K9KeyPolicy Allow CloudFront Service and IAM role with OAC generator 1`] = `
+Object {
+  "Resources": Object {
+    "TestKeyWithCloudFrontOACC788805D": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "KeyPolicy": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "kms:CancelKeyDeletion",
+                "kms:ConnectCustomKeyStore",
+                "kms:CreateAlias",
+                "kms:CreateCustomKeyStore",
+                "kms:CreateGrant",
+                "kms:CreateKey",
+                "kms:DeleteAlias",
+                "kms:DisableKey",
+                "kms:DisableKeyRotation",
+                "kms:DisconnectCustomKeyStore",
+                "kms:EnableKey",
+                "kms:EnableKeyRotation",
+                "kms:PutKeyPolicy",
+                "kms:RetireGrant",
+                "kms:RevokeGrant",
+                "kms:ScheduleKeyDeletion",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:UpdateAlias",
+                "kms:UpdateCustomKeyStore",
+                "kms:UpdateKeyDescription",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted administer-resource",
+            },
+            Object {
+              "Action": Array [
+                "kms:DescribeCustomKeyStores",
+                "kms:DescribeKey",
+                "kms:GetKeyPolicy",
+                "kms:GetKeyRotationStatus",
+                "kms:GetParametersForImport",
+                "kms:GetPublicKey",
+                "kms:ListAliases",
+                "kms:ListGrants",
+                "kms:ListKeyPolicies",
+                "kms:ListKeys",
+                "kms:ListResourceTags",
+                "kms:ListRetirableGrants",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted read-config",
+            },
+            Object {
+              "Action": Array [
+                "kms:Decrypt",
+                "kms:Verify",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted read-data",
+            },
+            Object {
+              "Action": Array [
+                "kms:Encrypt",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateRandom",
+                "kms:ImportKeyMaterial",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:Sign",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted write-data",
+            },
+            Object {
+              "Action": Array [
+                "kms:DeleteCustomKeyStore",
+                "kms:DeleteImportedKeyMaterial",
+              ],
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": Array [
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted delete-data",
+            },
+            Object {
+              "Action": "kms:Decrypt",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "aws:SourceArn": "arn:aws:cloudfront::123456789012:distribution/DIST_ID_1234",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "cloudfront.amazonaws.com",
+              },
+              "Resource": "*",
+              "Sid": "Allow CloudFront Service read-data",
+            },
+            Object {
+              "Action": "kms:Decrypt",
+              "Condition": Object {
+                "ArnEquals": Object {
+                  "aws:PrincipalArn": "arn:aws:iam::856369053181:role/OriginAccessControlRole",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow CloudFront IAM role read-data",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;
+
 exports[`K9KeyPolicy Allow root user and Identity policies 1`] = `
 Object {
   "Resources": Object {

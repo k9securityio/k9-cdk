@@ -494,6 +494,44 @@ describe('K9KeyPolicy', () => {
     }
   });
 
+  test('Allow CloudFront Service and IAM role with OAC generator', () => {
+    const stack = new cdk.Stack(app, 'WithCloudFrontOAC');
+    let expectDistributionArn = 'arn:aws:cloudfront::123456789012:distribution/DIST_ID_1234';
+    const k9KeyPolicyProps: K9KeyPolicyProps = {
+      k9DesiredAccess: desiredAccess,
+      awsServiceAccessGenerators: new Array<IAWSServiceAccessGenerator>(
+        new k9.kms.CloudFrontOACReadAccessGenerator(expectDistributionArn),
+      ),
+    };
+
+    const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
+
+    let policyJsonStr = stringifyPolicy(keyPolicy);
+    console.log(`keyPolicy.document (trustAccountIdentities: ${k9KeyPolicyProps.trustAccountIdentities}): ${policyJsonStr}`);
+    let policyObj = JSON.parse(policyJsonStr);
+
+    let actualPolicyStatements = policyObj.Statement;
+    expect(actualPolicyStatements).toBeDefined();
+
+    let allowCloudFrontSvcReadDataSid = k9.kms.CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_SVC_READ_DATA;
+    let allowCloudFrontIAMRoleReadDataSid = k9.kms.CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_IAM_ROLE_READ_DATA;
+    for (let stmt of actualPolicyStatements) {
+      if (allowCloudFrontSvcReadDataSid == stmt.Sid) {
+        expect(stmt.Principal.Service).toContain('${Token[cloudfront.amazonaws.com');
+        expect(stmt.Condition.StringEquals['aws:SourceArn']).toEqual(expectDistributionArn);
+      } else if (allowCloudFrontIAMRoleReadDataSid == stmt.Sid) {
+        expect(stmt.Principal.AWS).toEqual('*');
+        expect(stmt.Condition.ArnEquals['aws:PrincipalArn']).toEqual('arn:aws:iam::856369053181:role/OriginAccessControlRole');
+      }
+    }
+
+    new kms.Key(stack, 'TestKeyWithCloudFrontOAC', { policy: keyPolicy });
+
+    expectCDK(stack).to(haveResource('AWS::KMS::Key'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
+
+
 });
 
 function assertContainsStatementWithId(expectStmtId:string, statements:any) {
