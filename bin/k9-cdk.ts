@@ -131,7 +131,7 @@ const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
 // Set CDK preference @aws-cdk/aws-kms:defaultKeyPolicies to true in cdk.json
 const key = new kms.Key(stack, 'KMSKey', {
-    alias: 'k9-cdk-integration-test',
+    alias: 'k9-cdk-v2-integration-test',
     policy: keyPolicy,
 });
 
