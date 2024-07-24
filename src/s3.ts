@@ -1,9 +1,17 @@
-import { AddToResourcePolicyResult, AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import {
+  AddToResourcePolicyResult,
+  AnyPrincipal,
+  Conditions,
+  Effect,
+  PolicyStatement,
+  ServicePrincipal,
+} from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
+import { IBucket } from 'aws-cdk-lib/aws-s3/lib/bucket';
 import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
-import { AccessCapability, IAccessSpec, K9PolicyFactory } from './k9policy';
+import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator, K9PolicyFactory } from './k9policy';
 
 /**
  * Configure the k9 Security S3 Bucket policy generator with the K9BucketPolicyProps.
@@ -16,7 +24,7 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
   readonly k9DesiredAccess: Array<IAccessSpec>;
 
   /**
-   * (Optionally) provide the BucketEncryption object for the Bucket to
+   * (Optionally) Provide the BucketEncryption object for the Bucket to
    * allow the policy generator to customize the policy for the Bucket's
    * configuration without handling, e.g. the encryption method options directly
    */
@@ -36,6 +44,14 @@ export interface K9BucketPolicyProps extends s3.BucketPolicyProps {
    * @default false
    */
   readonly publicReadAccess?: boolean;
+
+  /**
+   * An (optional) array of IAWSServiceAccessGenerator instances which will generate statements to allow access to the
+   * bucket or bucket object(s) by an AWS service like CloudFront or Kinesis.
+   *
+   * @default undefined
+   */
+  readonly awsServiceAccessGenerators?: Array<IAWSServiceAccessGenerator>;
 }
 
 let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -49,6 +65,38 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_DENY_UNEXPECTED_ENCRYPTION_METHOD = 'DenyUnexpectedEncryptionMethod';
 export const SID_DENY_UNENCRYPTED_STORAGE = 'DenyUnencryptedStorage';
 export const SID_ALLOW_PUBLIC_READ_ACCESS = 'AllowPublicReadAccess';
+
+export class CloudFrontOACReadAccessGenerator implements IAWSServiceAccessGenerator {
+
+  static readonly SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS = 'AllowCloudFrontOACReadAccess';
+
+  readonly bucket: IBucket;
+  readonly distributionArn: string;
+
+  constructor(bucket: IBucket, distributionArn: string) {
+    this.bucket = bucket;
+    this.distributionArn = distributionArn;
+  }
+
+  makeAllowStatements(): Array<PolicyStatement> {
+    return [new PolicyStatement({
+      sid: CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS,
+      effect: Effect.ALLOW,
+      principals: [new ServicePrincipal('cloudfront.amazonaws.com')],
+      actions: ['s3:GetObject'],
+      resources: [`${this.bucket.arnForObjects('*')}`],
+      conditions: {
+        StringEquals: { 'aws:SourceArn': this.distributionArn },
+      },
+    })];
+  }
+
+  makeConditionsToExceptFromDenyEveryoneElse(): Conditions {
+    // return a (TypeScript) Record of the form:
+    //     {"Operator": { "keyInRequestContext": "value" } }
+    return { StringNotEqualsIfExists: { 'aws:PrincipalServiceName': 'cloudfront.amazonaws.com' } };
+  }
+}
 
 /**
  * Grants least-privilege access to a bucket by generating a BucketPolicy from the access capabilities
@@ -111,6 +159,13 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
     );
   }
 
+  if (props.awsServiceAccessGenerators) {
+    for (let serviceAccessSpec of props.awsServiceAccessGenerators) {
+      let allowStatements:Array<PolicyStatement> = serviceAccessSpec.makeAllowStatements();
+      k9Statements.unshift(...allowStatements);
+    }
+  }
+
   // Make Deny Statement
   const denyEveryoneElseTest = policyFactory.wasLikeUsed(props.k9DesiredAccess) ?
     'ArnNotLike' :
@@ -140,6 +195,19 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
   }
   denyEveryoneElseStatement.addCondition(denyEveryoneElseTest,
     { 'aws:PrincipalArn': [...allAllowedPrincipalArns] });
+
+  if (props.awsServiceAccessGenerators) {
+    for (let serviceAccessSpec of props.awsServiceAccessGenerators) {
+      let conditionsToExceptFromDenyEveryoneElse = serviceAccessSpec.makeConditionsToExceptFromDenyEveryoneElse();
+      let conditionOps = Object.keys(conditionsToExceptFromDenyEveryoneElse) as Array<string>;
+      for (let conditionOp of conditionOps) {
+        // note: when you call PolicyStatement#addCondition with the same conditionOp (e.g. StringEquals)
+        // multiple times, addCondition will collect the values into an array.
+        // c.f. https://github.com/aws/aws-cdk/blob/main/packages/aws-cdk-lib/aws-iam/lib/policy-statement.ts#L364
+        denyEveryoneElseStatement.addCondition(conditionOp, conditionsToExceptFromDenyEveryoneElse[conditionOp]);
+      }
+    }
+  }
 
   // default encryption method to SSE-KMS,
   // allow override to SSE-S3 (AES256)

@@ -7,13 +7,14 @@ import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
 import { fail, stringifyPolicy } from './helpers';
 import * as k9 from '../lib';
-import { AccessCapability, IAccessSpec } from '../lib/k9policy';
+import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator } from '../lib/k9policy';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
 import {
   K9BucketPolicyProps,
   SID_ALLOW_PUBLIC_READ_ACCESS,
   SID_DENY_UNENCRYPTED_STORAGE,
   SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
+  CloudFrontOACReadAccessGenerator,
 } from '../lib/s3';
 // @ts-ignore
 
@@ -249,6 +250,54 @@ test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-rea
 
 });
 
+test('K9BucketPolicy - allow CloudFront OAC', () => {
+  const stack = new cdk.Stack(app, 'K9BucketPolicyCloudFrontOAC');
+  const bucket = new s3.Bucket(stack, 'TestBucketForCloudFrontOAC', {});
+
+  let expectDistributionArn = 'arn:aws:cloudfront::123456789012:distribution/DIST_ID_1234';
+  const k9BucketPolicyProps: K9BucketPolicyProps = {
+    bucket: bucket,
+    k9DesiredAccess: new Array<IAccessSpec>(
+      {
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
+        allowPrincipalArns: administerResourceArns,
+      },
+    ),
+    encryption: BucketEncryption.S3_MANAGED,
+
+    awsServiceAccessGenerators: new Array<IAWSServiceAccessGenerator>(
+      new CloudFrontOACReadAccessGenerator(bucket, expectDistributionArn),
+    ),
+  };
+
+  let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'K9BucketPolicyCloudFrontOAC', k9BucketPolicyProps);
+  expect(bucket.policy).toBeDefined();
+
+  let policyStr = stringifyPolicy(bucket.policy?.document);
+  console.log('bucket.policy?.document: ' + policyStr);
+  expect(bucket.policy?.document).toBeDefined();
+
+  // assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults, k9BucketPolicyProps);
+  console.log('addToResourcePolicyResults: '+ addToResourcePolicyResults);
+  let policyObj = JSON.parse(policyStr);
+  let actualPolicyStatements = policyObj.Statement;
+  expect(actualPolicyStatements).toBeDefined();
+
+  let expectAllowSid = CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_OAC_READ_ACCESS;
+  assertContainsStatementWithId(expectAllowSid, actualPolicyStatements);
+
+  for (let stmt of actualPolicyStatements) {
+    if (SID_DENY_EVERYONE_ELSE == stmt.Sid) {
+      expect(stmt.Condition.ArnNotEquals['aws:PrincipalArn']).toBeTruthy();
+      expect(stmt.Condition.StringNotEqualsIfExists['aws:PrincipalServiceName']).toEqual('cloudfront.amazonaws.com');
+    } else if (expectAllowSid == stmt.Sid) {
+      expect(stmt.Condition.StringEquals['aws:SourceArn']).toEqual(expectDistributionArn);
+    }
+  }
+
+});
+
+
 test('K9BucketPolicy - IAccessSpec with set of capabilities', () => {
   const localstack = new cdk.Stack(app, 'K9BucketPolicyMultiAccessCapa');
   const bucket = new s3.Bucket(localstack, 'TestBucketWithMultiAccessSpec', {});
@@ -444,6 +493,44 @@ describe('K9KeyPolicy', () => {
 
     }
   });
+
+  test('Allow CloudFront Service and IAM role with OAC generator', () => {
+    const stack = new cdk.Stack(app, 'WithCloudFrontOAC');
+    let expectDistributionArn = 'arn:aws:cloudfront::123456789012:distribution/DIST_ID_1234';
+    const k9KeyPolicyProps: K9KeyPolicyProps = {
+      k9DesiredAccess: desiredAccess,
+      awsServiceAccessGenerators: new Array<IAWSServiceAccessGenerator>(
+        new k9.kms.CloudFrontOACReadAccessGenerator(expectDistributionArn),
+      ),
+    };
+
+    const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
+
+    let policyJsonStr = stringifyPolicy(keyPolicy);
+    console.log(`keyPolicy.document (trustAccountIdentities: ${k9KeyPolicyProps.trustAccountIdentities}): ${policyJsonStr}`);
+    let policyObj = JSON.parse(policyJsonStr);
+
+    let actualPolicyStatements = policyObj.Statement;
+    expect(actualPolicyStatements).toBeDefined();
+
+    let allowCloudFrontSvcReadDataSid = k9.kms.CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_SVC_READ_DATA;
+    let allowCloudFrontIAMRoleReadDataSid = k9.kms.CloudFrontOACReadAccessGenerator.SID_ALLOW_CLOUDFRONT_IAM_ROLE_READ_DATA;
+    for (let stmt of actualPolicyStatements) {
+      if (allowCloudFrontSvcReadDataSid == stmt.Sid) {
+        expect(stmt.Principal.Service).toContain('${Token[cloudfront.amazonaws.com');
+        expect(stmt.Condition.StringEquals['aws:SourceArn']).toEqual(expectDistributionArn);
+      } else if (allowCloudFrontIAMRoleReadDataSid == stmt.Sid) {
+        expect(stmt.Principal.AWS).toEqual('*');
+        expect(stmt.Condition.ArnEquals['aws:PrincipalArn']).toEqual('arn:aws:iam::856369053181:role/OriginAccessControlRole');
+      }
+    }
+
+    new kms.Key(stack, 'TestKeyWithCloudFrontOAC', { policy: keyPolicy });
+
+    expectCDK(stack).to(haveResource('AWS::KMS::Key'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
+
 
 });
 

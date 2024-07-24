@@ -2,9 +2,11 @@
 
 import * as cdk from "aws-cdk-lib";
 import {RemovalPolicy, Tags} from "aws-cdk-lib";
+// import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+// import * as cforigins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as s3 from "aws-cdk-lib/aws-s3";
-import {BucketEncryption} from "aws-cdk-lib/aws-s3";
+import {BlockPublicAccess, BucketEncryption} from "aws-cdk-lib/aws-s3";
 
 import * as k9 from "../lib";
 
@@ -12,9 +14,7 @@ const administerResourceArns = [
     // for development
     "arn:aws:iam::139710491120:user/ci",
     "arn:aws:iam::139710491120:user/skuenzli",
-    "arn:aws:sts::139710491120:federated-user/skuenzli",
     "arn:aws:iam::139710491120:role/k9-dev-appeng",
-    "arn:aws:sts::139710491120:assumed-role/k9-dev-appeng/console",
     "arn:aws:iam::139710491120:role/cdk-hnb659fds-cfn-exec-role-139710491120-us-east-1"
 ];
 
@@ -28,7 +28,7 @@ const readConfigArns = administerResourceArns.concat(
 const readWriteDataArns = [
     "arn:aws:iam::123456789012:role/app-backend",
     "arn:aws:iam::139710491120:role/k9-dev-appeng",
-    "arn:aws:sts::139710491120:assumed-role/k9-dev-appeng/console",
+    "arn:aws:sts::139710491120:assumed-role/k9-dev-appeng/console"
 ];
 
 const readDataArns = [
@@ -78,6 +78,9 @@ const websiteBucket = new s3.Bucket(stack, 'WebsiteBucket', {
     bucketName: 'k9-cdk-v2-public-website-test',
     removalPolicy: RemovalPolicy.DESTROY,
     encryption: BucketEncryption.S3_MANAGED,
+    blockPublicAccess: new BlockPublicAccess({
+        blockPublicPolicy: false
+    })
 });
 
 const websiteK9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
@@ -128,10 +131,64 @@ const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
 
 // Set CDK preference @aws-cdk/aws-kms:defaultKeyPolicies to true in cdk.json
 const key = new kms.Key(stack, 'KMSKey', {
-    alias: 'k9-cdk-integration-test',
+    alias: 'k9-cdk-v2-integration-test',
     policy: keyPolicy,
 });
 
-for(let construct of [bucket, websiteBucket, autoDeleteBucket, key]){
+// Created test distribution manually because I haven't fully sorted through
+// https://github.com/aws/aws-cdk/issues/21771
+//
+// let cloudfrontDistribution = new cloudfront.Distribution(stack, 'oac-bucket-dist', {
+//     comment: 'k9-cdk integration test distribution for CloudFront OAC',
+//     defaultBehavior: {
+//         origin: new cforigins.S3Origin(cloudfrontOACBucket, {
+//
+//         }),
+//     },
+// });
+let cloudfrontDistributionId = 'E1OHGXOERP1X0D'
+let cloudfrontDistributionArn = `arn:aws:cloudfront::${stack.account}:distribution/${cloudfrontDistributionId}`
+// let cloudfrontDistributionArn = `arn:aws:cloudfront::${stack.account}:distribution/${cloudfrontDistribution.distributionId}`
+
+const cloudfrontOACk9KeyPolicyProps: k9.kms.K9KeyPolicyProps = {
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess,
+    trustAccountIdentities: false,
+    awsServiceAccessGenerators: new Array<k9.k9policy.IAWSServiceAccessGenerator>(
+        new k9.kms.CloudFrontOACReadAccessGenerator(cloudfrontDistributionArn),
+    )
+};
+const cloudfrontOACKeyPolicy = k9.kms.makeKeyPolicy(cloudfrontOACk9KeyPolicyProps);
+
+const cloudfrontOACKey = new kms.Key(stack, 'CloudFrontOACKMSKey', {
+    alias: 'k9-cdk-v2-cloudfront-oac-test',
+    policy: cloudfrontOACKeyPolicy,
+});
+
+const cloudfrontOACBucket = new s3.Bucket(stack, 'CloudFrontOACBucket', {
+    bucketName: 'k9-cdk-v2-cloudfront-oac-test',
+    removalPolicy: RemovalPolicy.DESTROY,
+    encryption: BucketEncryption.KMS,
+    encryptionKey: cloudfrontOACKey
+});
+
+const cloudfrontOACBucketPolicyProps: k9.s3.K9BucketPolicyProps = {
+    bucket: cloudfrontOACBucket,
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess.concat([]),
+    encryption: BucketEncryption.KMS_MANAGED,
+    awsServiceAccessGenerators: new Array<k9.k9policy.IAWSServiceAccessGenerator>(
+      new k9.s3.CloudFrontOACReadAccessGenerator(cloudfrontOACBucket, cloudfrontDistributionArn),
+    )
+};
+
+k9.s3.grantAccessViaResourcePolicy(stack, "CloudFrontOACBucket", cloudfrontOACBucketPolicyProps);
+
+for (let construct of [bucket,
+    websiteBucket,
+    autoDeleteBucket,
+    key,
+    // cloudfrontDistribution,
+    cloudfrontOACBucket,
+    cloudfrontOACKey,
+]) {
     Tags.of(construct).add('k9security:analysis', 'include');
 }
