@@ -68,7 +68,6 @@ export interface IAWSServiceAccessGenerator {
  * @return true when at least one principal that can administer and read configuration exists
  */
 export function canPrincipalsManageResources(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
-  console.log(`canPrincipalsManageResources eval'ing ${accessSpecsByCapability}`);
   let adminSpec = accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE);
   let readConfigSpec = accessSpecsByCapability.get(AccessCapability.READ_CONFIG);
 

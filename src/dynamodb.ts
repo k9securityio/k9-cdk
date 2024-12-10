@@ -1,6 +1,10 @@
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
-import { AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import * as iam from 'aws-cdk-lib/aws-iam';
+import {
+  AccountRootPrincipal,
+  AddToResourcePolicyResult,
+  Effect,
+  PolicyStatement,
+} from 'aws-cdk-lib/aws-iam';
 import {
   AccessCapability,
   canPrincipalsManageResources,
@@ -24,11 +28,12 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
-export function grantAccessViaResourcePolicy(table: TableV2, props: K9DynamoDBResourcePolicyProps): PolicyDocument {
+export function grantAccessViaResourcePolicy(table: TableV2, props: K9DynamoDBResourcePolicyProps): AddToResourcePolicyResult[] {
   const policyFactory = new K9PolicyFactory();
-  const policy = new iam.PolicyDocument();
 
   const resourceArns = ['*'];
+
+  const addToResourcePolicyResults = new Array<AddToResourcePolicyResult>();
 
   let accessSpecsByCapabilityRecs = policyFactory.mergeDesiredAccessSpecsByCapability(SUPPORTED_CAPABILITIES, props.k9DesiredAccess);
   let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = new Map();
@@ -50,13 +55,12 @@ export function grantAccessViaResourcePolicy(table: TableV2, props: K9DynamoDBRe
     Array.from(accessSpecsByCapability.values()),
     resourceArns,
     true);
-  policy.addStatements(...allowStatements);
 
   for (const allowStatement of allowStatements) {
-    table.addToResourcePolicy(allowStatement);
+    let addToResourcePolicyResult = table.addToResourcePolicy(allowStatement);
+    addToResourcePolicyResults.push(addToResourcePolicyResult);
   }
 
-  // console.log('Adding Allow root and DenyEveryoneElse statements');
   const denyEveryoneElseStatement = new PolicyStatement({
     sid: SID_DENY_EVERYONE_ELSE,
     effect: Effect.DENY,
@@ -81,14 +85,9 @@ export function grantAccessViaResourcePolicy(table: TableV2, props: K9DynamoDBRe
     ],
   });
 
-  policy.addStatements(
-    denyEveryoneElseStatement,
-  );
-
-  table.addToResourcePolicy(denyEveryoneElseStatement);
+  let addDenyEveryoneElseResult = table.addToResourcePolicy(denyEveryoneElseStatement);
+  addToResourcePolicyResults.push(addDenyEveryoneElseResult);
   table.resourcePolicy?.validateForResourcePolicy();
 
-  policy.validateForResourcePolicy();
-
-  return policy;
+  return addToResourcePolicyResults;
 }

@@ -558,6 +558,7 @@ describe('DynamoDBResourcePolicy', () => {
       allowPrincipalArns: deleteDataArns,
     },
   );
+
   test('Typical usage', () => {
     const stack = new cdk.Stack(app, 'K9DDBResourcePolicyTestTypicalUsage', { env: { region: 'us-east-1' } });
 
@@ -571,58 +572,41 @@ describe('DynamoDBResourcePolicy', () => {
       // resourcePolicy: resourcePolicy,
     });
 
-    let resourcePolicy = k9.dynamodb.grantAccessViaResourcePolicy(table, ddbResourcePolicyProps);
+    let addToResourcePolicyResults = k9.dynamodb.grantAccessViaResourcePolicy(table, ddbResourcePolicyProps);
 
     console.log('table: ' + table);
     console.log('table.resourcePolicy: ' + stringifyPolicy(table.resourcePolicy));
-    console.log('resourcePolicy: ' + stringifyPolicy(resourcePolicy));
-
+    console.log('addToResourcePolicyResults: ' + addToResourcePolicyResults);
 
     expect(table.resourcePolicy).toBeDefined();
 
-    // const k9BucketPolicyProps: K9BucketPolicyProps = {
-    //   bucket: table,
-    //   k9DesiredAccess: new Array<IAccessSpec>(
-    //     {
-    //       accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
-    //       allowPrincipalArns: administerResourceArns,
-    //     },
-    //     {
-    //       accessCapabilities: AccessCapability.WRITE_DATA,
-    //       allowPrincipalArns: writeDataArns,
-    //     },
-    //     {
-    //       accessCapabilities: AccessCapability.READ_DATA,
-    //       allowPrincipalArns: readDataArns,
-    //     },
-    //     {
-    //       accessCapabilities: AccessCapability.DELETE_DATA,
-    //       allowPrincipalArns: deleteDataArns,
-    //     },
-    //   ),
-    // };
-    // let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'S3Bucket', k9BucketPolicyProps);
-    // expect(table.resourcePolicy).toBeDefined();
-    //
-    // let policyStr = stringifyPolicy(table.resourcePolicy);
-    // console.log('table.resourcePolicy?: ' + policyStr);
-    // expect(table.resourcePolicy).toBeDefined();
-    //
-    // assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
-    // let policyObj = JSON.parse(policyStr);
-    // let actualPolicyStatements = policyObj.Statement;
-    // expect(actualPolicyStatements).toBeDefined();
-    //
-    // for (let stmt of actualPolicyStatements) {
-    //   if (SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid) {
-    //     expect(stmt.Condition.StringNotEquals['s3:x-amz-server-side-encryption']).toEqual('aws:kms');
-    //   }
-    // }
-    // console.log('stack to json: ' + stack.toJsonString(stack))
+    let policyStr = stringifyPolicy(table.resourcePolicy);
 
-    // expectCDK(stack).to(haveResource('AWS::DynamoDB::Table'));
-    // expectCDK(stack).to(haveResource('AWS::S3::BucketPolicy'));
-    // expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+    let policyObj = JSON.parse(policyStr);
+    let actualPolicyStatements = policyObj.Statement;
+    expect(actualPolicyStatements).toBeDefined();
+
+    const expectStmtIds = [
+      SID_DENY_EVERYONE_ELSE,
+      'AllowRestrictedAdministerResource',
+      'AllowRestrictedReadConfig',
+      'AllowRestrictedReadData',
+      'AllowRestrictedWriteData',
+      'AllowRestrictedDeleteData',
+    ];
+    expect(actualPolicyStatements).toHaveLength(expectStmtIds.length);
+    expect(addToResourcePolicyResults).toHaveLength(expectStmtIds.length);
+
+    const policyStatementMap: { [key: string]: any } = {};
+    for (let stmt of actualPolicyStatements) {
+      if (stmt.Sid) {
+        policyStatementMap[stmt.Sid] = stmt;
+      }
+    }
+
+    for (let expectStmtId of expectStmtIds) {
+      expect(policyStatementMap[expectStmtId]).toBeTruthy();
+    }
   });
 
 });
