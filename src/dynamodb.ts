@@ -1,7 +1,13 @@
 import { TableV2 } from 'aws-cdk-lib/aws-dynamodb';
 import { AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory } from './k9policy';
+import {
+  AccessCapability,
+  canPrincipalsManageResources,
+  getAccessCapabilityFromValue,
+  IAccessSpec,
+  K9PolicyFactory,
+} from './k9policy';
 
 
 export interface K9DynamoDBResourcePolicyProps {
@@ -21,8 +27,6 @@ export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 export function grantAccessViaResourcePolicy(table: TableV2, props: K9DynamoDBResourcePolicyProps): PolicyDocument {
   const policyFactory = new K9PolicyFactory();
   const policy = new iam.PolicyDocument();
-
-  console.log('making resource policy with props: ' + props);
 
   const resourceArns = ['*'];
 
@@ -44,7 +48,8 @@ export function grantAccessViaResourcePolicy(table: TableV2, props: K9DynamoDBRe
   const allowStatements = policyFactory.makeAllowStatements('DynamoDB',
     SUPPORTED_CAPABILITIES,
     Array.from(accessSpecsByCapability.values()),
-    resourceArns);
+    resourceArns,
+    true);
   policy.addStatements(...allowStatements);
 
   for (const allowStatement of allowStatements) {
@@ -86,9 +91,4 @@ export function grantAccessViaResourcePolicy(table: TableV2, props: K9DynamoDBRe
   policy.validateForResourcePolicy();
 
   return policy;
-}
-
-function canPrincipalsManageResources(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
-  console.log(accessSpecsByCapability);
-  return true;
 }

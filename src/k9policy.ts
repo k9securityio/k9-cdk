@@ -61,6 +61,29 @@ export interface IAWSServiceAccessGenerator {
   makeConditionsToExceptFromDenyEveryoneElse(): Conditions;
 }
 
+/**
+ * Check whether the provided access specs ensure that at least one principal can both read and administer configuration.
+ * @param accessSpecsByCapability is a map of access specs keyed by access capability
+ *
+ * @return true when at least one principal that can administer and read configuration exists
+ */
+export function canPrincipalsManageResources(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
+  console.log(`canPrincipalsManageResources eval'ing ${accessSpecsByCapability}`);
+  let adminSpec = accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE);
+  let readConfigSpec = accessSpecsByCapability.get(AccessCapability.READ_CONFIG);
+
+  if ((adminSpec?.allowPrincipalArns && adminSpec.allowPrincipalArns.length > 0)
+        && (readConfigSpec?.allowPrincipalArns && readConfigSpec.allowPrincipalArns.length > 0)) {
+    const adminPrincipals = new Set<string>(adminSpec.allowPrincipalArns);
+    const readConfigPrincipals = new Set<string>(readConfigSpec.allowPrincipalArns);
+    const intersection = new Set(
+      [...adminPrincipals].filter(x => readConfigPrincipals.has(x)));
+    return intersection.size > 0;
+  }
+  return false;
+}
+
+
 export function toPascalCase(input: string): string {
   // Remove placeholders like ${something} and trim whitespace
   const cleanedInput = input.replace(/\$\{.*?\}/g, '').trim();

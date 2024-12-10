@@ -2,6 +2,7 @@ import { AnyPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { stringifyStatement } from './helpers';
 import {
   AccessCapability,
+  canPrincipalsManageResources,
   getAccessCapabilityFromValue,
   IAccessSpec,
   K9PolicyFactory,
@@ -31,6 +32,76 @@ test('getAccessCapabilityFromValue throws error for undefined capabilities', () 
     getAccessCapabilityFromValue('unknown-capability');
   }).toThrow('Could not get AccessCapability from value: unknown-capability');
 });
+
+describe('canPrincipalsManageResources', () => {
+  test('returns false when no principals have both administer-resource and read-config', () => {
+    const unmanageableCapabilityCombos = [
+      [],
+      [AccessCapability.ADMINISTER_RESOURCE],
+      [AccessCapability.READ_CONFIG],
+      [AccessCapability.ADMINISTER_RESOURCE, AccessCapability.WRITE_DATA],
+    ];
+
+    for (let unmanageableAccessCapabilities of unmanageableCapabilityCombos) {
+      let accessSpecsByCapability = new Map<AccessCapability, IAccessSpec>();
+
+      for (let capability of unmanageableAccessCapabilities) {
+        let unmanageableAccessSpec = {
+          accessCapabilities: capability,
+          allowPrincipalArns: [
+            'arn:aws:iam::123456789012:role/not-an-admin',
+          ],
+        };
+        accessSpecsByCapability.set(capability, unmanageableAccessSpec);
+      }
+
+      expect(canPrincipalsManageResources(accessSpecsByCapability)).toBeFalsy();
+    }
+  });
+
+  test('returns false when no there are principals with either administer-resource and read-config but not both', () => {
+    let accessSpecsByCapability = new Map<AccessCapability, IAccessSpec>();
+
+    accessSpecsByCapability.set(AccessCapability.ADMINISTER_RESOURCE, {
+      accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
+      allowPrincipalArns: [
+        'arn:aws:iam::123456789012:role/not-an-admin-1',
+      ],
+    });
+    accessSpecsByCapability.set(AccessCapability.READ_CONFIG, {
+      accessCapabilities: AccessCapability.READ_CONFIG,
+      allowPrincipalArns: [
+        'arn:aws:iam::123456789012:role/not-an-admin-2',
+      ],
+    });
+
+    expect(canPrincipalsManageResources(accessSpecsByCapability)).toBeFalsy();
+  });
+
+  test('returns true when a principal has both administer-resource and read-config', () => {
+    const manageableCapabilityCombos = [
+      [AccessCapability.ADMINISTER_RESOURCE, AccessCapability.READ_CONFIG],
+      [AccessCapability.ADMINISTER_RESOURCE, AccessCapability.READ_CONFIG, AccessCapability.WRITE_DATA],
+    ];
+
+    for (let manageableAccessCapabilities of manageableCapabilityCombos) {
+      let accessSpecsByCapability = new Map<AccessCapability, IAccessSpec>();
+
+      for (let capability of manageableAccessCapabilities) {
+        let unmanageableAccessSpec = {
+          accessCapabilities: capability,
+          allowPrincipalArns: [
+            'arn:aws:iam::123456789012:role/admin',
+          ],
+        };
+        accessSpecsByCapability.set(capability, unmanageableAccessSpec);
+      }
+
+      expect(canPrincipalsManageResources(accessSpecsByCapability)).toBeTruthy();
+    }
+  });
+});
+
 
 test('toPascalCase converts classic Allow Restricted X SID', () => {
   expect(toPascalCase('Allow Restricted administer-resource'))
