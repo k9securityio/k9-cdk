@@ -1,6 +1,12 @@
 import { AnyPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { stringifyStatement } from './helpers';
-import { AccessCapability, getAccessCapabilityFromValue, IAccessSpec, K9PolicyFactory } from '../lib/k9policy';
+import {
+  AccessCapability,
+  getAccessCapabilityFromValue,
+  IAccessSpec,
+  K9PolicyFactory,
+  toPascalCase,
+} from '../lib/k9policy';
 // @ts-ignore
 
 const S3_SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
@@ -24,6 +30,16 @@ test('getAccessCapabilityFromValue throws error for undefined capabilities', () 
   expect(() => {
     getAccessCapabilityFromValue('unknown-capability');
   }).toThrow('Could not get AccessCapability from value: unknown-capability');
+});
+
+test('toPascalCase converts classic Allow Restricted X SID', () => {
+  expect(toPascalCase('Allow Restricted administer-resource'))
+    .toEqual('AllowRestrictedAdministerResource');
+});
+
+test('toPascalCase trims leading and trailing spaces', () => {
+  expect(toPascalCase(' Allow Restricted With Leading and Trailing Spaces'))
+    .toEqual('AllowRestrictedWithLeadingAndTrailingSpaces');
 });
 
 test('K9PolicyFactory#wasLikeUsed', () => {

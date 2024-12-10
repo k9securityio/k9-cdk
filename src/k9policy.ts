@@ -61,6 +61,21 @@ export interface IAWSServiceAccessGenerator {
   makeConditionsToExceptFromDenyEveryoneElse(): Conditions;
 }
 
+export function toPascalCase(input: string): string {
+  // Remove placeholders like ${something} and trim whitespace
+  const cleanedInput = input.replace(/\$\{.*?\}/g, '').trim();
+
+  // Split the input into words based on spaces, hyphens, underscores, or other delimiters
+  const words = cleanedInput.split(/[\s_\-]+/);
+
+  // Convert each word to PascalCase
+  return words
+    .map(
+      word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(), // Capitalize the first letter, lower the rest
+    )
+    .join('');
+}
+
 export class K9PolicyFactory {
 
   /**
@@ -179,7 +194,8 @@ export class K9PolicyFactory {
   makeAllowStatements(serviceName: string,
     supportedCapabilities: Array<AccessCapability>,
     desiredAccess: Array<IAccessSpec>,
-    resourceArns: Array<string>): Array<PolicyStatement> {
+    resourceArns: Array<string>,
+    usePascalCase: boolean = false): Array<PolicyStatement> {
     let policyStatements = new Array<PolicyStatement>();
     let accessSpecsByCapabilityRecs = this.mergeDesiredAccessSpecsByCapability(supportedCapabilities, desiredAccess);
     let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = new Map();
@@ -202,7 +218,12 @@ export class K9PolicyFactory {
 
       let arnConditionTest = accessSpec.test || 'ArnEquals';
 
-      let statement = this.makeAllowStatement(`Allow Restricted ${supportedCapability}`,
+      let sid = `Allow Restricted ${supportedCapability}`;
+      if (usePascalCase) {
+        sid = toPascalCase(sid);
+      }
+
+      let statement = this.makeAllowStatement(sid,
         this.getActions(serviceName, supportedCapability),
         accessSpec.allowPrincipalArns,
         arnConditionTest,
@@ -274,4 +295,3 @@ export class K9PolicyFactory {
   }
 
 }
-
