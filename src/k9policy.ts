@@ -86,6 +86,7 @@ export class K9PolicyFactory {
   _SUPPORTED_SERVICES = new Set<string>([
     'S3',
     'KMS',
+    'DynamoDB',
   ]);
 
   /** @internal */

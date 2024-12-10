@@ -1,4 +1,5 @@
 import { expect as expectCDK, haveResource, SynthUtils } from '@aws-cdk/assert';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import { AddToResourcePolicyResult } from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as s3 from 'aws-cdk-lib/aws-s3';
@@ -16,6 +17,7 @@ import {
   SID_DENY_UNEXPECTED_ENCRYPTION_METHOD,
   CloudFrontOACReadAccessGenerator,
 } from '../lib/s3';
+import { K9DynamoDBResourcePolicyProps } from '../src/dynamodb';
 // @ts-ignore
 
 // Test the primary public interface to k9 cdk
@@ -533,6 +535,98 @@ describe('K9KeyPolicy', () => {
 
 
 });
+
+describe('DynamoDBResourcePolicy', () => {
+  const desiredAccess = new Array<IAccessSpec>(
+    {
+      accessCapabilities: [
+        AccessCapability.ADMINISTER_RESOURCE,
+        AccessCapability.READ_CONFIG,
+      ],
+      allowPrincipalArns: administerResourceArns,
+    },
+    {
+      accessCapabilities: AccessCapability.WRITE_DATA,
+      allowPrincipalArns: writeDataArns,
+    },
+    {
+      accessCapabilities: AccessCapability.READ_DATA,
+      allowPrincipalArns: readDataArns,
+    },
+    {
+      accessCapabilities: AccessCapability.DELETE_DATA,
+      allowPrincipalArns: deleteDataArns,
+    },
+  );
+  test('Typical usage', () => {
+    const stack = new cdk.Stack(app, 'K9DDBResourcePolicyTestTypicalUsage', { env: { region: 'us-east-1' } });
+
+    const ddbResourcePolicyProps: K9DynamoDBResourcePolicyProps = {
+      k9DesiredAccess: desiredAccess,
+    };
+
+    const table = new dynamodb.TableV2(stack, 'test-table-typical-usage', {
+      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      // resourcePolicy: resourcePolicy,
+    });
+
+    let resourcePolicy = k9.dynamodb.grantAccessViaResourcePolicy(table, ddbResourcePolicyProps);
+
+    console.log('table: ' + table);
+    console.log('table.resourcePolicy: ' + stringifyPolicy(table.resourcePolicy));
+    console.log('resourcePolicy: ' + stringifyPolicy(resourcePolicy));
+
+
+    expect(table.resourcePolicy).toBeDefined();
+
+    // const k9BucketPolicyProps: K9BucketPolicyProps = {
+    //   bucket: table,
+    //   k9DesiredAccess: new Array<IAccessSpec>(
+    //     {
+    //       accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
+    //       allowPrincipalArns: administerResourceArns,
+    //     },
+    //     {
+    //       accessCapabilities: AccessCapability.WRITE_DATA,
+    //       allowPrincipalArns: writeDataArns,
+    //     },
+    //     {
+    //       accessCapabilities: AccessCapability.READ_DATA,
+    //       allowPrincipalArns: readDataArns,
+    //     },
+    //     {
+    //       accessCapabilities: AccessCapability.DELETE_DATA,
+    //       allowPrincipalArns: deleteDataArns,
+    //     },
+    //   ),
+    // };
+    // let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'S3Bucket', k9BucketPolicyProps);
+    // expect(table.resourcePolicy).toBeDefined();
+    //
+    // let policyStr = stringifyPolicy(table.resourcePolicy);
+    // console.log('table.resourcePolicy?: ' + policyStr);
+    // expect(table.resourcePolicy).toBeDefined();
+    //
+    // assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+    // let policyObj = JSON.parse(policyStr);
+    // let actualPolicyStatements = policyObj.Statement;
+    // expect(actualPolicyStatements).toBeDefined();
+    //
+    // for (let stmt of actualPolicyStatements) {
+    //   if (SID_DENY_UNEXPECTED_ENCRYPTION_METHOD == stmt.Sid) {
+    //     expect(stmt.Condition.StringNotEquals['s3:x-amz-server-side-encryption']).toEqual('aws:kms');
+    //   }
+    // }
+    // console.log('stack to json: ' + stack.toJsonString(stack))
+
+    // expectCDK(stack).to(haveResource('AWS::DynamoDB::Table'));
+    // expectCDK(stack).to(haveResource('AWS::S3::BucketPolicy'));
+    // expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
+
+});
+
 
 function assertContainsStatementWithId(expectStmtId:string, statements:any) {
   let foundStmt = false;
