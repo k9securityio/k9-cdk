@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DynamoDBResourcePolicy Typical usage 1`] = `
+Object {
+  "Resources": Object {
+    "testtabletypicalusageD052F216": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "AttributeDefinitions": Array [
+          Object {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": Array [
+          Object {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+        ],
+        "Replicas": Array [
+          Object {
+            "Region": "us-east-1",
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
 exports[`K9BucketPolicy - IAccessSpec with set of capabilities 1`] = `
 Object {
   "Resources": Object {

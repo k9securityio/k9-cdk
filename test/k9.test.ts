@@ -569,7 +569,6 @@ describe('DynamoDBResourcePolicy', () => {
     const table = new dynamodb.TableV2(stack, 'test-table-typical-usage', {
       partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      // resourcePolicy: resourcePolicy,
     });
 
     let addToResourcePolicyResults = k9.dynamodb.grantAccessViaResourcePolicy(table, ddbResourcePolicyProps);
@@ -607,6 +606,9 @@ describe('DynamoDBResourcePolicy', () => {
     for (let expectStmtId of expectStmtIds) {
       expect(policyStatementMap[expectStmtId]).toBeTruthy();
     }
+    
+    expectCDK(stack).to(haveResource('AWS::DynamoDB::GlobalTable'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 
 });
