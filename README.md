@@ -8,6 +8,7 @@ Supported services:
 
 * S3
 * KMS
+* DynamoDB
 
 This library [simplifies IAM as described in Effective IAM for AWS](https://www.effectiveiam.com/simplify-aws-iam) and is fully-supported by k9 Security. We're happy to answer questions or help you integrate it via a [GitHub issue](https://github.com/k9securityio/k9-cdk/issues) or email to [support@k9security.io](mailto:support@k9security.io?subject=k9-cdk). 
 
@@ -34,7 +35,8 @@ const administerResourceArns = [
 ];
 
 const readConfigArns = administerResourceArns.concat([
-    "arn:aws:iam::123456789012:role/k9-auditor"
+    "arn:aws:iam::123456789012:role/k9-auditor",
+    "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer"
 ]);
 
 const app = new cdk.App();
@@ -93,20 +95,40 @@ new kms.Key(stack, 'KMSKey', {
 }); 
 ```
 
-The example stack demonstrates full use of the k9 S3 and KMS policy generators.  Generated policies:
+Protecting a DynamoDB table follows the same path as KMS, generating a policy then providing it to the DynamoDB table construct via props:
+
+```typescript
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+
+const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess
+};
+
+
+const ddbResourcePolicy = k9.dynamodb.makeResourcePolicy(ddbResourcePolicyProps);
+
+const table = new dynamodb.TableV2(stack, 'app-table-with-k9-policy', {
+  partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+  resourcePolicy: ddbResourcePolicy,
+});
+```
+
+The example stack demonstrates full use of the k9 S3, KMS, and DynamoDB policy generators.  Generated policies:
 
 S3 Bucket Policy:
+
 * [Templatized Bucket Policy](examples/generated.bucket-policy.json)
 * [BucketPolicy resource in CFn template](examples/K9Example.template.json)
 
 KMS Key Policy:
+
 * [Templatized Key Policy](examples/generated.key-policy.json)
 * [KeyPolicy attribute of Key resource in CFn template](examples/K9Example.template.json)
 
 ## Specialized Use Cases
 
 k9-cdk can be configured to support specialized use cases, including:
-* [Public Bucket](docs/use-case-public-bucket.md) - Publicaly readable objects, least privilege for all other actions 
+* [Public Bucket](docs/use-case-public-bucket.md) - Publicly readable objects, least privilege for all other actions 
 
 ## Local Development and Testing
 
