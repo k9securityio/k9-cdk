@@ -6,10 +6,10 @@ import {RemovalPolicy, Tags} from "aws-cdk-lib";
 // import * as cforigins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import {BlockPublicAccess, BucketEncryption} from "aws-cdk-lib/aws-s3";
 
 import * as k9 from "../lib";
-import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 
 const administerResourceArns = [
     // for development
@@ -212,7 +212,7 @@ const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
 };
 
 
-const ddbResourcePolicy = k9.dynamodb.grantAccessViaResourcePolicy(ddbResourcePolicyProps);
+const ddbResourcePolicy = k9.dynamodb.makeResourcePolicy(ddbResourcePolicyProps);
 
 const table = new dynamodb.TableV2(stack, 'k9-cdk-v2-int-test', {
   partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },

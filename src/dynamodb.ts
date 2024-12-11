@@ -23,7 +23,14 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
-export function grantAccessViaResourcePolicy(props: K9DynamoDBResourcePolicyProps): PolicyDocument {
+/**
+ * Generate a DynamoDB resource policy from the provided props that can be attached to DynamoDB
+ * resources, particularly tables & indices.
+ *
+ * @param props specifying desired access
+ * @return a PolicyDocument that can be attached to DynamoDB resources
+ */
+export function makeResourcePolicy(props: K9DynamoDBResourcePolicyProps): PolicyDocument {
   const policyFactory = new K9PolicyFactory();
   const policy = new iam.PolicyDocument();
 

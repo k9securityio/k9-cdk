@@ -566,7 +566,7 @@ describe('DynamoDBResourcePolicy', () => {
       k9DesiredAccess: desiredAccess,
     };
 
-    let resourcePolicy = k9.dynamodb.grantAccessViaResourcePolicy(ddbResourcePolicyProps);
+    let resourcePolicy = k9.dynamodb.makeResourcePolicy(ddbResourcePolicyProps);
     console.log('resourcePolicy: ' + stringifyPolicy(resourcePolicy));
 
     expect(resourcePolicy).toBeDefined();
