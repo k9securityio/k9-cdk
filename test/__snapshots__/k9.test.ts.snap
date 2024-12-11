@@ -22,6 +22,182 @@ Object {
         "Replicas": Array [
           Object {
             "Region": "us-east-1",
+            "ResourcePolicy": Object {
+              "PolicyDocument": Object {
+                "Statement": Array [
+                  Object {
+                    "Action": Array [
+                      "dynamodb:CreateBackup",
+                      "dynamodb:DeleteResourcePolicy",
+                      "dynamodb:DeleteTableReplica",
+                      "dynamodb:DisableKinesisStreamingDestination",
+                      "dynamodb:EnableKinesisStreamingDestination",
+                      "dynamodb:ExportTableToPointInTime",
+                      "dynamodb:PutResourcePolicy",
+                      "dynamodb:RestoreTableToPointInTime",
+                      "dynamodb:TagResource",
+                      "dynamodb:UntagResource",
+                      "dynamodb:UpdateContinuousBackups",
+                      "dynamodb:UpdateContributorInsights",
+                      "dynamodb:UpdateKinesisStreamingDestination",
+                      "dynamodb:UpdateTable",
+                      "dynamodb:UpdateTableReplicaAutoScaling",
+                      "dynamodb:UpdateTimeToLive",
+                    ],
+                    "Condition": Object {
+                      "ArnEquals": Object {
+                        "aws:PrincipalArn": Array [
+                          "arn:aws:iam::139710491120:user/ci",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": Object {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedAdministerResource",
+                  },
+                  Object {
+                    "Action": Array [
+                      "dynamodb:DescribeContinuousBackups",
+                      "dynamodb:DescribeContributorInsights",
+                      "dynamodb:DescribeExport",
+                      "dynamodb:DescribeKinesisStreamingDestination",
+                      "dynamodb:DescribeTable",
+                      "dynamodb:DescribeTableReplicaAutoScaling",
+                      "dynamodb:DescribeTimeToLive",
+                      "dynamodb:GetResourcePolicy",
+                      "dynamodb:ListTagsOfResource",
+                    ],
+                    "Condition": Object {
+                      "ArnEquals": Object {
+                        "aws:PrincipalArn": Array [
+                          "arn:aws:iam::139710491120:user/ci",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": Object {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedReadConfig",
+                  },
+                  Object {
+                    "Action": Array [
+                      "dynamodb:BatchGetItem",
+                      "dynamodb:ConditionCheckItem",
+                      "dynamodb:GetItem",
+                      "dynamodb:PartiQLSelect",
+                      "dynamodb:Query",
+                      "dynamodb:Scan",
+                    ],
+                    "Condition": Object {
+                      "ArnEquals": Object {
+                        "aws:PrincipalArn": Array [
+                          "arn:aws:iam::123456789012:role/app-backend",
+                          "arn:aws:iam::123456789012:role/customer-service",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": Object {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedReadData",
+                  },
+                  Object {
+                    "Action": Array [
+                      "dynamodb:BatchWriteItem",
+                      "dynamodb:PartiQLInsert",
+                      "dynamodb:PartiQLUpdate",
+                      "dynamodb:PutItem",
+                      "dynamodb:UpdateItem",
+                    ],
+                    "Condition": Object {
+                      "ArnEquals": Object {
+                        "aws:PrincipalArn": Array [
+                          "arn:aws:iam::123456789012:role/app-backend",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": Object {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedWriteData",
+                  },
+                  Object {
+                    "Action": Array [
+                      "dynamodb:DeleteItem",
+                      "dynamodb:DeleteTable",
+                      "dynamodb:DeleteTableReplica",
+                      "dynamodb:PartiQLDelete",
+                    ],
+                    "Condition": Object {
+                      "ArnEquals": Object {
+                        "aws:PrincipalArn": Array [
+                          "arn:aws:iam::139710491120:user/super-admin",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": Object {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedDeleteData",
+                  },
+                  Object {
+                    "Action": "dynamodb:*",
+                    "Condition": Object {
+                      "ArnNotEquals": Object {
+                        "aws:PrincipalArn": Array [
+                          Object {
+                            "Fn::Join": Array [
+                              "",
+                              Array [
+                                "arn:",
+                                Object {
+                                  "Ref": "AWS::Partition",
+                                },
+                                ":iam::",
+                                Object {
+                                  "Ref": "AWS::AccountId",
+                                },
+                                ":root",
+                              ],
+                            ],
+                          },
+                          "arn:aws:iam::139710491120:user/ci",
+                          "arn:aws:iam::123456789012:role/app-backend",
+                          "arn:aws:iam::123456789012:role/customer-service",
+                          "arn:aws:iam::139710491120:user/super-admin",
+                        ],
+                      },
+                      "Bool": Object {
+                        "aws:PrincipalIsAWSService": Array [
+                          "false",
+                        ],
+                      },
+                    },
+                    "Effect": "Deny",
+                    "Principal": Object {
+                      "AWS": Array [
+                        "*",
+                        "*",
+                      ],
+                    },
+                    "Resource": "*",
+                    "Sid": "DenyEveryoneElse",
+                  },
+                ],
+                "Version": "2012-10-17",
+              },
+            },
           },
         ],
       },

@@ -184,10 +184,6 @@ const cloudfrontOACBucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 k9.s3.grantAccessViaResourcePolicy(stack, "CloudFrontOACBucket", cloudfrontOACBucketPolicyProps);
 
 // Demonstrate generating and applying a DynamoDB resource policy
-const table = new dynamodb.TableV2(stack, 'k9-cdk-v2-int-test', {
-  partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
-  removalPolicy: cdk.RemovalPolicy.DESTROY,
-});
 const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
     k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
         {
@@ -212,7 +208,16 @@ const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
         },
     )
 };
-k9.dynamodb.grantAccessViaResourcePolicy(table, ddbResourcePolicyProps);
+
+
+const ddbResourcePolicy = k9.dynamodb.grantAccessViaResourcePolicy(ddbResourcePolicyProps);
+
+const table = new dynamodb.TableV2(stack, 'k9-cdk-v2-int-test', {
+  partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+  removalPolicy: cdk.RemovalPolicy.DESTROY,
+  resourcePolicy: ddbResourcePolicy
+});
+
 
 for (let construct of [bucket,
     websiteBucket,

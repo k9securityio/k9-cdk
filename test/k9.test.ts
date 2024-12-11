@@ -566,23 +566,15 @@ describe('DynamoDBResourcePolicy', () => {
       k9DesiredAccess: desiredAccess,
     };
 
-    const table = new dynamodb.TableV2(stack, 'test-table-typical-usage', {
-      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
+    let resourcePolicy = k9.dynamodb.grantAccessViaResourcePolicy(ddbResourcePolicyProps);
+    console.log('resourcePolicy: ' + stringifyPolicy(resourcePolicy));
 
-    let addToResourcePolicyResults = k9.dynamodb.grantAccessViaResourcePolicy(table, ddbResourcePolicyProps);
+    expect(resourcePolicy).toBeDefined();
 
-    console.log('table: ' + table);
-    console.log('table.resourcePolicy: ' + stringifyPolicy(table.resourcePolicy));
-    console.log('addToResourcePolicyResults: ' + addToResourcePolicyResults);
-
-    expect(table.resourcePolicy).toBeDefined();
-
-    let policyStr = stringifyPolicy(table.resourcePolicy);
-
+    let policyStr = stringifyPolicy(resourcePolicy);
     let policyObj = JSON.parse(policyStr);
     let actualPolicyStatements = policyObj.Statement;
+
     expect(actualPolicyStatements).toBeDefined();
 
     const expectStmtIds = [
@@ -594,7 +586,6 @@ describe('DynamoDBResourcePolicy', () => {
       'AllowRestrictedDeleteData',
     ];
     expect(actualPolicyStatements).toHaveLength(expectStmtIds.length);
-    expect(addToResourcePolicyResults).toHaveLength(expectStmtIds.length);
 
     const policyStatementMap: { [key: string]: any } = {};
     for (let stmt of actualPolicyStatements) {
@@ -606,7 +597,16 @@ describe('DynamoDBResourcePolicy', () => {
     for (let expectStmtId of expectStmtIds) {
       expect(policyStatementMap[expectStmtId]).toBeTruthy();
     }
-    
+
+    const table = new dynamodb.TableV2(stack, 'test-table-typical-usage', {
+      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      resourcePolicy: resourcePolicy,
+    });
+
+    console.log('table: ' + table);
+    console.log('table.resourcePolicy: ' + stringifyPolicy(table.resourcePolicy));
+
     expectCDK(stack).to(haveResource('AWS::DynamoDB::GlobalTable'));
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
