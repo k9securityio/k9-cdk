@@ -192,7 +192,9 @@ const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
         },
         {
             accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
-            allowPrincipalArns: readConfigArns,
+            allowPrincipalArns: readConfigArns.concat([
+                "arn:aws:iam::139710491120:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer"
+            ]),
         },
         {
             accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
