@@ -6,6 +6,7 @@ import {RemovalPolicy, Tags} from "aws-cdk-lib";
 // import * as cforigins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import {BlockPublicAccess, BucketEncryption} from "aws-cdk-lib/aws-s3";
 
 import * as k9 from "../lib";
@@ -182,6 +183,44 @@ const cloudfrontOACBucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 
 k9.s3.grantAccessViaResourcePolicy(stack, "CloudFrontOACBucket", cloudfrontOACBucketPolicyProps);
 
+// Demonstrate generating and applying a DynamoDB resource policy
+const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
+            allowPrincipalArns: readConfigArns.concat([
+                "arn:aws:iam::139710491120:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer"
+            ]),
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
+            allowPrincipalArns: readWriteDataArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: readWriteDataArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.DELETE_DATA,
+            allowPrincipalArns: readWriteDataArns,
+        },
+    )
+};
+
+
+const ddbResourcePolicy = k9.dynamodb.makeResourcePolicy(ddbResourcePolicyProps);
+
+const table = new dynamodb.TableV2(stack, 'k9-cdk-v2-int-test', {
+  partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+  removalPolicy: cdk.RemovalPolicy.DESTROY,
+  resourcePolicy: ddbResourcePolicy
+});
+
+
 for (let construct of [bucket,
     websiteBucket,
     autoDeleteBucket,
@@ -189,6 +228,7 @@ for (let construct of [bucket,
     // cloudfrontDistribution,
     cloudfrontOACBucket,
     cloudfrontOACKey,
+    table,
 ]) {
     Tags.of(construct).add('k9security:analysis', 'include');
 }

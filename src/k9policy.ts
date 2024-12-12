@@ -61,6 +61,49 @@ export interface IAWSServiceAccessGenerator {
   makeConditionsToExceptFromDenyEveryoneElse(): Conditions;
 }
 
+/**
+ * Check whether the provided access specs ensure that at least one principal can both read and administer configuration.
+ * @param accessSpecsByCapability is a map of access specs keyed by access capability
+ *
+ * @return true when at least one principal that can administer and read configuration exists
+ */
+export function canPrincipalsManageResources(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
+  let adminSpec = accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE);
+  let readConfigSpec = accessSpecsByCapability.get(AccessCapability.READ_CONFIG);
+
+  if ((adminSpec?.allowPrincipalArns && adminSpec.allowPrincipalArns.length > 0)
+        && (readConfigSpec?.allowPrincipalArns && readConfigSpec.allowPrincipalArns.length > 0)) {
+    const adminPrincipals = new Set<string>(adminSpec.allowPrincipalArns);
+    const readConfigPrincipals = new Set<string>(readConfigSpec.allowPrincipalArns);
+    const intersection = new Set(
+      [...adminPrincipals].filter(x => readConfigPrincipals.has(x)));
+    return intersection.size > 0;
+  }
+  return false;
+}
+
+
+/**
+ * Converts a string to PascalCase, which is useful for e.g. policy types that don't
+ * do not support spaces or hyphens in statement ids.
+ *
+ * @param input
+ */
+export function toPascalCase(input: string): string {
+  // Remove placeholders like ${something} and trim whitespace
+  const cleanedInput = input.replace(/\$\{.*?\}/g, '').trim();
+
+  // Split the input into words based on spaces, hyphens, underscores, or other delimiters
+  const words = cleanedInput.split(/[\s_\-]+/);
+
+  // Convert each word to PascalCase
+  return words
+    .map(
+      word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(), // Capitalize the first letter, lower the rest
+    )
+    .join('');
+}
+
 export class K9PolicyFactory {
 
   /**
@@ -86,6 +129,7 @@ export class K9PolicyFactory {
   _SUPPORTED_SERVICES = new Set<string>([
     'S3',
     'KMS',
+    'DynamoDB',
   ]);
 
   /** @internal */
@@ -178,7 +222,8 @@ export class K9PolicyFactory {
   makeAllowStatements(serviceName: string,
     supportedCapabilities: Array<AccessCapability>,
     desiredAccess: Array<IAccessSpec>,
-    resourceArns: Array<string>): Array<PolicyStatement> {
+    resourceArns: Array<string>,
+    usePascalCase: boolean = false): Array<PolicyStatement> {
     let policyStatements = new Array<PolicyStatement>();
     let accessSpecsByCapabilityRecs = this.mergeDesiredAccessSpecsByCapability(supportedCapabilities, desiredAccess);
     let accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = new Map();
@@ -201,7 +246,12 @@ export class K9PolicyFactory {
 
       let arnConditionTest = accessSpec.test || 'ArnEquals';
 
-      let statement = this.makeAllowStatement(`Allow Restricted ${supportedCapability}`,
+      let sid = `Allow Restricted ${supportedCapability}`;
+      if (usePascalCase) {
+        sid = toPascalCase(sid);
+      }
+
+      let statement = this.makeAllowStatement(sid,
         this.getActions(serviceName, supportedCapability),
         accessSpec.allowPrincipalArns,
         arnConditionTest,
@@ -273,4 +323,3 @@ export class K9PolicyFactory {
   }
 
 }
-

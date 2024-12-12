@@ -9,6 +9,7 @@ import {
 } from 'aws-cdk-lib/aws-iam';
 import {
   AccessCapability,
+  canPrincipalsManageResources,
   getAccessCapabilityFromValue,
   IAccessSpec,
   IAWSServiceAccessGenerator,
@@ -90,21 +91,6 @@ export class CloudFrontOACReadAccessGenerator implements IAWSServiceAccessGenera
 }
 
 
-function canPrincipalsManageKey(accessSpecsByCapability: Map<AccessCapability, IAccessSpec>) {
-  let adminSpec = accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE);
-  let readConfigSpec = accessSpecsByCapability.get(AccessCapability.READ_CONFIG);
-
-  if ((adminSpec?.allowPrincipalArns && adminSpec.allowPrincipalArns.length > 0)
-        && (readConfigSpec?.allowPrincipalArns && readConfigSpec.allowPrincipalArns.length > 0)) {
-    const adminPrincipals = new Set<string>(adminSpec.allowPrincipalArns);
-    const readConfigPrincipals = new Set<string>(readConfigSpec.allowPrincipalArns);
-    const intersection = new Set(
-      [...adminPrincipals].filter(x => readConfigPrincipals.has(x)));
-    return intersection.size > 0;
-  }
-  return false;
-}
-
 export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
   const policyFactory = new K9PolicyFactory();
   const policy = new iam.PolicyDocument();
@@ -118,7 +104,7 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     accessSpecsByCapability.set(getAccessCapabilityFromValue(capabilityStr), accessSpec);
   }
 
-  if (!canPrincipalsManageKey(accessSpecsByCapability)) {
+  if (!canPrincipalsManageResources(accessSpecsByCapability)) {
     throw Error('At least one principal must be able to administer and read-config for keys' +
             ' so encrypted data remains accessible; found:\n' +
             `administer-resource: '${accessSpecsByCapability.get(AccessCapability.ADMINISTER_RESOURCE)?.allowPrincipalArns}'\n` +
