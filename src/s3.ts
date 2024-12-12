@@ -7,8 +7,7 @@ import {
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
-import { IBucket } from 'aws-cdk-lib/aws-s3/lib/bucket';
+import { IBucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
 import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator, K9PolicyFactory } from './k9policy';
