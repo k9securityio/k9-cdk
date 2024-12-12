@@ -83,6 +83,12 @@ export function canPrincipalsManageResources(accessSpecsByCapability: Map<Access
 }
 
 
+/**
+ * Converts a string to PascalCase, which is useful for e.g. policy types that don't
+ * do not support spaces or hyphens in statement ids.
+ *
+ * @param input
+ */
 export function toPascalCase(input: string): string {
   // Remove placeholders like ${something} and trim whitespace
   const cleanedInput = input.replace(/\$\{.*?\}/g, '').trim();
