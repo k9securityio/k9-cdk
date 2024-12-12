@@ -1,0 +1,163 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "dynamodb:CreateBackup",
+        "dynamodb:DeleteResourcePolicy",
+        "dynamodb:DeleteTableReplica",
+        "dynamodb:DisableKinesisStreamingDestination",
+        "dynamodb:EnableKinesisStreamingDestination",
+        "dynamodb:ExportTableToPointInTime",
+        "dynamodb:PutResourcePolicy",
+        "dynamodb:RestoreTableToPointInTime",
+        "dynamodb:TagResource",
+        "dynamodb:UntagResource",
+        "dynamodb:UpdateContinuousBackups",
+        "dynamodb:UpdateContributorInsights",
+        "dynamodb:UpdateKinesisStreamingDestination",
+        "dynamodb:UpdateTable",
+        "dynamodb:UpdateTableReplicaAutoScaling",
+        "dynamodb:UpdateTimeToLive"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "AllowRestrictedAdministerResource"
+    },
+    {
+      "Action": [
+        "dynamodb:DescribeContinuousBackups",
+        "dynamodb:DescribeContributorInsights",
+        "dynamodb:DescribeExport",
+        "dynamodb:DescribeKinesisStreamingDestination",
+        "dynamodb:DescribeTable",
+        "dynamodb:DescribeTableReplicaAutoScaling",
+        "dynamodb:DescribeTimeToLive",
+        "dynamodb:GetResourcePolicy",
+        "dynamodb:ListTagsOfResource"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1",
+            "arn:aws:iam::123456789012:role/k9-auditor",
+            "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "AllowRestrictedReadConfig"
+    },
+    {
+      "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:GetItem",
+        "dynamodb:PartiQLSelect",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::123456789012:role/app-backend",
+            "arn:aws:iam::123456789012:role/customer-service"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "AllowRestrictedReadData"
+    },
+    {
+      "Action": [
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PartiQLInsert",
+        "dynamodb:PartiQLUpdate",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::123456789012:role/app-backend"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "AllowRestrictedWriteData"
+    },
+    {
+      "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:DeleteTable",
+        "dynamodb:DeleteTableReplica",
+        "dynamodb:PartiQLDelete"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": []
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "AllowRestrictedDeleteData"
+    },
+    {
+      "Action": "dynamodb:*",
+      "Condition": {
+        "Bool": {
+          "aws:PrincipalIsAWSService": [
+            "false"
+          ]
+        },
+        "ArnNotEquals": {
+          "aws:PrincipalArn": [
+            "${Token[TOKEN.31]}",
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1",
+            "arn:aws:iam::123456789012:role/k9-auditor",
+            "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer",
+            "arn:aws:iam::123456789012:role/app-backend",
+            "arn:aws:iam::123456789012:role/customer-service"
+          ]
+        }
+      },
+      "Effect": "Deny",
+      "Principal": {
+        "AWS": [
+          "*",
+          "*"
+        ]
+      },
+      "Resource": "*",
+      "Sid": "DenyEveryoneElse"
+    }
+  ],
+  "Version": "2012-10-17"
+}

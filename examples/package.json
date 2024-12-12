@@ -21,13 +21,13 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "aws-cdk-lib": "2.1.0",
+    "aws-cdk-lib": "2.146.0",
+    "typescript": "^5.4.5",
     "ts-node": "^10.8.0",
-    "typescript": "^3.9.10",
-    "aws-cdk": "^2.24.1"
+    "aws-cdk": "^2.173.0"
   },
   "dependencies": {
-    "aws-cdk-lib": "2.1.0",
-    "@k9securityio/k9-cdk": "2.0.4"
+    "aws-cdk-lib": "2.146.0",
+    "@k9securityio/k9-cdk": "2.0.16"
   }
 }

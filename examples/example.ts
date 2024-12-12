@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import {writeFileSync} from 'fs';
 import * as cdk from "aws-cdk-lib";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as k9 from "@k9securityio/k9-cdk";
@@ -11,7 +12,8 @@ const administerResourceArns = [
 ];
 
 const readConfigArns = administerResourceArns.concat([
-    "arn:aws:iam::123456789012:role/k9-auditor"
+    "arn:aws:iam::123456789012:role/k9-auditor",
+    "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer",
 ]);
 
 const writeDataArns = [
@@ -81,5 +83,20 @@ writeFileSync('generated.key-policy.json',
     JSON.stringify(keyPolicy.toJSON(), null, 2));
 
 new kms.Key(stack, 'TestKey', {policy: keyPolicy});
+
+
+const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess
+};
+
+const ddbResourcePolicy = k9.dynamodb.makeResourcePolicy(ddbResourcePolicyProps);
+
+writeFileSync('generated.dynamodb-policy.json',
+    JSON.stringify(ddbResourcePolicy.toJSON(), null, 2));
+
+new dynamodb.TableV2(stack, 'TestTable', {
+  partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+  resourcePolicy: ddbResourcePolicy,
+});
 
 app.synth();

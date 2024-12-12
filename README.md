@@ -125,6 +125,12 @@ KMS Key Policy:
 * [Templatized Key Policy](examples/generated.key-policy.json)
 * [KeyPolicy attribute of Key resource in CFn template](examples/K9Example.template.json)
 
+DynamoDB Resource Policy:
+
+* [Templatized DynamoDB Resource Policy](examples/generated.dynamodb-policy.json)
+* [ResourcePolicy attribute of GlobalTable resource in CFn template](examples/K9Example.template.json)
+
+
 ## Specialized Use Cases
 
 k9-cdk can be configured to support specialized use cases, including:

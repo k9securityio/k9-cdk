@@ -13,6 +13,7 @@
         "s3:PutBucketLogging",
         "s3:PutBucketNotification",
         "s3:PutBucketObjectLockConfiguration",
+        "s3:PutBucketOwnershipControls",
         "s3:PutBucketPolicy",
         "s3:PutBucketPublicAccessBlock",
         "s3:PutBucketRequestPayment",
@@ -20,6 +21,7 @@
         "s3:PutBucketVersioning",
         "s3:PutBucketWebsite",
         "s3:PutEncryptionConfiguration",
+        "s3:PutIntelligentTieringConfiguration",
         "s3:PutInventoryConfiguration",
         "s3:PutLifecycleConfiguration",
         "s3:PutMetricsConfiguration",
@@ -42,8 +44,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "Allow Restricted administer-resource"
     },
@@ -66,14 +68,17 @@
         "s3:GetBucketVersioning",
         "s3:GetBucketWebsite",
         "s3:GetEncryptionConfiguration",
+        "s3:GetIntelligentTieringConfiguration",
         "s3:GetInventoryConfiguration",
         "s3:GetLifecycleConfiguration",
         "s3:GetMetricsConfiguration",
         "s3:GetObjectAcl",
+        "s3:GetObjectAttributes",
         "s3:GetObjectLegalHold",
         "s3:GetObjectRetention",
         "s3:GetObjectTagging",
         "s3:GetObjectVersionAcl",
+        "s3:GetObjectVersionAttributes",
         "s3:GetObjectVersionTagging",
         "s3:GetReplicationConfiguration",
         "s3:ListBucketMultipartUploads",
@@ -85,7 +90,8 @@
           "aws:PrincipalArn": [
             "arn:aws:iam::123456789012:user/ci",
             "arn:aws:iam::123456789012:user/person1",
-            "arn:aws:iam::123456789012:role/k9-auditor"
+            "arn:aws:iam::123456789012:role/k9-auditor",
+            "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer"
           ]
         }
       },
@@ -94,8 +100,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "Allow Restricted read-config"
     },
@@ -121,14 +127,15 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "Allow Restricted read-data"
     },
     {
       "Action": [
         "s3:AbortMultipartUpload",
+        "s3:InitiateReplication",
         "s3:PutBucketTagging",
         "s3:PutObject",
         "s3:PutObjectTagging",
@@ -150,8 +157,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "Allow Restricted write-data"
     },
@@ -172,8 +179,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "Allow Restricted delete-data"
     },
@@ -189,8 +196,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "DenyInsecureCommunications"
     },
@@ -209,8 +216,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "DenyUnencryptedStorage"
     },
@@ -229,8 +236,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "DenyUnexpectedEncryptionMethod"
     },
@@ -242,6 +249,7 @@
             "arn:aws:iam::123456789012:user/ci",
             "arn:aws:iam::123456789012:user/person1",
             "arn:aws:iam::123456789012:role/k9-auditor",
+            "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer",
             "arn:aws:iam::123456789012:role/app-backend",
             "arn:aws:iam::123456789012:role/customer-service"
           ]
@@ -255,8 +263,8 @@
         ]
       },
       "Resource": [
-        "${Token[TOKEN.203]}",
-        "${Token[TOKEN.203]}/*"
+        "${Token[TOKEN.20]}",
+        "${Token[TOKEN.20]}/*"
       ],
       "Sid": "DenyEveryoneElse"
     }
