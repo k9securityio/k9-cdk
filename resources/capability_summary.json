@@ -773,7 +773,6 @@
     ],
     "delete-data": [
       "sqs:DeleteMessage",
-      "sqs:DeleteMessageBatch",
       "sqs:DeleteQueue",
       "sqs:PurgeQueue"
     ],
@@ -790,9 +789,7 @@
     ],
     "write-data": [
       "sqs:ChangeMessageVisibility",
-      "sqs:ChangeMessageVisibilityBatch",
-      "sqs:SendMessage",
-      "sqs:SendMessageBatch"
+      "sqs:SendMessage"
     ]
   },
   "STS": {
