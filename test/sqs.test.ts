@@ -53,8 +53,34 @@ describe('SQSResourcePolicy', () => {
 
   test('Typical usage', () => {
     const stack = new cdk.Stack(app, 'K9SQSResourcePolicyTestTypicalUsage', { env: { region: 'us-east-1' } });
+    const queue = new sqs.Queue(stack, 'test-queue-typical-usage');
 
     const sqsResourcePolicyProps: K9SQSResourcePolicyProps = {
+      queue: queue,
+      k9DesiredAccess: desiredAccess,
+    };
+
+    let addToResourcePolicyResults = k9.sqs.grantAccessViaResourcePolicy(sqsResourcePolicyProps);
+    console.log('addToResourcePolicyResults: ' + addToResourcePolicyResults);
+
+    for (let result of addToResourcePolicyResults) {
+      expect(result.statementAdded).toBeTruthy();
+    }
+
+    console.log('queue: ' + queue);
+
+    // sadly, fails with Resolution error: statement.freeze is not a function deep in CDK
+    // expectCDK(stack).to(haveResource('AWS::SQS::Queue'));
+    // expectCDK(stack).to(haveResource('AWS::SQS::QueuePolicy'));
+    // expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
+
+  test('Policy Generation', () => {
+    const stack = new cdk.Stack(app, 'K9SQSResourcePolicyTestPolicyGen', { env: { region: 'us-east-1' } });
+    const queue = new sqs.Queue(stack, 'test-queue-policy-gen');
+
+    const sqsResourcePolicyProps: K9SQSResourcePolicyProps = {
+      queue: queue,
       k9DesiredAccess: desiredAccess,
     };
 
@@ -90,18 +116,12 @@ describe('SQSResourcePolicy', () => {
       expect(policyStatementMap[expectStmtId]).toBeTruthy();
     }
 
-    const queue = new sqs.Queue(stack, 'test-queue-typical-usage');
 
     for (let stmt of actualPolicyStatements) {
       queue.addToResourcePolicy(stmt);
     }
 
     console.log('queue: ' + queue);
-    // console.log('queue.policy: ' + stringifyPolicy(queue.policy));
-
-    // expectCDK(stack).to(haveResource('AWS::SQS::Queue'));
-    // expectCDK(stack).to(haveResource('AWS::SQS::QueuePolicy'));
-    // expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 
 });

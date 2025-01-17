@@ -1,5 +1,12 @@
-import { AccountRootPrincipal, Effect, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import {
+  AccountRootPrincipal,
+  AddToResourcePolicyResult,
+  Effect,
+  PolicyDocument,
+  PolicyStatement,
+} from 'aws-cdk-lib/aws-iam';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import {
   AccessCapability,
   canPrincipalsManageResources,
@@ -10,6 +17,7 @@ import {
 
 
 export interface K9SQSResourcePolicyProps {
+  readonly queue: IQueue;
   readonly k9DesiredAccess: Array<IAccessSpec>;
 }
 
@@ -87,4 +95,35 @@ export function makeResourcePolicy(props: K9SQSResourcePolicyProps): PolicyDocum
   policy.validateForResourcePolicy();
 
   return policy;
+}
+
+/**
+ * Grant access to a queue via resource policy using k9 IAccessSpec definitions. This function
+ * is the preferred interface for granting access to a queue.
+ *
+ * The grant and make operations are split because SQS policies can only be managed via the
+ * IQueue.addToResourcePolicy method but IQueue does not offer a way to read the policy.
+ * So making the policy is done in a separate function so policy generation can be tested.
+ *
+ * @param props specifying the queue and desired access
+ *
+ * @return the results for adding each statement
+ */
+export function grantAccessViaResourcePolicy(props: K9SQSResourcePolicyProps):
+AddToResourcePolicyResult[] {
+  const resourcePolicy = makeResourcePolicy(props);
+
+  resourcePolicy.validateForResourcePolicy();
+
+  const policyObj = JSON.parse(JSON.stringify(resourcePolicy.toJSON()));
+  const k9Statements = policyObj.Statement;
+  const queue = props.queue;
+  const addToResourcePolicyResults = new Array<AddToResourcePolicyResult>();
+
+  for (let statement of k9Statements) {
+    let addToResourcePolicyResult = queue.addToResourcePolicy(statement);
+    addToResourcePolicyResults.push(addToResourcePolicyResult);
+  }
+
+  return addToResourcePolicyResults;
 }
