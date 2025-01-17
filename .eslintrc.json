@@ -162,11 +162,7 @@
         "groups": [
           "builtin",
           "external"
-        ],
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
+        ]
       }
     ],
     "import/no-duplicates": [

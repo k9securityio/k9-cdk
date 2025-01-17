@@ -35,4 +35,18 @@ const project = new awscdk.AwsCdkConstructLibrary({
   docgen: false,
 });
 
-project.synth();
+project.eslint?.addRules({
+  'import/order': [
+    'warn',
+    {
+      groups: [
+        'builtin',
+        'external',
+      ],
+    },
+  ],
+});
+
+project.eslint?.
+
+  project.synth();
