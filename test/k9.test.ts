@@ -4,6 +4,7 @@ import { AddToResourcePolicyResult } from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
 import { fail, stringifyPolicy } from './helpers';
@@ -18,6 +19,7 @@ import {
   CloudFrontOACReadAccessGenerator,
 } from '../lib/s3';
 import { K9DynamoDBResourcePolicyProps } from '../src/dynamodb';
+import { K9SQSResourcePolicyProps } from '../src/sqs';
 // @ts-ignore
 
 // Test the primary public interface to k9 cdk
@@ -608,6 +610,84 @@ describe('DynamoDBResourcePolicy', () => {
     console.log('table.resourcePolicy: ' + stringifyPolicy(table.resourcePolicy));
 
     expectCDK(stack).to(haveResource('AWS::DynamoDB::GlobalTable'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
+
+});
+
+describe('SQSResourcePolicy', () => {
+  const desiredAccess = new Array<IAccessSpec>(
+    {
+      accessCapabilities: [
+        AccessCapability.ADMINISTER_RESOURCE,
+        AccessCapability.READ_CONFIG,
+      ],
+      allowPrincipalArns: administerResourceArns,
+    },
+    {
+      accessCapabilities: AccessCapability.WRITE_DATA,
+      allowPrincipalArns: writeDataArns,
+    },
+    {
+      accessCapabilities: AccessCapability.READ_DATA,
+      allowPrincipalArns: readDataArns,
+    },
+    {
+      accessCapabilities: AccessCapability.DELETE_DATA,
+      allowPrincipalArns: deleteDataArns,
+    },
+  );
+
+  test('Typical usage', () => {
+    const stack = new cdk.Stack(app, 'K9SQSResourcePolicyTestTypicalUsage', { env: { region: 'us-east-1' } });
+
+    const sqsResourcePolicyProps: K9SQSResourcePolicyProps = {
+      k9DesiredAccess: desiredAccess,
+    };
+
+    let resourcePolicy = k9.sqs.makeResourcePolicy(sqsResourcePolicyProps);
+    console.log('resourcePolicy: ' + stringifyPolicy(resourcePolicy));
+
+    expect(resourcePolicy).toBeDefined();
+
+    let policyStr = stringifyPolicy(resourcePolicy);
+    let policyObj = JSON.parse(policyStr);
+    let actualPolicyStatements = policyObj.Statement;
+
+    expect(actualPolicyStatements).toBeDefined();
+
+    const expectStmtIds = [
+      SID_DENY_EVERYONE_ELSE,
+      'Allow Restricted administer-resource',
+      'Allow Restricted read-config',
+      'Allow Restricted read-data',
+      'Allow Restricted write-data',
+      'Allow Restricted delete-data',
+    ];
+    expect(actualPolicyStatements).toHaveLength(expectStmtIds.length);
+
+    const policyStatementMap: { [key: string]: any } = {};
+    for (let stmt of actualPolicyStatements) {
+      if (stmt.Sid) {
+        policyStatementMap[stmt.Sid] = stmt;
+      }
+    }
+
+    for (let expectStmtId of expectStmtIds) {
+      expect(policyStatementMap[expectStmtId]).toBeTruthy();
+    }
+
+    const queue = new sqs.Queue(stack, 'test-queue-typical-usage');
+
+    for (let stmt of actualPolicyStatements) {
+      queue.addToResourcePolicy(stmt);
+    }
+
+    console.log('queue: ' + queue);
+    // console.log('queue.policy: ' + stringifyPolicy(queue.policy));
+
+    expectCDK(stack).to(haveResource('AWS::SQS::Queue'));
+    expectCDK(stack).to(haveResource('AWS::SQS::QueuePolicy'));
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 
