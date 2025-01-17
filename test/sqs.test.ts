@@ -1,3 +1,4 @@
+import * as cdk from 'aws-cdk-lib/core';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import * as cdk from 'aws-cdk-lib/core';
 
@@ -11,6 +12,7 @@ import { stringifyPolicy } from './helpers';
 
 const administerResourceArns = [
   'arn:aws:iam::139710491120:user/ci',
+  'arn:aws:iam::139710491120:role/k9-dev-appeng',
 ];
 
 const writeDataArns = [
@@ -97,7 +99,8 @@ describe('SQSResourcePolicy', () => {
 
     const expectStmtIds = [
       SID_DENY_EVERYONE_ELSE,
-      'Allow Restricted administer-resource',
+      'Allow Restricted administer-resource 1',
+      'Allow Restricted administer-resource 2',
       'Allow Restricted read-config',
       'Allow Restricted read-data',
       'Allow Restricted write-data',

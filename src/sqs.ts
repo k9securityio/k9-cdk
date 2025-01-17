@@ -31,6 +31,14 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
+function partitionArray<T>(arr: T[], maxLength: number): T[][] {
+    const result: T[][] = [];
+    for (let i = 0; i < arr.length; i += maxLength) {
+        result.push(arr.slice(i, i + maxLength));
+    }
+    return result;
+}
+
 /**
  * Generate a SQS resource policy from the provided props that can be attached to a queue.
  *
@@ -62,7 +70,25 @@ export function makeResourcePolicy(props: K9SQSResourcePolicyProps): PolicyDocum
     SUPPORTED_CAPABILITIES,
     Array.from(accessSpecsByCapability.values()),
     resourceArns);
-  policy.addStatements(...allowStatements);
+
+  for (let allowStatement of allowStatements) {
+    //SQS resource policy has a limit of 7 actions per statement.
+    //But you can have as many statements as you want up to the queue policy size limit.
+    //So, if an allowStatement has more than 7 actions (like the administer-resource statement does),
+    //then create additional statements and spread the original statement's permissions across them
+    if (allowStatement.actions.length > 7) {
+      const partitionedActions = partitionArray(allowStatement.actions, 7);
+      partitionedActions.forEach((actions, index) => {
+        const newStatement = allowStatement.copy({
+          sid: `${allowStatement.sid} ${index + 1}`,
+          actions: actions
+        });
+        policy.addStatements(newStatement);
+      });
+    } else {
+      policy.addStatements(allowStatement);
+    }
+  }
 
   const denyEveryoneElseStatement = new PolicyStatement({
     sid: SID_DENY_EVERYONE_ELSE,
