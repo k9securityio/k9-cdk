@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib/core';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
-import * as cdk from 'aws-cdk-lib/core';
+import { expect as expectCDK, haveResource, SynthUtils } from '@aws-cdk/assert';
 
 import * as k9 from '../lib';
 import { AccessCapability, IAccessSpec } from '../lib/k9policy';
@@ -72,9 +72,9 @@ describe('SQSResourcePolicy', () => {
     console.log('queue: ' + queue);
 
     // sadly, fails with Resolution error: statement.freeze is not a function deep in CDK
-    // expectCDK(stack).to(haveResource('AWS::SQS::Queue'));
-    // expectCDK(stack).to(haveResource('AWS::SQS::QueuePolicy'));
-    // expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+    expectCDK(stack).to(haveResource('AWS::SQS::Queue'));
+    expectCDK(stack).to(haveResource('AWS::SQS::QueuePolicy'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 
   test('Policy Generation', () => {
