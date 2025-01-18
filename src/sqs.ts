@@ -32,11 +32,11 @@ let SUPPORTED_CAPABILITIES = new Array<AccessCapability>(
 export const SID_DENY_EVERYONE_ELSE = 'DenyEveryoneElse';
 
 function partitionArray<T>(arr: T[], maxLength: number): T[][] {
-    const result: T[][] = [];
-    for (let i = 0; i < arr.length; i += maxLength) {
-        result.push(arr.slice(i, i + maxLength));
-    }
-    return result;
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i += maxLength) {
+    result.push(arr.slice(i, i + maxLength));
+  }
+  return result;
 }
 
 /**
@@ -81,7 +81,7 @@ export function makeResourcePolicy(props: K9SQSResourcePolicyProps): PolicyDocum
       partitionedActions.forEach((actions, index) => {
         const newStatement = allowStatement.copy({
           sid: `${allowStatement.sid} ${index + 1}`,
-          actions: actions
+          actions: actions,
         });
         policy.addStatements(newStatement);
       });
