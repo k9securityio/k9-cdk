@@ -1,0 +1,198 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SQSResourcePolicy Typical usage 1`] = `
+{
+  "Resources": {
+    "testqueuetypicalusage223F5EFF": {
+      "DeletionPolicy": "Delete",
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "testqueuetypicalusagePolicy422E4ED0": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sqs:AddPermission",
+                "sqs:CancelMessageMoveTask",
+                "sqs:CreateQueue",
+                "sqs:DeleteQueue",
+                "sqs:PurgeQueue",
+                "sqs:RemovePermission",
+                "sqs:SetQueueAttributes",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                    "arn:aws:iam::139710491120:role/k9-dev-appeng",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted administer-resource 1",
+            },
+            {
+              "Action": [
+                "sqs:StartMessageMoveTask",
+                "sqs:TagQueue",
+                "sqs:UntagQueue",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                    "arn:aws:iam::139710491120:role/k9-dev-appeng",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted administer-resource 2",
+            },
+            {
+              "Action": [
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+                "sqs:ListDeadLetterSourceQueues",
+                "sqs:ListMessageMoveTasks",
+                "sqs:ListQueues",
+                "sqs:ListQueueTags",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                    "arn:aws:iam::139710491120:role/k9-dev-appeng",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted read-config",
+            },
+            {
+              "Action": "sqs:ReceiveMessage",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted read-data",
+            },
+            {
+              "Action": [
+                "sqs:ChangeMessageVisibility",
+                "sqs:SendMessage",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted write-data",
+            },
+            {
+              "Action": [
+                "sqs:DeleteMessage",
+                "sqs:DeleteQueue",
+                "sqs:PurgeQueue",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted delete-data",
+            },
+            {
+              "Action": "sqs:*",
+              "Condition": {
+                "ArnNotEquals": {
+                  "aws:PrincipalArn": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "arn:",
+                          {
+                            "Ref": "AWS::Partition",
+                          },
+                          ":iam::",
+                          {
+                            "Ref": "AWS::AccountId",
+                          },
+                          ":root",
+                        ],
+                      ],
+                    },
+                    "arn:aws:iam::139710491120:user/ci",
+                    "arn:aws:iam::139710491120:role/k9-dev-appeng",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
+                },
+                "Bool": {
+                  "aws:PrincipalIsAWSService": [
+                    "false",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": "*",
+              "Sid": "DenyEveryoneElse",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Queues": [
+          {
+            "Ref": "testqueuetypicalusage223F5EFF",
+          },
+        ],
+      },
+      "Type": "AWS::SQS::QueuePolicy",
+    },
+  },
+}
+`;

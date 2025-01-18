@@ -141,13 +141,15 @@ AddToResourcePolicyResult[] {
 
   resourcePolicy.validateForResourcePolicy();
 
-  const policyObj = JSON.parse(JSON.stringify(resourcePolicy.toJSON()));
-  const k9Statements = policyObj.Statement;
+  const policyJson = resourcePolicy.toJSON();
+  const k9Statements = policyJson.Statement;
   const queue = props.queue;
   const addToResourcePolicyResults = new Array<AddToResourcePolicyResult>();
 
   for (let statement of k9Statements) {
-    let addToResourcePolicyResult = queue.addToResourcePolicy(statement);
+    let addToResourcePolicyResult = queue.addToResourcePolicy(
+      PolicyStatement.fromJson(statement),
+    );
     addToResourcePolicyResults.push(addToResourcePolicyResult);
   }
 
