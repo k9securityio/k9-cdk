@@ -15,7 +15,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   authorOrganization: true,
   authorAddress: 'hello@k9security.io',
 
-  cdkVersion: '2.146.0',
+  cdkVersion: '2.176.0',
   jsiiVersion: '~5.4.0',
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
@@ -37,6 +37,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
 
 project.eslint?.addRules({
   'import/order': [
+    // override import/order plugin config so that it does *not* reorder imports alphabetically
     'warn',
     {
       groups: [
@@ -47,6 +48,5 @@ project.eslint?.addRules({
   ],
 });
 
-project.eslint?.
 
-  project.synth();
+project.synth();
