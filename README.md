@@ -81,7 +81,7 @@ k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
 Granting access to an SQS queue works the same way, using the `k9.sqs.grantAccessViaResourcePolicy` function:
 ```typescript
 import * as sqs from 'aws-cdk-lib/aws-sqs';
-const queue = new sqs.Queue(stack, 'k9-cdk-v2-int-test-queue', {
+const queue = new sqs.Queue(stack, 'Queue', {
         queueName: 'app-queue-with-k9-policy',
 });
 
