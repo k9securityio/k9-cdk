@@ -9,6 +9,7 @@ Supported services:
 * S3
 * KMS
 * DynamoDB
+* SQS
 
 This library [simplifies IAM as described in Effective IAM for AWS](https://www.effectiveiam.com/simplify-aws-iam) and is fully-supported by k9 Security. We're happy to answer questions or help you integrate it via a [GitHub issue](https://github.com/k9securityio/k9-cdk/issues) or email to [support@k9security.io](mailto:support@k9security.io?subject=k9-cdk). 
 
@@ -77,6 +78,21 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
 k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
 ```
 
+Granting access to an SQS queue works the same way, using the `k9.sqs.grantAccessViaResourcePolicy` function:
+```typescript
+const queue = new sqs.Queue(stack, 'k9-cdk-v2-int-test-queue', {
+        queueName: 'app-queue-with-k9-policy',
+});
+
+const k9SQSResourcePolicyProps: K9SQSResourcePolicyProps = {
+    queue: queue,
+    // reuse bucket's desired access for brevity; configure k9DesiredAccess however you need
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess,
+};
+
+k9.sqs.grantAccessViaResourcePolicy(k9SQSResourcePolicyProps);
+```
+
 Granting access to a KMS key is similar, but the custom resource policy is created first 
 so it can be set via `props` per CDK convention:
  
@@ -112,6 +128,8 @@ const table = new dynamodb.TableV2(stack, 'app-table-with-k9-policy', {
   resourcePolicy: ddbResourcePolicy,
 });
 ```
+
+## Example stack
 
 The example stack demonstrates full use of the k9 S3, KMS, and DynamoDB policy generators.  Generated policies:
 
