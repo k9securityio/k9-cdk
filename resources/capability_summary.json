@@ -761,17 +761,18 @@
   "SQS": {
     "administer-resource": [
       "sqs:AddPermission",
+      "sqs:CancelMessageMoveTask",
       "sqs:CreateQueue",
       "sqs:DeleteQueue",
       "sqs:PurgeQueue",
       "sqs:RemovePermission",
       "sqs:SetQueueAttributes",
+      "sqs:StartMessageMoveTask",
       "sqs:TagQueue",
       "sqs:UntagQueue"
     ],
     "delete-data": [
       "sqs:DeleteMessage",
-      "sqs:DeleteMessageBatch",
       "sqs:DeleteQueue",
       "sqs:PurgeQueue"
     ],
@@ -779,6 +780,7 @@
       "sqs:GetQueueAttributes",
       "sqs:GetQueueUrl",
       "sqs:ListDeadLetterSourceQueues",
+      "sqs:ListMessageMoveTasks",
       "sqs:ListQueues",
       "sqs:ListQueueTags"
     ],
@@ -787,9 +789,7 @@
     ],
     "write-data": [
       "sqs:ChangeMessageVisibility",
-      "sqs:ChangeMessageVisibilityBatch",
-      "sqs:SendMessage",
-      "sqs:SendMessageBatch"
+      "sqs:SendMessage"
     ]
   },
   "STS": {

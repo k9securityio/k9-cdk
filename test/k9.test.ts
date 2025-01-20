@@ -6,6 +6,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import * as cdk from 'aws-cdk-lib/core';
 import { RemovalPolicy } from 'aws-cdk-lib/core';
+// @ts-ignore
 import { fail, stringifyPolicy } from './helpers';
 import * as k9 from '../lib';
 import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator } from '../lib/k9policy';
@@ -18,7 +19,6 @@ import {
   CloudFrontOACReadAccessGenerator,
 } from '../lib/s3';
 import { K9DynamoDBResourcePolicyProps } from '../src/dynamodb';
-// @ts-ignore
 
 // Test the primary public interface to k9 cdk
 

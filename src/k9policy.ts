@@ -130,6 +130,7 @@ export class K9PolicyFactory {
     'S3',
     'KMS',
     'DynamoDB',
+    'SQS',
   ]);
 
   /** @internal */
