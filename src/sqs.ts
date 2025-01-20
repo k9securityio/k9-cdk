@@ -71,13 +71,14 @@ export function makeResourcePolicy(props: K9SQSResourcePolicyProps): PolicyDocum
     Array.from(accessSpecsByCapability.values()),
     resourceArns);
 
+  const max_actions_in_statement = 7;
   for (let allowStatement of allowStatements) {
-    //SQS resource policy has a limit of 7 actions per statement.
+    //SQS resource policy has a limit of 7 actions per statement (Really).
     //But you can have as many statements as you want up to the queue policy size limit.
     //So, if an allowStatement has more than 7 actions (like the administer-resource statement does),
     //then create additional statements and spread the original statement's permissions across them
-    if (allowStatement.actions.length > 7) {
-      const partitionedActions = partitionArray(allowStatement.actions, 7);
+    if (allowStatement.actions.length > max_actions_in_statement) {
+      const partitionedActions = partitionArray(allowStatement.actions, max_actions_in_statement);
       partitionedActions.forEach((actions, index) => {
         const newStatement = allowStatement.copy({
           sid: `${allowStatement.sid} ${index + 1}`,
