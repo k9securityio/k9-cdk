@@ -2,8 +2,9 @@
 import {writeFileSync} from 'fs';
 import * as cdk from "aws-cdk-lib";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
-import * as s3 from "aws-cdk-lib/aws-s3";
 import * as kms from "aws-cdk-lib/aws-kms";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as k9 from "@k9securityio/k9-cdk";
 
 const administerResourceArns = [
@@ -26,6 +27,8 @@ const readDataArns = writeDataArns.concat([
 const app = new cdk.App();
 
 const stack = new cdk.Stack(app, 'K9Example');
+
+// demonstrate generating a k9 bucket policy
 const bucket = new s3.Bucket(stack, 'TestBucket', {});
 
 const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
@@ -56,6 +59,40 @@ writeFileSync('generated.bucket-policy.json',
     JSON.stringify(bucket.policy?.document.toJSON(), null, 2));
 
 
+// demonstrate generating a k9 queue policy
+const queue = new sqs.Queue(stack, 'TestQueue', {
+    queueName: 'app-queue-with-k9-policy',
+});
+
+const k9QueuePolicyProps: k9.sqs.K9SQSResourcePolicyProps = {
+    queue: queue,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
+            allowPrincipalArns: readConfigArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: writeDataArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
+            allowPrincipalArns: readDataArns,
+        }
+        // omit access spec for delete-data because it is unneeded
+    )
+}
+k9.sqs.grantAccessViaResourcePolicy(k9QueuePolicyProps);
+// unfortunately, the Queue object doesn't make the queue policy readable; re-generate for example policy file
+writeFileSync('generated.queue-policy.json',
+    JSON.stringify(k9.sqs.makeResourcePolicy(k9QueuePolicyProps).toJSON(), null, 2));
+
+
+// demonstrate generating a k9 key policy
 const keyPolicyProps: k9.kms.K9KeyPolicyProps = {
     k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
         {
@@ -84,7 +121,7 @@ writeFileSync('generated.key-policy.json',
 
 new kms.Key(stack, 'TestKey', {policy: keyPolicy});
 
-
+// demonstrate generating a k9 DynamoDB policy
 const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
     k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess
 };

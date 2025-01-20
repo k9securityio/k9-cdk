@@ -454,6 +454,206 @@
     "aws:cdk:path": "K9Example/S3BucketPolicy/Resource"
    }
   },
+  "TestQueue6F0069AA": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "app-queue-with-k9-policy"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "K9Example/TestQueue/Resource"
+   }
+  },
+  "TestQueuePolicyA65327BC": {
+   "Type": "AWS::SQS::QueuePolicy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "sqs:AddPermission",
+        "sqs:CancelMessageMoveTask",
+        "sqs:CreateQueue",
+        "sqs:DeleteQueue",
+        "sqs:PurgeQueue",
+        "sqs:RemovePermission",
+        "sqs:SetQueueAttributes"
+       ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::123456789012:user/ci",
+          "arn:aws:iam::123456789012:user/person1"
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": "*",
+       "Sid": "Allow Restricted administer-resource 1"
+      },
+      {
+       "Action": [
+        "sqs:StartMessageMoveTask",
+        "sqs:TagQueue",
+        "sqs:UntagQueue"
+       ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::123456789012:user/ci",
+          "arn:aws:iam::123456789012:user/person1"
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": "*",
+       "Sid": "Allow Restricted administer-resource 2"
+      },
+      {
+       "Action": [
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ListDeadLetterSourceQueues",
+        "sqs:ListMessageMoveTasks",
+        "sqs:ListQueues",
+        "sqs:ListQueueTags"
+       ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::123456789012:user/ci",
+          "arn:aws:iam::123456789012:user/person1",
+          "arn:aws:iam::123456789012:role/k9-auditor",
+          "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer"
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": "*",
+       "Sid": "Allow Restricted read-config"
+      },
+      {
+       "Action": "sqs:ReceiveMessage",
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::123456789012:role/app-backend",
+          "arn:aws:iam::123456789012:role/customer-service"
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": "*",
+       "Sid": "Allow Restricted read-data"
+      },
+      {
+       "Action": [
+        "sqs:ChangeMessageVisibility",
+        "sqs:SendMessage"
+       ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": [
+          "arn:aws:iam::123456789012:role/app-backend"
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": "*",
+       "Sid": "Allow Restricted write-data"
+      },
+      {
+       "Action": [
+        "sqs:DeleteMessage",
+        "sqs:DeleteQueue",
+        "sqs:PurgeQueue"
+       ],
+       "Condition": {
+        "ArnEquals": {
+         "aws:PrincipalArn": []
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": "*",
+       "Sid": "Allow Restricted delete-data"
+      },
+      {
+       "Action": "sqs:*",
+       "Condition": {
+        "Bool": {
+         "aws:PrincipalIsAWSService": [
+          "false"
+         ]
+        },
+        "ArnNotEquals": {
+         "aws:PrincipalArn": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":iam::",
+             {
+              "Ref": "AWS::AccountId"
+             },
+             ":root"
+            ]
+           ]
+          },
+          "arn:aws:iam::123456789012:user/ci",
+          "arn:aws:iam::123456789012:user/person1",
+          "arn:aws:iam::123456789012:role/k9-auditor",
+          "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer",
+          "arn:aws:iam::123456789012:role/app-backend",
+          "arn:aws:iam::123456789012:role/customer-service"
+         ]
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": [
+         "*",
+         "*"
+        ]
+       },
+       "Resource": "*",
+       "Sid": "DenyEveryoneElse"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Queues": [
+     {
+      "Ref": "TestQueue6F0069AA"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "K9Example/TestQueue/Policy/Resource"
+   }
+  },
   "TestKey4CACAF33": {
    "Type": "AWS::KMS::Key",
    "Properties": {
@@ -815,7 +1015,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WJyw6CMBBFv4V9GQGJHyALF2wIGremjzEZWtqEFglp+u8GMHF1zj23grK+QJHxxedS6dyQgHgPXGrGF/+K/gzxOkuNgTVv+7MDnTMk138+dmJ69BBb3J8W18TUavnolID44MLgs9qem3GCmz2ktIUevZsniZs3zioK5Gxi1imEwZ8+VQFlDUU2eKJ8mm2gEaE/+AVlye6ExgAAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02NwQ6CMBBEv8V7WQGN3uXggYui8WpKuyalpY0slZCm/24AE7zszLzJZnLIjgdIN3ygREidGFVDuPVcaMYHegbaQTh5obFnxcv+3CIXZ5QYV7zkyOhNEK4ePU7dYua7PvzFyHRLEEqcixLHyORoeetkDeHOa4OPfGrOxtXczCDGCVRIzndiHimclapXzkZmnURoaPvJU8j2kG4aUirpvO1Vi1At+gWhj+v29gAAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "K9Example/CDKMetadata/Default"
@@ -865,7 +1065,23 @@
         {
          "Ref": "AWS::Region"
         },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
         "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
        ]
       },
       {
@@ -889,7 +1105,35 @@
         {
          "Ref": "AWS::Region"
         },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
         "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
        ]
       },
       {
@@ -907,17 +1151,21 @@
         },
         "cn-northwest-1"
        ]
-      }
-     ]
-    },
-    {
-     "Fn::Or": [
+      },
       {
        "Fn::Equals": [
         {
          "Ref": "AWS::Region"
         },
         "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
        ]
       },
       {
@@ -936,6 +1184,18 @@
         "eu-south-1"
        ]
       },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
       {
        "Fn::Equals": [
         {
@@ -991,11 +1251,7 @@
         },
         "sa-east-1"
        ]
-      }
-     ]
-    },
-    {
-     "Fn::Or": [
+      },
       {
        "Fn::Equals": [
         {
@@ -1019,15 +1275,15 @@
         },
         "us-west-1"
        ]
-      },
-      {
-       "Fn::Equals": [
-        {
-         "Ref": "AWS::Region"
-        },
-        "us-west-2"
-       ]
       }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
      ]
     }
    ]

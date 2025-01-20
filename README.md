@@ -139,6 +139,11 @@ S3 Bucket Policy:
 * [Templatized Bucket Policy](examples/generated.bucket-policy.json)
 * [BucketPolicy resource in CFn template](examples/K9Example.template.json)
 
+SQS Queue Policy:
+
+* [Templatized Queue Policy](examples/generated.queue-policy.json)
+* [TestQueuePolicy resource in CFn template](examples/K9Example.template.json)
+
 KMS Key Policy:
 
 * [Templatized Key Policy](examples/generated.key-policy.json)

@@ -2,22 +2,13 @@
   "Statement": [
     {
       "Action": [
-        "dynamodb:CreateBackup",
-        "dynamodb:DeleteResourcePolicy",
-        "dynamodb:DeleteTableReplica",
-        "dynamodb:DisableKinesisStreamingDestination",
-        "dynamodb:EnableKinesisStreamingDestination",
-        "dynamodb:ExportTableToPointInTime",
-        "dynamodb:PutResourcePolicy",
-        "dynamodb:RestoreTableToPointInTime",
-        "dynamodb:TagResource",
-        "dynamodb:UntagResource",
-        "dynamodb:UpdateContinuousBackups",
-        "dynamodb:UpdateContributorInsights",
-        "dynamodb:UpdateKinesisStreamingDestination",
-        "dynamodb:UpdateTable",
-        "dynamodb:UpdateTableReplicaAutoScaling",
-        "dynamodb:UpdateTimeToLive"
+        "sqs:AddPermission",
+        "sqs:CancelMessageMoveTask",
+        "sqs:CreateQueue",
+        "sqs:DeleteQueue",
+        "sqs:PurgeQueue",
+        "sqs:RemovePermission",
+        "sqs:SetQueueAttributes"
       ],
       "Condition": {
         "ArnEquals": {
@@ -32,19 +23,37 @@
         "AWS": "*"
       },
       "Resource": "*",
-      "Sid": "AllowRestrictedAdministerResource"
+      "Sid": "Allow Restricted administer-resource 1"
     },
     {
       "Action": [
-        "dynamodb:DescribeContinuousBackups",
-        "dynamodb:DescribeContributorInsights",
-        "dynamodb:DescribeExport",
-        "dynamodb:DescribeKinesisStreamingDestination",
-        "dynamodb:DescribeTable",
-        "dynamodb:DescribeTableReplicaAutoScaling",
-        "dynamodb:DescribeTimeToLive",
-        "dynamodb:GetResourcePolicy",
-        "dynamodb:ListTagsOfResource"
+        "sqs:StartMessageMoveTask",
+        "sqs:TagQueue",
+        "sqs:UntagQueue"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "Allow Restricted administer-resource 2"
+    },
+    {
+      "Action": [
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ListDeadLetterSourceQueues",
+        "sqs:ListMessageMoveTasks",
+        "sqs:ListQueues",
+        "sqs:ListQueueTags"
       ],
       "Condition": {
         "ArnEquals": {
@@ -61,17 +70,10 @@
         "AWS": "*"
       },
       "Resource": "*",
-      "Sid": "AllowRestrictedReadConfig"
+      "Sid": "Allow Restricted read-config"
     },
     {
-      "Action": [
-        "dynamodb:BatchGetItem",
-        "dynamodb:ConditionCheckItem",
-        "dynamodb:GetItem",
-        "dynamodb:PartiQLSelect",
-        "dynamodb:Query",
-        "dynamodb:Scan"
-      ],
+      "Action": "sqs:ReceiveMessage",
       "Condition": {
         "ArnEquals": {
           "aws:PrincipalArn": [
@@ -85,15 +87,12 @@
         "AWS": "*"
       },
       "Resource": "*",
-      "Sid": "AllowRestrictedReadData"
+      "Sid": "Allow Restricted read-data"
     },
     {
       "Action": [
-        "dynamodb:BatchWriteItem",
-        "dynamodb:PartiQLInsert",
-        "dynamodb:PartiQLUpdate",
-        "dynamodb:PutItem",
-        "dynamodb:UpdateItem"
+        "sqs:ChangeMessageVisibility",
+        "sqs:SendMessage"
       ],
       "Condition": {
         "ArnEquals": {
@@ -107,14 +106,13 @@
         "AWS": "*"
       },
       "Resource": "*",
-      "Sid": "AllowRestrictedWriteData"
+      "Sid": "Allow Restricted write-data"
     },
     {
       "Action": [
-        "dynamodb:DeleteItem",
-        "dynamodb:DeleteTable",
-        "dynamodb:DeleteTableReplica",
-        "dynamodb:PartiQLDelete"
+        "sqs:DeleteMessage",
+        "sqs:DeleteQueue",
+        "sqs:PurgeQueue"
       ],
       "Condition": {
         "ArnEquals": {
@@ -126,10 +124,10 @@
         "AWS": "*"
       },
       "Resource": "*",
-      "Sid": "AllowRestrictedDeleteData"
+      "Sid": "Allow Restricted delete-data"
     },
     {
-      "Action": "dynamodb:*",
+      "Action": "sqs:*",
       "Condition": {
         "Bool": {
           "aws:PrincipalIsAWSService": [
@@ -138,7 +136,7 @@
         },
         "ArnNotEquals": {
           "aws:PrincipalArn": [
-            "${Token[TOKEN.49]}",
+            "${Token[TOKEN.42]}",
             "arn:aws:iam::123456789012:user/ci",
             "arn:aws:iam::123456789012:user/person1",
             "arn:aws:iam::123456789012:role/k9-auditor",
