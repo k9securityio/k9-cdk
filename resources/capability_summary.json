@@ -171,6 +171,46 @@
       "dynamodbstreams:GetShardIterator"
     ]
   },
+  "EventBridge": {
+    "administer-resource": [
+      "events:CreateArchive",
+      "events:CreateEventBus",
+      "events:DeleteArchive",
+      "events:DeleteEventBus",
+      "events:PutPermission",
+      "events:RemovePermission",
+      "events:TagResource",
+      "events:UntagResource",
+      "events:UpdateArchive",
+      "events:UpdateEventBus"
+    ],
+    "delete-data": [
+      "events:DeleteEventBus",
+      "events:DeleteRule",
+      "events:RemoveTargets"
+    ],
+    "read-config": [
+      "events:DescribeArchive",
+      "events:DescribeEventBus",
+      "events:DescribeRule",
+      "events:ListArchives",
+      "events:ListEventBuses",
+      "events:ListRuleNamesByTarget",
+      "events:ListRules",
+      "events:ListTagsForResource",
+      "events:ListTargetsByRule"
+    ],
+    "read-data": [
+      "events:TestEventPattern"
+    ],
+    "write-data": [
+      "events:DisableRule",
+      "events:EnableRule",
+      "events:PutEvents",
+      "events:PutRule",
+      "events:PutTargets"
+    ]
+  },
   "IAM": {
     "administer-resource": [
       "iam:AddRoleToInstanceProfile",

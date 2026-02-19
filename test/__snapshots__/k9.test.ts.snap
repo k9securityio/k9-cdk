@@ -208,6 +208,228 @@ exports[`DynamoDBResourcePolicy Typical usage 1`] = `
 }
 `;
 
+exports[`EventBridgeResourcePolicy Typical usage 1`] = `
+{
+  "Resources": {
+    "K9PolicyAllowRestrictedAdministerResource": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusinttypicalusage1FFB1668",
+        },
+        "Statement": {
+          "Action": [
+            "events:CreateArchive",
+            "events:CreateEventBus",
+            "events:DeleteArchive",
+            "events:DeleteEventBus",
+            "events:PutPermission",
+            "events:RemovePermission",
+            "events:TagResource",
+            "events:UntagResource",
+            "events:UpdateArchive",
+            "events:UpdateEventBus",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:user/ci",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "AllowRestrictedAdministerResource",
+        },
+        "StatementId": "AllowRestrictedAdministerResource",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "K9PolicyAllowRestrictedDeleteData": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusinttypicalusage1FFB1668",
+        },
+        "Statement": {
+          "Action": [
+            "events:DeleteEventBus",
+            "events:DeleteRule",
+            "events:RemoveTargets",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:user/super-admin",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "AllowRestrictedDeleteData",
+        },
+        "StatementId": "AllowRestrictedDeleteData",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "K9PolicyAllowRestrictedReadConfig": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusinttypicalusage1FFB1668",
+        },
+        "Statement": {
+          "Action": [
+            "events:DescribeArchive",
+            "events:DescribeEventBus",
+            "events:DescribeRule",
+            "events:ListArchives",
+            "events:ListEventBuses",
+            "events:ListRuleNamesByTarget",
+            "events:ListRules",
+            "events:ListTagsForResource",
+            "events:ListTargetsByRule",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:user/ci",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "AllowRestrictedReadConfig",
+        },
+        "StatementId": "AllowRestrictedReadConfig",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "K9PolicyAllowRestrictedReadData": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusinttypicalusage1FFB1668",
+        },
+        "Statement": {
+          "Action": "events:TestEventPattern",
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::123456789012:role/app-backend",
+                "arn:aws:iam::123456789012:role/customer-service",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "AllowRestrictedReadData",
+        },
+        "StatementId": "AllowRestrictedReadData",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "K9PolicyAllowRestrictedWriteData": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusinttypicalusage1FFB1668",
+        },
+        "Statement": {
+          "Action": [
+            "events:DisableRule",
+            "events:EnableRule",
+            "events:PutEvents",
+            "events:PutRule",
+            "events:PutTargets",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::123456789012:role/app-backend",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "AllowRestrictedWriteData",
+        },
+        "StatementId": "AllowRestrictedWriteData",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "K9PolicyDenyEveryoneElse": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusinttypicalusage1FFB1668",
+        },
+        "Statement": {
+          "Action": "events:*",
+          "Condition": {
+            "ArnNotEquals": {
+              "aws:PrincipalArn": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
+                    ],
+                  ],
+                },
+                "arn:aws:iam::139710491120:user/ci",
+                "arn:aws:iam::123456789012:role/app-backend",
+                "arn:aws:iam::123456789012:role/customer-service",
+                "arn:aws:iam::139710491120:user/super-admin",
+              ],
+            },
+            "Bool": {
+              "aws:PrincipalIsAWSService": [
+                "false",
+              ],
+            },
+          },
+          "Effect": "Deny",
+          "Principal": {
+            "AWS": [
+              "*",
+              "*",
+            ],
+          },
+          "Resource": "*",
+          "Sid": "DenyEveryoneElse",
+        },
+        "StatementId": "DenyEveryoneElse",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbusinttypicalusage1FFB1668": {
+      "Properties": {
+        "Name": "K9EventBridgeIntTestTypicalUsagetestbusinttypicalusage3B8F4D81",
+      },
+      "Type": "AWS::Events::EventBus",
+    },
+  },
+}
+`;
+
 exports[`K9BucketPolicy - IAccessSpec with set of capabilities 1`] = `
 {
   "Resources": {

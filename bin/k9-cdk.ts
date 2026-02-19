@@ -9,9 +9,11 @@ import * as kms from "aws-cdk-lib/aws-kms";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import {BlockPublicAccess, BucketEncryption} from "aws-cdk-lib/aws-s3";
 import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as events from 'aws-cdk-lib/aws-events';
 
 import * as k9 from "../lib";
 import {K9SQSResourcePolicyProps} from "../src/sqs";
+import {K9EventBridgeResourcePolicyProps} from "../src/eventbridge";
 
 const administerResourceArns = [
     // for development
@@ -256,6 +258,39 @@ const k9SQSResourcePolicyProps: K9SQSResourcePolicyProps = {
 
 k9.sqs.grantAccessViaResourcePolicy(k9SQSResourcePolicyProps);
 
+// Demonstrate generating and applying an EventBridge resource policy
+const bus = new events.EventBus(stack, 'k9-cdk-v2-int-test-bus', {
+    eventBusName: 'k9-cdk-v2-int-test',
+});
+
+const k9EventBridgeResourcePolicyProps: K9EventBridgeResourcePolicyProps = {
+    eventBus: bus,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
+            allowPrincipalArns: readConfigArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
+            allowPrincipalArns: readWriteDataArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: readWriteDataArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.DELETE_DATA,
+            allowPrincipalArns: readWriteDataArns,
+        },
+    )
+};
+
+k9.eventbridge.grantAccessViaResourcePolicy(stack, 'EventBridgeBus', k9EventBridgeResourcePolicyProps);
+
 for (let construct of [bucket,
     websiteBucket,
     autoDeleteBucket,
@@ -265,6 +300,7 @@ for (let construct of [bucket,
     cloudfrontOACKey,
     table,
     queue,
+    bus,
 ]) {
     Tags.of(construct).add('k9security:analysis', 'include');
 }

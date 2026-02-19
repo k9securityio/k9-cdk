@@ -1,5 +1,6 @@
 import { expect as expectCDK, haveResource, SynthUtils } from '@aws-cdk/assert';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as events from 'aws-cdk-lib/aws-events';
 import { AddToResourcePolicyResult } from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as s3 from 'aws-cdk-lib/aws-s3';
@@ -19,6 +20,7 @@ import {
   CloudFrontOACReadAccessGenerator,
 } from '../lib/s3';
 import { K9DynamoDBResourcePolicyProps } from '../src/dynamodb';
+import { K9EventBridgeResourcePolicyProps, SID_DENY_EVERYONE_ELSE as EB_SID_DENY_EVERYONE_ELSE } from '../src/eventbridge';
 
 // Test the primary public interface to k9 cdk
 
@@ -608,6 +610,81 @@ describe('DynamoDBResourcePolicy', () => {
     console.log('table.resourcePolicy: ' + stringifyPolicy(table.resourcePolicy));
 
     expectCDK(stack).to(haveResource('AWS::DynamoDB::GlobalTable'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
+
+});
+
+
+describe('EventBridgeResourcePolicy', () => {
+  const desiredAccess = new Array<IAccessSpec>(
+    {
+      accessCapabilities: [
+        AccessCapability.ADMINISTER_RESOURCE,
+        AccessCapability.READ_CONFIG,
+      ],
+      allowPrincipalArns: administerResourceArns,
+    },
+    {
+      accessCapabilities: AccessCapability.WRITE_DATA,
+      allowPrincipalArns: writeDataArns,
+    },
+    {
+      accessCapabilities: AccessCapability.READ_DATA,
+      allowPrincipalArns: readDataArns,
+    },
+    {
+      accessCapabilities: AccessCapability.DELETE_DATA,
+      allowPrincipalArns: deleteDataArns,
+    },
+  );
+
+  test('Typical usage', () => {
+    const stack = new cdk.Stack(app, 'K9EventBridgeIntTestTypicalUsage', { env: { region: 'us-east-1' } });
+    const bus = new events.EventBus(stack, 'test-bus-int-typical-usage');
+
+    const ebResourcePolicyProps: K9EventBridgeResourcePolicyProps = {
+      eventBus: bus,
+      k9DesiredAccess: desiredAccess,
+    };
+
+    let policies = k9.eventbridge.grantAccessViaResourcePolicy(stack, 'K9Policy', ebResourcePolicyProps);
+    expect(policies.length).toBeGreaterThan(0);
+
+    let resourcePolicy = k9.eventbridge.makeResourcePolicy(ebResourcePolicyProps);
+    console.log('EventBridge resourcePolicy: ' + stringifyPolicy(resourcePolicy));
+
+    expect(resourcePolicy).toBeDefined();
+
+    let policyStr = stringifyPolicy(resourcePolicy);
+    let policyObj = JSON.parse(policyStr);
+    let actualPolicyStatements = policyObj.Statement;
+
+    expect(actualPolicyStatements).toBeDefined();
+
+    const expectStmtIds = [
+      EB_SID_DENY_EVERYONE_ELSE,
+      'AllowRestrictedAdministerResource',
+      'AllowRestrictedReadConfig',
+      'AllowRestrictedReadData',
+      'AllowRestrictedWriteData',
+      'AllowRestrictedDeleteData',
+    ];
+    expect(actualPolicyStatements).toHaveLength(expectStmtIds.length);
+
+    const policyStatementMap: { [key: string]: any } = {};
+    for (let stmt of actualPolicyStatements) {
+      if (stmt.Sid) {
+        policyStatementMap[stmt.Sid] = stmt;
+      }
+    }
+
+    for (let expectStmtId of expectStmtIds) {
+      expect(policyStatementMap[expectStmtId]).toBeTruthy();
+    }
+
+    expectCDK(stack).to(haveResource('AWS::Events::EventBus'));
+    expectCDK(stack).to(haveResource('AWS::Events::EventBusPolicy'));
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 

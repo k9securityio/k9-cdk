@@ -10,6 +10,7 @@ Supported services:
 * KMS
 * DynamoDB
 * SQS
+* EventBridge
 
 This library [simplifies IAM as described in Effective IAM for AWS](https://www.effectiveiam.com/simplify-aws-iam) and is fully-supported by k9 Security. We're happy to answer questions or help you integrate it via a [GitHub issue](https://github.com/k9securityio/k9-cdk/issues) or email to [support@k9security.io](mailto:support@k9security.io?subject=k9-cdk). 
 
@@ -94,6 +95,22 @@ const k9SQSResourcePolicyProps: K9SQSResourcePolicyProps = {
 k9.sqs.grantAccessViaResourcePolicy(k9SQSResourcePolicyProps);
 ```
 
+Granting access to an EventBridge event bus works similarly, using `k9.eventBridge.grantAccessViaResourcePolicy`:
+```typescript
+import * as events from 'aws-cdk-lib/aws-events';
+
+const bus = new events.EventBus(stack, 'EventBus', {
+    eventBusName: 'app-event-bus',
+});
+
+const k9EventBridgeProps: k9.eventBridge.K9EventBridgeResourcePolicyProps = {
+    eventBus: bus,
+    k9DesiredAccess: k9BucketPolicyProps.k9DesiredAccess,
+};
+
+k9.eventBridge.grantAccessViaResourcePolicy(stack, 'EventBridgeBus', k9EventBridgeProps);
+```
+
 Granting access to a KMS key is similar, but the custom resource policy is created first 
 so it can be set via `props` per CDK convention:
  
@@ -153,6 +170,10 @@ DynamoDB Resource Policy:
 
 * [Templatized DynamoDB Resource Policy](examples/generated.dynamodb-policy.json)
 * [ResourcePolicy attribute of GlobalTable resource in CFn template](examples/K9Example.template.json)
+
+EventBridge Resource Policy:
+
+* [EventBusPolicy resources in CFn template](examples/K9Example.template.json)
 
 
 ## Specialized Use Cases

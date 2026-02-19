@@ -131,6 +131,7 @@ export class K9PolicyFactory {
     'KMS',
     'DynamoDB',
     'SQS',
+    'EventBridge',
   ]);
 
   /** @internal */
