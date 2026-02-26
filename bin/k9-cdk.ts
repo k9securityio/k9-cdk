@@ -8,9 +8,11 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import {BlockPublicAccess, BucketEncryption} from "aws-cdk-lib/aws-s3";
+import * as events from 'aws-cdk-lib/aws-events';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 import * as k9 from "../lib";
+import {K9EventBusResourcePolicyProps} from "../src/events";
 import {K9SQSResourcePolicyProps} from "../src/sqs";
 
 const administerResourceArns = [
@@ -256,6 +258,55 @@ const k9SQSResourcePolicyProps: K9SQSResourcePolicyProps = {
 
 k9.sqs.grantAccessViaResourcePolicy(k9SQSResourcePolicyProps);
 
+// Demonstrate generating and applying an EventBridge Bus resource policy
+const bus = new events.EventBus(stack, 'k9-cdk-v2-int-test-bus', {
+    eventBusName: 'k9-cdk-v2-int-test',
+});
+const k9EventBusResourcePolicyProps: K9EventBusResourcePolicyProps = {
+    bus: bus,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
+            allowPrincipalArns: readConfigArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: readWriteDataArns,
+        },
+    )
+};
+
+k9.events.grantAccessViaResourcePolicy(k9EventBusResourcePolicyProps);
+
+// Demonstrate org-scoped EventBridge Bus access (wildcard + org constraint)
+const orgScopedBus = new events.EventBus(stack, 'k9-cdk-v2-int-test-org-bus', {
+    eventBusName: 'k9-cdk-v2-int-test-org',
+});
+const k9OrgScopedEventBusProps: K9EventBusResourcePolicyProps = {
+    bus: orgScopedBus,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
+            allowPrincipalArns: readConfigArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: ['*'],
+            constrainToPrincipalOrgIDs: ['o-yourorgid'],
+        },
+    )
+};
+
+k9.events.grantAccessViaResourcePolicy(k9OrgScopedEventBusProps);
+
 for (let construct of [bucket,
     websiteBucket,
     autoDeleteBucket,
@@ -265,6 +316,8 @@ for (let construct of [bucket,
     cloudfrontOACKey,
     table,
     queue,
+    bus,
+    orgScopedBus,
 ]) {
     Tags.of(construct).add('k9security:analysis', 'include');
 }

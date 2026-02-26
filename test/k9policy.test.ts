@@ -468,6 +468,50 @@ describe('K9PolicyFactory#makeAllowStatements', () => {
   });
 });
 
+describe('K9PolicyFactory EventBridge capability mapping', () => {
+  const k9PolicyFactory = new K9PolicyFactory();
+
+  test('getActions returns expected administer-resource actions', () => {
+    const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.ADMINISTER_RESOURCE);
+    expect(actions).toEqual([
+      'events:AllowVendedLogDeliveryForResource',
+      'events:CreateArchive',
+      'events:CreateEventBus',
+      'events:DeleteEventBus',
+      'events:TagResource',
+      'events:UntagResource',
+      'events:UpdateEventBus',
+    ]);
+  });
+
+  test('getActions returns expected write-data actions', () => {
+    const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.WRITE_DATA);
+    expect(actions).toEqual([
+      'events:CreateArchive',
+      'events:PutEvents',
+      'events:StartReplay',
+    ]);
+  });
+
+  test('getActions returns expected read-config actions', () => {
+    const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.READ_CONFIG);
+    expect(actions).toEqual([
+      'events:DescribeEventBus',
+      'events:ListTagsForResource',
+    ]);
+  });
+
+  test('getActions returns empty array for read-data', () => {
+    const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.READ_DATA);
+    expect(actions).toEqual([]);
+  });
+
+  test('getActions returns empty array for delete-data', () => {
+    const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.DELETE_DATA);
+    expect(actions).toEqual([]);
+  });
+});
+
 test('K9PolicyFactory#deduplicatePrincipals', () => {
   const roleDefinedDirectlyByArn = 'arn:aws:iam::123456789012:role/some-role';
 
