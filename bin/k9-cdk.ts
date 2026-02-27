@@ -283,6 +283,31 @@ const k9EventBusResourcePolicyProps: K9EventBusResourcePolicyProps = {
 
 k9.events.grantAccessViaResourcePolicy(k9EventBusResourcePolicyProps);
 
+// Test wildcard + org constraint pattern (no DenyEveryoneElse)
+const orgBus = new events.EventBus(stack, 'k9-cdk-v2-int-test-org-bus', {
+    eventBusName: 'k9-cdk-v2-int-test-org',
+});
+const k9OrgBusResourcePolicyProps: K9EventBusResourcePolicyProps = {
+    bus: orgBus,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
+            allowPrincipalArns: readConfigArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: ['*'],
+            constrainToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
+        },
+    )
+};
+
+k9.events.grantAccessViaResourcePolicy(k9OrgBusResourcePolicyProps);
+
 for (let construct of [bucket,
     websiteBucket,
     autoDeleteBucket,
@@ -293,6 +318,7 @@ for (let construct of [bucket,
     table,
     queue,
     bus,
+    orgBus,
 ]) {
     Tags.of(construct).add('k9security:analysis', 'include');
 }
