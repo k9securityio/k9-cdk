@@ -474,22 +474,15 @@ describe('K9PolicyFactory EventBridge capability mapping', () => {
   test('getActions returns expected administer-resource actions', () => {
     const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.ADMINISTER_RESOURCE);
     expect(actions).toEqual([
-      'events:AllowVendedLogDeliveryForResource',
-      'events:CreateArchive',
-      'events:CreateEventBus',
-      'events:DeleteEventBus',
       'events:TagResource',
       'events:UntagResource',
-      'events:UpdateEventBus',
     ]);
   });
 
   test('getActions returns expected write-data actions', () => {
     const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.WRITE_DATA);
     expect(actions).toEqual([
-      'events:CreateArchive',
       'events:PutEvents',
-      'events:StartReplay',
     ]);
   });
 

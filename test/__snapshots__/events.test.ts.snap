@@ -16,13 +16,8 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
         },
         "Statement": {
           "Action": [
-            "events:AllowVendedLogDeliveryForResource",
-            "events:CreateArchive",
-            "events:CreateEventBus",
-            "events:DeleteEventBus",
             "events:TagResource",
             "events:UntagResource",
-            "events:UpdateEventBus",
           ],
           "Condition": {
             "ArnEquals": {
@@ -78,11 +73,7 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
           "Ref": "testbusorgsnapshot203C2631",
         },
         "Statement": {
-          "Action": [
-            "events:CreateArchive",
-            "events:PutEvents",
-            "events:StartReplay",
-          ],
+          "Action": "events:PutEvents",
           "Condition": {
             "StringEquals": {
               "aws:PrincipalOrgID": [
@@ -121,13 +112,8 @@ exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
         },
         "Statement": {
           "Action": [
-            "events:AllowVendedLogDeliveryForResource",
-            "events:CreateArchive",
-            "events:CreateEventBus",
-            "events:DeleteEventBus",
             "events:TagResource",
             "events:UntagResource",
-            "events:UpdateEventBus",
           ],
           "Condition": {
             "ArnEquals": {
@@ -183,11 +169,7 @@ exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
           "Ref": "testbussnapshot31E5750E",
         },
         "Statement": {
-          "Action": [
-            "events:CreateArchive",
-            "events:PutEvents",
-            "events:StartReplay",
-          ],
+          "Action": "events:PutEvents",
           "Condition": {
             "ArnEquals": {
               "aws:PrincipalArn": [
@@ -277,13 +259,8 @@ exports[`EventBusResourcePolicy Typical usage — specific principals, no org co
         },
         "Statement": {
           "Action": [
-            "events:AllowVendedLogDeliveryForResource",
-            "events:CreateArchive",
-            "events:CreateEventBus",
-            "events:DeleteEventBus",
             "events:TagResource",
             "events:UntagResource",
-            "events:UpdateEventBus",
           ],
           "Condition": {
             "ArnEquals": {
@@ -339,11 +316,7 @@ exports[`EventBusResourcePolicy Typical usage — specific principals, no org co
           "Ref": "testbustypicalusage6B2659F6",
         },
         "Statement": {
-          "Action": [
-            "events:CreateArchive",
-            "events:PutEvents",
-            "events:StartReplay",
-          ],
+          "Action": "events:PutEvents",
           "Condition": {
             "ArnEquals": {
               "aws:PrincipalArn": [

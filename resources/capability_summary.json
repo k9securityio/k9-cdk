@@ -173,22 +173,15 @@
   },
   "EventBridge": {
     "administer-resource": [
-      "events:AllowVendedLogDeliveryForResource",
-      "events:CreateArchive",
-      "events:CreateEventBus",
-      "events:DeleteEventBus",
       "events:TagResource",
-      "events:UntagResource",
-      "events:UpdateEventBus"
+      "events:UntagResource"
     ],
     "read-config": [
       "events:DescribeEventBus",
       "events:ListTagsForResource"
     ],
     "write-data": [
-      "events:CreateArchive",
-      "events:PutEvents",
-      "events:StartReplay"
+      "events:PutEvents"
     ]
   },
   "IAM": {
