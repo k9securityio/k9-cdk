@@ -63,7 +63,8 @@ export function makeResourcePolicy(props: K9EventBusResourcePolicyProps): Policy
   const allowStatements = policyFactory.makeAllowStatements('EventBridge',
     SUPPORTED_CAPABILITIES,
     Array.from(accessSpecsByCapability.values()),
-    resourceArns);
+    resourceArns,
+    true);
   policy.addStatements(...allowStatements);
 
   // DenyEveryoneElse — conditional on access pattern:

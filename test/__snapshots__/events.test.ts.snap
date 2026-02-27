@@ -9,7 +9,7 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
       },
       "Type": "AWS::Events::EventBus",
     },
-    "testbusorgsnapshotcdkAllowRestrictedadministerresource29B5EAEA": {
+    "testbusorgsnapshotcdkAllowRestrictedAdministerResourceC811FF22": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbusorgsnapshot203C2631",
@@ -37,13 +37,13 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted administer-resource",
+          "Sid": "cdk-AllowRestrictedAdministerResource",
         },
-        "StatementId": "cdk-Allow Restricted administer-resource",
+        "StatementId": "cdk-AllowRestrictedAdministerResource",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
-    "testbusorgsnapshotcdkAllowRestrictedreadconfigDAAEB966": {
+    "testbusorgsnapshotcdkAllowRestrictedReadConfig84AE420F": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbusorgsnapshot203C2631",
@@ -66,13 +66,13 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted read-config",
+          "Sid": "cdk-AllowRestrictedReadConfig",
         },
-        "StatementId": "cdk-Allow Restricted read-config",
+        "StatementId": "cdk-AllowRestrictedReadConfig",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
-    "testbusorgsnapshotcdkAllowRestrictedwritedataB95B5739": {
+    "testbusorgsnapshotcdkAllowRestrictedWriteData29374AA8": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbusorgsnapshot203C2631",
@@ -95,9 +95,9 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted write-data",
+          "Sid": "cdk-AllowRestrictedWriteData",
         },
-        "StatementId": "cdk-Allow Restricted write-data",
+        "StatementId": "cdk-AllowRestrictedWriteData",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
@@ -114,7 +114,7 @@ exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
       },
       "Type": "AWS::Events::EventBus",
     },
-    "testbussnapshotcdkAllowRestrictedadministerresource26159C5B": {
+    "testbussnapshotcdkAllowRestrictedAdministerResourceEBF6E5DB": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbussnapshot31E5750E",
@@ -142,13 +142,13 @@ exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted administer-resource",
+          "Sid": "cdk-AllowRestrictedAdministerResource",
         },
-        "StatementId": "cdk-Allow Restricted administer-resource",
+        "StatementId": "cdk-AllowRestrictedAdministerResource",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
-    "testbussnapshotcdkAllowRestrictedreadconfig1E221F1F": {
+    "testbussnapshotcdkAllowRestrictedReadConfigFFF40D36": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbussnapshot31E5750E",
@@ -171,13 +171,13 @@ exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted read-config",
+          "Sid": "cdk-AllowRestrictedReadConfig",
         },
-        "StatementId": "cdk-Allow Restricted read-config",
+        "StatementId": "cdk-AllowRestrictedReadConfig",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
-    "testbussnapshotcdkAllowRestrictedwritedata02FB3846": {
+    "testbussnapshotcdkAllowRestrictedWriteDataB7A88FF1": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbussnapshot31E5750E",
@@ -200,9 +200,9 @@ exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted write-data",
+          "Sid": "cdk-AllowRestrictedWriteData",
         },
-        "StatementId": "cdk-Allow Restricted write-data",
+        "StatementId": "cdk-AllowRestrictedWriteData",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
@@ -270,7 +270,7 @@ exports[`EventBusResourcePolicy Typical usage — specific principals, no org co
       },
       "Type": "AWS::Events::EventBus",
     },
-    "testbustypicalusagecdkAllowRestrictedadministerresource1C50EB6C": {
+    "testbustypicalusagecdkAllowRestrictedAdministerResourceD8498F90": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbustypicalusage6B2659F6",
@@ -298,13 +298,13 @@ exports[`EventBusResourcePolicy Typical usage — specific principals, no org co
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted administer-resource",
+          "Sid": "cdk-AllowRestrictedAdministerResource",
         },
-        "StatementId": "cdk-Allow Restricted administer-resource",
+        "StatementId": "cdk-AllowRestrictedAdministerResource",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
-    "testbustypicalusagecdkAllowRestrictedreadconfigCDBD6FD1": {
+    "testbustypicalusagecdkAllowRestrictedReadConfig9E6B0DB0": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbustypicalusage6B2659F6",
@@ -327,13 +327,13 @@ exports[`EventBusResourcePolicy Typical usage — specific principals, no org co
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted read-config",
+          "Sid": "cdk-AllowRestrictedReadConfig",
         },
-        "StatementId": "cdk-Allow Restricted read-config",
+        "StatementId": "cdk-AllowRestrictedReadConfig",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
-    "testbustypicalusagecdkAllowRestrictedwritedata01027E6F": {
+    "testbustypicalusagecdkAllowRestrictedWriteData1B46A3CB": {
       "Properties": {
         "EventBusName": {
           "Ref": "testbustypicalusage6B2659F6",
@@ -356,9 +356,9 @@ exports[`EventBusResourcePolicy Typical usage — specific principals, no org co
             "AWS": "*",
           },
           "Resource": "*",
-          "Sid": "cdk-Allow Restricted write-data",
+          "Sid": "cdk-AllowRestrictedWriteData",
         },
-        "StatementId": "cdk-Allow Restricted write-data",
+        "StatementId": "cdk-AllowRestrictedWriteData",
       },
       "Type": "AWS::Events::EventBusPolicy",
     },

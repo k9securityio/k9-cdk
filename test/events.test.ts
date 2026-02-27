@@ -77,14 +77,14 @@ describe('EventBusResourcePolicy', () => {
     expect(statements.length).toEqual(4);
 
     let sids = statements.map((s: any) => s.Sid);
-    expect(sids).toContain('Allow Restricted administer-resource');
-    expect(sids).toContain('Allow Restricted read-config');
-    expect(sids).toContain('Allow Restricted write-data');
+    expect(sids).toContain('AllowRestrictedAdministerResource');
+    expect(sids).toContain('AllowRestrictedReadConfig');
+    expect(sids).toContain('AllowRestrictedWriteData');
     expect(sids).toContain(SID_DENY_EVERYONE_ELSE);
 
     // Verify Allow statements use aws:PrincipalArn condition
     for (let stmt of statements) {
-      if (stmt.Sid.startsWith('Allow Restricted')) {
+      if (stmt.Sid.startsWith('AllowRestricted')) {
         expect(stmt.Effect).toEqual('Allow');
         expect(stmt.Condition.ArnEquals).toBeDefined();
         expect(stmt.Condition.ArnEquals['aws:PrincipalArn']).toBeDefined();
@@ -131,19 +131,19 @@ describe('EventBusResourcePolicy', () => {
     expect(statements.length).toEqual(3);
 
     let sids = statements.map((s: any) => s.Sid);
-    expect(sids).toContain('Allow Restricted administer-resource');
-    expect(sids).toContain('Allow Restricted read-config');
-    expect(sids).toContain('Allow Restricted write-data');
+    expect(sids).toContain('AllowRestrictedAdministerResource');
+    expect(sids).toContain('AllowRestrictedReadConfig');
+    expect(sids).toContain('AllowRestrictedWriteData');
     expect(sids).not.toContain(SID_DENY_EVERYONE_ELSE);
 
     // Verify write-data statement uses aws:PrincipalOrgID condition (not aws:PrincipalArn)
-    let writeStmt = statements.find((s: any) => s.Sid === 'Allow Restricted write-data');
+    let writeStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedWriteData');
     expect(writeStmt.Condition.StringEquals).toBeDefined();
     expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
     expect(writeStmt.Condition.ArnEquals).toBeUndefined();
 
     // Verify administer-resource still uses aws:PrincipalArn (specific ARNs)
-    let adminStmt = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource');
+    let adminStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedAdministerResource');
     expect(adminStmt.Condition.ArnEquals).toBeDefined();
     expect(adminStmt.Condition.ArnEquals['aws:PrincipalArn']).toBeDefined();
   });
@@ -183,7 +183,7 @@ describe('EventBusResourcePolicy', () => {
     expect(sids).toContain(SID_DENY_EVERYONE_ELSE);
 
     // Verify write-data has BOTH aws:PrincipalArn AND aws:PrincipalOrgID conditions
-    let writeStmt = statements.find((s: any) => s.Sid === 'Allow Restricted write-data');
+    let writeStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedWriteData');
     expect(writeStmt.Condition.ArnEquals).toBeDefined();
     expect(writeStmt.Condition.ArnEquals['aws:PrincipalArn']).toBeDefined();
     expect(writeStmt.Condition.StringEquals).toBeDefined();
@@ -230,13 +230,13 @@ describe('EventBusResourcePolicy', () => {
     expect(statements.length).toEqual(4);
 
     let sids = statements.map((s: any) => s.Sid);
-    expect(sids).toContain('Allow Restricted administer-resource');
-    expect(sids).toContain('Allow Restricted read-config');
-    expect(sids).toContain('Allow Restricted write-data');
+    expect(sids).toContain('AllowRestrictedAdministerResource');
+    expect(sids).toContain('AllowRestrictedReadConfig');
+    expect(sids).toContain('AllowRestrictedWriteData');
     expect(sids).toContain(SID_DENY_EVERYONE_ELSE);
 
     // Verify write-data uses ArnLike (wildcards in ARNs) with BOTH PrincipalArn AND PrincipalOrgID
-    let writeStmt = statements.find((s: any) => s.Sid === 'Allow Restricted write-data');
+    let writeStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedWriteData');
     expect(writeStmt.Condition.ArnLike).toBeDefined();
     expect(writeStmt.Condition.ArnLike['aws:PrincipalArn']).toEqual(multiAccountWriteArns);
     expect(writeStmt.Condition.ArnEquals).toBeUndefined();
@@ -244,7 +244,7 @@ describe('EventBusResourcePolicy', () => {
     expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123', 'o-def345']);
 
     // Verify administer-resource uses ArnLike but does NOT have org constraint
-    let adminStmt = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource');
+    let adminStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedAdministerResource');
     expect(adminStmt.Condition.ArnLike).toBeDefined();
     expect(adminStmt.Condition.ArnLike['aws:PrincipalArn']).toBeDefined();
     expect(adminStmt.Condition.StringEquals).toBeUndefined();

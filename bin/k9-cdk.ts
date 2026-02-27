@@ -276,36 +276,12 @@ const k9EventBusResourcePolicyProps: K9EventBusResourcePolicyProps = {
         {
             accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
             allowPrincipalArns: readWriteDataArns,
+            constrainToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
         },
     )
 };
 
 k9.events.grantAccessViaResourcePolicy(k9EventBusResourcePolicyProps);
-
-// Demonstrate org-scoped EventBridge Bus access (wildcard + org constraint)
-const orgScopedBus = new events.EventBus(stack, 'k9-cdk-v2-int-test-org-bus', {
-    eventBusName: 'k9-cdk-v2-int-test-org',
-});
-const k9OrgScopedEventBusProps: K9EventBusResourcePolicyProps = {
-    bus: orgScopedBus,
-    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
-        {
-            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
-            allowPrincipalArns: administerResourceArns,
-        },
-        {
-            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
-            allowPrincipalArns: readConfigArns,
-        },
-        {
-            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
-            allowPrincipalArns: ['*'],
-            constrainToPrincipalOrgIDs: ['o-yourorgid'],
-        },
-    )
-};
-
-k9.events.grantAccessViaResourcePolicy(k9OrgScopedEventBusProps);
 
 for (let construct of [bucket,
     websiteBucket,
@@ -317,7 +293,6 @@ for (let construct of [bucket,
     table,
     queue,
     bus,
-    orgScopedBus,
 ]) {
     Tags.of(construct).add('k9security:analysis', 'include');
 }
