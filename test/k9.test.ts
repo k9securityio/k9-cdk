@@ -371,6 +371,64 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
+test('K9BucketPolicy - restrictToPrincipalOrgIDs restricts write-data to org', () => {
+  const stack = new cdk.Stack(app, 'K9PolicyTestOrgRestricted');
+  const bucket = new s3.Bucket(stack, 'OrgRestrictedBucket', {});
+
+  const k9BucketPolicyProps: K9BucketPolicyProps = {
+    bucket: bucket,
+    k9DesiredAccess: new Array<IAccessSpec>(
+      {
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
+        allowPrincipalArns: administerResourceArns,
+      },
+      {
+        accessCapabilities: AccessCapability.WRITE_DATA,
+        allowPrincipalArns: writeDataArns,
+        restrictToPrincipalOrgIDs: ['o-abc123'],
+      },
+      {
+        accessCapabilities: AccessCapability.READ_DATA,
+        allowPrincipalArns: readDataArns,
+      },
+    ),
+  };
+
+  let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'S3OrgRestricted', k9BucketPolicyProps);
+  expect(bucket.policy).toBeDefined();
+
+  assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+
+  let policyStr = stringifyPolicy(bucket.policy?.document);
+  console.log('org-restricted bucket policy: ' + policyStr);
+  let policyObj = JSON.parse(policyStr);
+  let statements = policyObj.Statement;
+
+  // Verify write-data has BOTH aws:PrincipalArn AND aws:PrincipalOrgID conditions
+  let writeStmt = statements.find((s: any) => s.Sid === 'Allow Restricted write-data');
+  expect(writeStmt).toBeDefined();
+  expect(writeStmt.Condition.ArnEquals['aws:PrincipalArn']).toEqual(writeDataArns);
+  expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+  // Verify other statements do NOT have org constraint
+  let adminStmt = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource');
+  expect(adminStmt).toBeDefined();
+  expect(adminStmt.Condition.ArnEquals).toBeDefined();
+  expect(adminStmt.Condition.StringEquals).toBeUndefined();
+
+  let readStmt = statements.find((s: any) => s.Sid === 'Allow Restricted read-data');
+  expect(readStmt).toBeDefined();
+  expect(readStmt.Condition.ArnEquals).toBeDefined();
+  expect(readStmt.Condition.StringEquals).toBeUndefined();
+
+  // Verify DenyEveryoneElse is still present (specific ARNs, not wildcard)
+  let denyStmt = statements.find((s: any) => s.Sid === 'DenyEveryoneElse');
+  expect(denyStmt).toBeDefined();
+  expect(denyStmt.Effect).toEqual('Deny');
+
+  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+});
+
 describe('K9KeyPolicy', () => {
   const desiredAccess = new Array<IAccessSpec>(
     {
