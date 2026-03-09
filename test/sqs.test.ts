@@ -127,4 +127,66 @@ describe('SQSResourcePolicy', () => {
     console.log('queue: ' + queue);
   });
 
+  test('restrictToPrincipalOrgIDs restricts write-data to org', () => {
+    const stack = new cdk.Stack(app, 'K9SQSResourcePolicyTestOrgRestricted', { env: { region: 'us-east-1' } });
+    const queue = new sqs.Queue(stack, 'test-queue-org-restricted');
+
+    const sqsResourcePolicyProps: K9SQSResourcePolicyProps = {
+      queue: queue,
+      k9DesiredAccess: new Array<IAccessSpec>(
+        {
+          accessCapabilities: [
+            AccessCapability.ADMINISTER_RESOURCE,
+            AccessCapability.READ_CONFIG,
+          ],
+          allowPrincipalArns: administerResourceArns,
+        },
+        {
+          accessCapabilities: AccessCapability.WRITE_DATA,
+          allowPrincipalArns: writeDataArns,
+          restrictToPrincipalOrgIDs: ['o-abc123'],
+        },
+        {
+          accessCapabilities: AccessCapability.READ_DATA,
+          allowPrincipalArns: readDataArns,
+        },
+        {
+          accessCapabilities: AccessCapability.DELETE_DATA,
+          allowPrincipalArns: deleteDataArns,
+        },
+      ),
+    };
+
+    let resourcePolicy = k9.sqs.makeResourcePolicy(sqsResourcePolicyProps);
+    let policyStr = stringifyPolicy(resourcePolicy);
+    console.log('org-restricted SQS policy: ' + policyStr);
+
+    let policyObj = JSON.parse(policyStr);
+    let statements = policyObj.Statement;
+    expect(statements).toBeDefined();
+
+    // Verify write-data has BOTH aws:PrincipalArn AND aws:PrincipalOrgID conditions
+    let writeStmt = statements.find((s: any) => s.Sid === 'Allow Restricted write-data');
+    expect(writeStmt).toBeDefined();
+    expect(writeStmt.Condition.ArnEquals['aws:PrincipalArn']).toEqual(writeDataArns);
+    expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+    // Verify administer-resource does NOT have org constraint
+    let adminStmt1 = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource 1');
+    expect(adminStmt1).toBeDefined();
+    expect(adminStmt1.Condition.ArnEquals).toBeDefined();
+    expect(adminStmt1.Condition.StringEquals).toBeUndefined();
+
+    // Verify read-data does NOT have org constraint
+    let readStmt = statements.find((s: any) => s.Sid === 'Allow Restricted read-data');
+    expect(readStmt).toBeDefined();
+    expect(readStmt.Condition.ArnEquals).toBeDefined();
+    expect(readStmt.Condition.StringEquals).toBeUndefined();
+
+    // Verify DenyEveryoneElse is present (specific ARNs, not wildcard)
+    let denyStmt = statements.find((s: any) => s.Sid === SID_DENY_EVERYONE_ELSE);
+    expect(denyStmt).toBeDefined();
+    expect(denyStmt.Effect).toEqual('Deny');
+  });
+
 });
