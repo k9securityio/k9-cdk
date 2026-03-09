@@ -2483,6 +2483,163 @@ exports[`K9KeyPolicy Without Allow root user and Identity policies 1`] = `
 }
 `;
 
+exports[`K9KeyPolicy restrictToPrincipalOrgIDs restricts write-data to org 1`] = `
+{
+  "Resources": {
+    "TestKeyOrgRestrictedC99C38C6": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:CancelKeyDeletion",
+                "kms:ConnectCustomKeyStore",
+                "kms:CreateAlias",
+                "kms:CreateCustomKeyStore",
+                "kms:CreateGrant",
+                "kms:CreateKey",
+                "kms:DeleteAlias",
+                "kms:DisableKey",
+                "kms:DisableKeyRotation",
+                "kms:DisconnectCustomKeyStore",
+                "kms:EnableKey",
+                "kms:EnableKeyRotation",
+                "kms:PutKeyPolicy",
+                "kms:RetireGrant",
+                "kms:RevokeGrant",
+                "kms:ScheduleKeyDeletion",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:UpdateAlias",
+                "kms:UpdateCustomKeyStore",
+                "kms:UpdateKeyDescription",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted administer-resource",
+            },
+            {
+              "Action": [
+                "kms:DescribeCustomKeyStores",
+                "kms:DescribeKey",
+                "kms:GetKeyPolicy",
+                "kms:GetKeyRotationStatus",
+                "kms:GetParametersForImport",
+                "kms:GetPublicKey",
+                "kms:ListAliases",
+                "kms:ListGrants",
+                "kms:ListKeyPolicies",
+                "kms:ListKeys",
+                "kms:ListResourceTags",
+                "kms:ListRetirableGrants",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted read-config",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Verify",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted read-data",
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateRandom",
+                "kms:ImportKeyMaterial",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:Sign",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
+                },
+                "StringEquals": {
+                  "aws:PrincipalOrgID": [
+                    "o-abc123",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted write-data",
+            },
+            {
+              "Action": [
+                "kms:DeleteCustomKeyStore",
+                "kms:DeleteImportedKeyMaterial",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted delete-data",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;
+
 exports[`k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObjects 1`] = `
 {
   "Mappings": {

@@ -591,6 +591,69 @@ describe('K9KeyPolicy', () => {
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 
+  test('restrictToPrincipalOrgIDs restricts write-data to org', () => {
+    const stack = new cdk.Stack(app, 'K9KeyPolicyOrgRestricted');
+    const k9KeyPolicyProps: K9KeyPolicyProps = {
+      k9DesiredAccess: new Array<IAccessSpec>(
+        {
+          accessCapabilities: [
+            AccessCapability.ADMINISTER_RESOURCE,
+            AccessCapability.READ_CONFIG,
+          ],
+          allowPrincipalArns: administerResourceArns,
+        },
+        {
+          accessCapabilities: AccessCapability.WRITE_DATA,
+          allowPrincipalArns: writeDataArns,
+          restrictToPrincipalOrgIDs: ['o-abc123'],
+        },
+        {
+          accessCapabilities: AccessCapability.READ_DATA,
+          allowPrincipalArns: readDataArns,
+        },
+        {
+          accessCapabilities: AccessCapability.DELETE_DATA,
+          allowPrincipalArns: deleteDataArns,
+        },
+      ),
+      trustAccountIdentities: false,
+    };
+
+    const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
+
+    let policyJsonStr = stringifyPolicy(keyPolicy);
+    console.log('org-restricted key policy: ' + policyJsonStr);
+    let policyObj = JSON.parse(policyJsonStr);
+    let statements = policyObj.Statement;
+    expect(statements).toBeDefined();
+
+    // Verify write-data has BOTH aws:PrincipalArn AND aws:PrincipalOrgID conditions
+    let writeStmt = statements.find((s: any) => s.Sid === 'Allow Restricted write-data');
+    expect(writeStmt).toBeDefined();
+    expect(writeStmt.Condition.ArnEquals['aws:PrincipalArn']).toEqual(writeDataArns);
+    expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+    // Verify administer-resource does NOT have org constraint
+    let adminStmt = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource');
+    expect(adminStmt).toBeDefined();
+    expect(adminStmt.Condition.ArnEquals).toBeDefined();
+    expect(adminStmt.Condition.StringEquals).toBeUndefined();
+
+    // Verify read-data does NOT have org constraint
+    let readStmt = statements.find((s: any) => s.Sid === 'Allow Restricted read-data');
+    expect(readStmt).toBeDefined();
+    expect(readStmt.Condition.ArnEquals).toBeDefined();
+    expect(readStmt.Condition.StringEquals).toBeUndefined();
+
+    // Verify DenyEveryoneElse is NOT present (trustAccountIdentities: false)
+    let denyStmt = statements.find((s: any) => s.Sid === SID_DENY_EVERYONE_ELSE);
+    expect(denyStmt).toBeFalsy();
+
+    new kms.Key(stack, 'TestKeyOrgRestricted', { policy: keyPolicy });
+
+    expectCDK(stack).to(haveResource('AWS::KMS::Key'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
 
 });
 
