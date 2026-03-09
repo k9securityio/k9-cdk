@@ -42,14 +42,14 @@ export interface IAccessSpec {
   allowPrincipalArns: Array<string>;
   test?: ArnConditionTest;
   /**
-   * Optional list of AWS Organization IDs that scope down the principals specified
+   * Optional list of AWS Organization IDs that restrict the principals specified
    * in `allowPrincipalArns`. When present, generated Allow statements will include
    * a `StringEquals` condition on `aws:PrincipalOrgID`.
    *
-   * Org IDs act as constraints that narrow which principals are allowed — they do not
-   * replace `allowPrincipalArns`.
+   * Org IDs restrict which principals are allowed — they do not replace
+   * `allowPrincipalArns`.
    */
-  constrainToPrincipalOrgIDs?: Array<string>;
+  restrictToPrincipalOrgIDs?: Array<string>;
 }
 
 /**
@@ -108,7 +108,7 @@ export function hasWildcardPrincipal(accessSpecs: Array<IAccessSpec>): boolean {
  * Validate that access specs have valid principal ARN + org constraint combinations.
  * Throws an error for invalid combinations:
  * - Empty allowPrincipalArns
- * - Wildcard allowPrincipalArns without constrainToPrincipalOrgIDs (public access)
+ * - Wildcard allowPrincipalArns without restrictToPrincipalOrgIDs (public access)
  */
 export function validateAccessSpecs(accessSpecs: Array<IAccessSpec>): void {
   for (let spec of accessSpecs) {
@@ -118,10 +118,10 @@ export function validateAccessSpecs(accessSpecs: Array<IAccessSpec>): void {
       );
     }
     if (spec.allowPrincipalArns.includes('*') &&
-        (!spec.constrainToPrincipalOrgIDs || spec.constrainToPrincipalOrgIDs.length === 0)) {
+        (!spec.restrictToPrincipalOrgIDs || spec.restrictToPrincipalOrgIDs.length === 0)) {
       throw new Error(
         'k9-cdk will not generate a resource policy that allows fully public access.' +
-        ' Wildcard principal ("*") requires constrainToPrincipalOrgIDs to scope access.' +
+        ' Wildcard principal ("*") requires restrictToPrincipalOrgIDs to scope access.' +
         ' Consider specifying account principal ARNs or constraining to specific PrincipalOrgIDs.',
       );
     }
@@ -218,12 +218,12 @@ export class K9PolicyFactory {
       }
     }
 
-    // Merge constrainToPrincipalOrgIDs
-    if (addition.constrainToPrincipalOrgIDs && addition.constrainToPrincipalOrgIDs.length > 0) {
-      if (!target.constrainToPrincipalOrgIDs) {
-        target.constrainToPrincipalOrgIDs = [];
+    // Merge restrictToPrincipalOrgIDs
+    if (addition.restrictToPrincipalOrgIDs && addition.restrictToPrincipalOrgIDs.length > 0) {
+      if (!target.restrictToPrincipalOrgIDs) {
+        target.restrictToPrincipalOrgIDs = [];
       }
-      target.constrainToPrincipalOrgIDs.push(...addition.constrainToPrincipalOrgIDs);
+      target.restrictToPrincipalOrgIDs.push(...addition.restrictToPrincipalOrgIDs);
     }
 
   }
@@ -311,7 +311,7 @@ export class K9PolicyFactory {
         accessSpec.allowPrincipalArns,
         arnConditionTest,
         resourceArns,
-        accessSpec.constrainToPrincipalOrgIDs);
+        accessSpec.restrictToPrincipalOrgIDs);
       policyStatements.push(statement);
     }
     return policyStatements;
@@ -322,7 +322,7 @@ export class K9PolicyFactory {
     principalArns: Array<string>,
     test: ArnConditionTest,
     resources: Array<string>,
-    constrainToPrincipalOrgIDs?: Array<string>): PolicyStatement {
+    restrictToPrincipalOrgIDs?: Array<string>): PolicyStatement {
     const policyStatementProps: PolicyStatementProps = {
       sid: sid,
       effect: Effect.ALLOW,
@@ -333,19 +333,19 @@ export class K9PolicyFactory {
     statement.addResources(...resources);
 
     const isWildcardPrincipal = principalArns.includes('*');
-    const hasOrgConstraint = constrainToPrincipalOrgIDs && constrainToPrincipalOrgIDs.length > 0;
+    const hasOrgConstraint = restrictToPrincipalOrgIDs && restrictToPrincipalOrgIDs.length > 0;
 
     if (isWildcardPrincipal && hasOrgConstraint) {
       // Code Path B: wildcard + org constraint
       // Use Principal: "*" (already added via addAnyPrincipal) + aws:PrincipalOrgID condition
       // Do NOT add aws:PrincipalArn condition
-      statement.addCondition('StringEquals', { 'aws:PrincipalOrgID': constrainToPrincipalOrgIDs });
+      statement.addCondition('StringEquals', { 'aws:PrincipalOrgID': restrictToPrincipalOrgIDs });
     } else {
       // Code Path A: specific principal ARNs (existing behavior)
       statement.addCondition(test, { 'aws:PrincipalArn': K9PolicyFactory.deduplicatePrincipals(principalArns) });
       if (hasOrgConstraint) {
         // Specific ARNs + org constraint: both conditions must be true
-        statement.addCondition('StringEquals', { 'aws:PrincipalOrgID': constrainToPrincipalOrgIDs });
+        statement.addCondition('StringEquals', { 'aws:PrincipalOrgID': restrictToPrincipalOrgIDs });
       }
     }
 

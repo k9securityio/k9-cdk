@@ -276,7 +276,7 @@ const k9EventBusResourcePolicyProps: K9EventBusResourcePolicyProps = {
         {
             accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
             allowPrincipalArns: readWriteDataArns,
-            constrainToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
+            restrictToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
         },
     )
 };
@@ -301,7 +301,7 @@ const k9OrgBusResourcePolicyProps: K9EventBusResourcePolicyProps = {
         {
             accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
             allowPrincipalArns: ['*'],
-            constrainToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
+            restrictToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
         },
     )
 };

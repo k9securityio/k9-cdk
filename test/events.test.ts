@@ -111,7 +111,7 @@ describe('EventBusResourcePolicy', () => {
       {
         accessCapabilities: AccessCapability.WRITE_DATA,
         allowPrincipalArns: ['*'],
-        constrainToPrincipalOrgIDs: ['o-abc123'],
+        restrictToPrincipalOrgIDs: ['o-abc123'],
       },
     );
 
@@ -160,7 +160,7 @@ describe('EventBusResourcePolicy', () => {
       {
         accessCapabilities: AccessCapability.WRITE_DATA,
         allowPrincipalArns: writeDataArns,
-        constrainToPrincipalOrgIDs: ['o-abc123'],
+        restrictToPrincipalOrgIDs: ['o-abc123'],
       },
     );
 
@@ -210,7 +210,7 @@ describe('EventBusResourcePolicy', () => {
         accessCapabilities: AccessCapability.WRITE_DATA,
         allowPrincipalArns: multiAccountWriteArns,
         test: 'ArnLike',
-        constrainToPrincipalOrgIDs: ['o-abc123', 'o-def345'],
+        restrictToPrincipalOrgIDs: ['o-abc123', 'o-def345'],
       },
     );
 
@@ -291,7 +291,7 @@ describe('EventBusResourcePolicy', () => {
         {
           accessCapabilities: AccessCapability.WRITE_DATA,
           allowPrincipalArns: ['*'],
-          constrainToPrincipalOrgIDs: ['o-abc123'],
+          restrictToPrincipalOrgIDs: ['o-abc123'],
         },
       ),
     });
