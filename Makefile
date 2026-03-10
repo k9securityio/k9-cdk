@@ -1,4 +1,4 @@
-.PHONY: clean deps build unit-test lint converge verify destroy circleci-build
+.PHONY: clean deps build unit-test lint converge verify destroy circleci-build examples
 
 IMAGE_NAME := TBD
 IMAGE_TAG := TBD
@@ -75,5 +75,8 @@ destroy:
 	@cdk destroy --force;
 
 quick: build
+
+examples: build
+	@$(MAKE) -C examples examples
 
 all: init build converge

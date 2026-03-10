@@ -1,6 +1,8 @@
 examples:
 	@echo "building k9 policy examples"
 	@set -e
+	@echo "compiling k9-cdk library"
+	@cd .. && npx projen compile
 	@echo "installing example dependencies"
 	@npm install
 	@echo "running build"
