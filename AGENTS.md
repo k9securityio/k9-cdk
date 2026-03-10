@@ -38,7 +38,13 @@ npx projen eslint
 npx jest -u
 ```
 
-The `Makefile` provides `make build` (same as `npx projen build`) and `make all` (init + build + deploy).
+The `Makefile` provides:
+* `make init` — install dependencies via `yarn install` (requires yarn installed globally)
+* `make build` — same as `npx projen build`
+* `make examples` — builds the library then builds and synthesizes the examples app
+* `make all` — init + build + deploy
+
+The `examples/Makefile` provides `make examples` which compiles the parent library, installs example dependencies, builds, and synthesizes.
 
 ## Architecture
 
@@ -91,3 +97,17 @@ Every generated policy follows the same structure:
 - JSII compatibility required — this library is compiled with jsii for cross-language support. Avoid TypeScript features not supported by jsii (mapped types, conditional types, `Partial<T>`, `Map<K,V>` as public params, union types like `T | null`). For internal methods that need these types, use `/** @internal */` and prefix with `_`.
 - ESLint import ordering: warns on misordered imports but does not enforce alphabetical sorting within groups
 - Example CDK app in `bin/k9-cdk.ts` demonstrates library usage and is deployed for integration testing via `cdk deploy`
+- Examples app in `examples/example.ts` demonstrates all service modules; depends on the local build via `"file:.."` in `examples/package.json`. The examples directory must NOT have its own `aws-cdk-lib` dependency — it resolves from the parent's `node_modules` to avoid duplicate type conflicts.
+
+## Node.js and Toolchain
+
+- Node.js version is pinned to v22 LTS (`lts/jod`) via `.nvmrc` (local) and `workflowNodeVersion` in `.projenrc.js` (CI)
+- jsii version is `~5.9.0` — the current supported release line. jsii 5.9 officially supports Node ^20 and ^22.
+- Package manager is **yarn** (v1/Classic). `yarn.lock` is tracked in git. Do not use `npm install` in the project root — it creates a conflicting `package-lock.json`.
+- `make clean` removes `node_modules`; run `make init` (which requires globally-installed yarn) to bootstrap.
+
+## Releases
+
+- Releases are automated via the `release` GitHub Actions workflow, triggered on push to `v2-main`
+- Version bumps are determined automatically by projen/standard-version from conventional commit prefixes (`feat:` → minor, `fix:`/`build:` → patch)
+- The workflow publishes to npm (requires `NPM_TOKEN` secret) and creates a GitHub Release
