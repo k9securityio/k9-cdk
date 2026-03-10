@@ -44,7 +44,8 @@ export interface IAccessSpec {
   /**
    * Optional list of AWS Organization IDs that restrict the principals specified
    * in `allowPrincipalArns`. When present, generated Allow statements will include
-   * a `StringEquals` condition on `aws:PrincipalOrgID`.
+   * a `StringEquals` condition on `aws:PrincipalOrgID` and a DenyUntrustedOrgs statement will
+   * be generated for the permissions that are restricted by org IDs.
    *
    * Org IDs restrict which principals are allowed — they do not replace
    * `allowPrincipalArns`. If you want to allow an entire org, add `*` to `allowPrincipalArns` and the org ID to
