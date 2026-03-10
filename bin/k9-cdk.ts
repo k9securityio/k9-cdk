@@ -72,6 +72,7 @@ const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
         {
             accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
             allowPrincipalArns: readDataArns,
+            restrictToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
         }
         // omit access spec for delete-data because it is unneeded
     )
@@ -207,6 +208,7 @@ const ddbResourcePolicyProps: k9.dynamodb.K9DynamoDBResourcePolicyProps = {
         {
             accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
             allowPrincipalArns: readWriteDataArns,
+            restrictToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
         },
         {
             accessCapabilities: k9.k9policy.AccessCapability.DELETE_DATA,
@@ -248,6 +250,7 @@ const k9SQSResourcePolicyProps: K9SQSResourcePolicyProps = {
         {
             accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
             allowPrincipalArns: readWriteDataArns,
+            restrictToPrincipalOrgIDs: ['o-y2fdpt5ftt'],
         },
         {
             accessCapabilities: k9.k9policy.AccessCapability.DELETE_DATA,
