@@ -16,7 +16,8 @@ const project = new awscdk.AwsCdkConstructLibrary({
   authorAddress: 'hello@k9security.io',
 
   cdkVersion: '2.176.0',
-  jsiiVersion: '~5.4.0',
+  jsiiVersion: '~5.9.0',
+  workflowNodeVersion: 'lts/jod', // lts/jod is v22, latest supported by projen 0.91.6 and jsii 5.9.x
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
 
