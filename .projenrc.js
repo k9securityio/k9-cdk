@@ -16,7 +16,7 @@ const project = new awscdk.AwsCdkConstructLibrary({
   authorAddress: 'hello@k9security.io',
 
   cdkVersion: '2.176.0',
-  jsiiVersion: '~5.4.0',
+  jsiiVersion: '~5.9.0',
   defaultReleaseBranch: 'v2-main',
   majorVersion: 2,
 
