@@ -47,7 +47,8 @@ export interface IAccessSpec {
    * a `StringEquals` condition on `aws:PrincipalOrgID`.
    *
    * Org IDs restrict which principals are allowed — they do not replace
-   * `allowPrincipalArns`.
+   * `allowPrincipalArns`. If you want to allow an entire org, add `*` to `allowPrincipalArns` and the org ID to
+   * `restrictToPrincipalOrgIDs`.
    */
   restrictToPrincipalOrgIDs?: Array<string>;
 }
