@@ -1,0 +1,92 @@
+{
+  "Statement": [
+    {
+      "Action": [
+        "events:TagResource",
+        "events:UntagResource"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "AllowRestrictedAdministerResource"
+    },
+    {
+      "Action": [
+        "events:DescribeEventBus",
+        "events:ListTagsForResource"
+      ],
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1",
+            "arn:aws:iam::123456789012:role/k9-auditor",
+            "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "AllowRestrictedReadConfig"
+    },
+    {
+      "Action": "events:PutEvents",
+      "Condition": {
+        "ArnEquals": {
+          "aws:PrincipalArn": [
+            "arn:aws:iam::123456789012:role/app-backend"
+          ]
+        }
+      },
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Resource": "*",
+      "Sid": "AllowRestrictedWriteData"
+    },
+    {
+      "Action": "events:*",
+      "Condition": {
+        "Bool": {
+          "aws:PrincipalIsAWSService": [
+            "false"
+          ]
+        },
+        "ArnNotEquals": {
+          "aws:PrincipalArn": [
+            "${Token[TOKEN.78]}",
+            "arn:aws:iam::123456789012:user/ci",
+            "arn:aws:iam::123456789012:user/person1",
+            "arn:aws:iam::123456789012:role/k9-auditor",
+            "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer",
+            "arn:aws:iam::123456789012:role/app-backend"
+          ]
+        }
+      },
+      "Effect": "Deny",
+      "Principal": {
+        "AWS": [
+          "*",
+          "*"
+        ]
+      },
+      "Resource": "*",
+      "Sid": "DenyEveryoneElse"
+    }
+  ],
+  "Version": "2012-10-17"
+}

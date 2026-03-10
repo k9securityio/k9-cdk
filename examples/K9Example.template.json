@@ -1012,10 +1012,169 @@
     "aws:cdk:path": "K9Example/TestTable/Resource"
    }
   },
+  "TestBusF2C65FE8": {
+   "Type": "AWS::Events::EventBus",
+   "Properties": {
+    "Name": "app-bus-with-k9-policy"
+   },
+   "Metadata": {
+    "aws:cdk:path": "K9Example/TestBus/Resource"
+   }
+  },
+  "TestBuscdkAllowRestrictedAdministerResource96DB6C49": {
+   "Type": "AWS::Events::EventBusPolicy",
+   "Properties": {
+    "EventBusName": {
+     "Ref": "TestBusF2C65FE8"
+    },
+    "Statement": {
+     "Action": [
+      "events:TagResource",
+      "events:UntagResource"
+     ],
+     "Condition": {
+      "ArnEquals": {
+       "aws:PrincipalArn": [
+        "arn:aws:iam::123456789012:user/ci",
+        "arn:aws:iam::123456789012:user/person1"
+       ]
+      }
+     },
+     "Effect": "Allow",
+     "Principal": {
+      "AWS": "*"
+     },
+     "Resource": "*",
+     "Sid": "cdk-AllowRestrictedAdministerResource"
+    },
+    "StatementId": "cdk-AllowRestrictedAdministerResource"
+   },
+   "Metadata": {
+    "aws:cdk:path": "K9Example/TestBus/cdk-AllowRestrictedAdministerResource/Resource"
+   }
+  },
+  "TestBuscdkAllowRestrictedReadConfigA5F3680E": {
+   "Type": "AWS::Events::EventBusPolicy",
+   "Properties": {
+    "EventBusName": {
+     "Ref": "TestBusF2C65FE8"
+    },
+    "Statement": {
+     "Action": [
+      "events:DescribeEventBus",
+      "events:ListTagsForResource"
+     ],
+     "Condition": {
+      "ArnEquals": {
+       "aws:PrincipalArn": [
+        "arn:aws:iam::123456789012:user/ci",
+        "arn:aws:iam::123456789012:user/person1",
+        "arn:aws:iam::123456789012:role/k9-auditor",
+        "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer"
+       ]
+      }
+     },
+     "Effect": "Allow",
+     "Principal": {
+      "AWS": "*"
+     },
+     "Resource": "*",
+     "Sid": "cdk-AllowRestrictedReadConfig"
+    },
+    "StatementId": "cdk-AllowRestrictedReadConfig"
+   },
+   "Metadata": {
+    "aws:cdk:path": "K9Example/TestBus/cdk-AllowRestrictedReadConfig/Resource"
+   }
+  },
+  "TestBuscdkAllowRestrictedWriteData43EBEA53": {
+   "Type": "AWS::Events::EventBusPolicy",
+   "Properties": {
+    "EventBusName": {
+     "Ref": "TestBusF2C65FE8"
+    },
+    "Statement": {
+     "Action": "events:PutEvents",
+     "Condition": {
+      "ArnEquals": {
+       "aws:PrincipalArn": [
+        "arn:aws:iam::123456789012:role/app-backend"
+       ]
+      }
+     },
+     "Effect": "Allow",
+     "Principal": {
+      "AWS": "*"
+     },
+     "Resource": "*",
+     "Sid": "cdk-AllowRestrictedWriteData"
+    },
+    "StatementId": "cdk-AllowRestrictedWriteData"
+   },
+   "Metadata": {
+    "aws:cdk:path": "K9Example/TestBus/cdk-AllowRestrictedWriteData/Resource"
+   }
+  },
+  "TestBuscdkDenyEveryoneElse783CA01E": {
+   "Type": "AWS::Events::EventBusPolicy",
+   "Properties": {
+    "EventBusName": {
+     "Ref": "TestBusF2C65FE8"
+    },
+    "Statement": {
+     "Action": "events:*",
+     "Condition": {
+      "Bool": {
+       "aws:PrincipalIsAWSService": [
+        "false"
+       ]
+      },
+      "ArnNotEquals": {
+       "aws:PrincipalArn": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::",
+           {
+            "Ref": "AWS::AccountId"
+           },
+           ":root"
+          ]
+         ]
+        },
+        "arn:aws:iam::123456789012:user/ci",
+        "arn:aws:iam::123456789012:user/person1",
+        "arn:aws:iam::123456789012:role/k9-auditor",
+        "arn:aws:iam::123456789012:role/aws-service-role/access-analyzer.amazonaws.com/AWSServiceRoleForAccessAnalyzer",
+        "arn:aws:iam::123456789012:role/app-backend"
+       ]
+      }
+     },
+     "Effect": "Deny",
+     "Principal": {
+      "AWS": [
+       "*",
+       "*"
+      ]
+     },
+     "Resource": "*",
+     "Sid": "cdk-DenyEveryoneElse"
+    },
+    "StatementId": "cdk-DenyEveryoneElse"
+   },
+   "Metadata": {
+    "aws:cdk:path": "K9Example/TestBus/cdk-DenyEveryoneElse/Resource"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02NwQ6CMBBEv8V7WQGN3uXggYui8WpKuyalpY0slZCm/24AE7zszLzJZnLIjgdIN3ygREidGFVDuPVcaMYHegbaQTh5obFnxcv+3CIXZ5QYV7zkyOhNEK4ePU7dYua7PvzFyHRLEEqcixLHyORoeetkDeHOa4OPfGrOxtXczCDGCVRIzndiHimclapXzkZmnURoaPvJU8j2kG4aUirpvO1Vi1At+gWhj+v29gAAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WOvQ7CMAyEn4U9NaUg2EGIgYU/saI0MVLaNBE4AVVR3h2lBQqL7/OdLbuAyWIO+Yg/KROyzrQqIRwdFzXjT7oEmkJYelGjY6ureVMvO6uVaAe77yOjG0HYe/SYsh66Oiz8tJHVDUHYYhdssY1MtoY3VpYQTrzUeC5SstG25LozIsMHGkcQ1kmXntLAlz8wnPt3YkzeAcn6u+h+XFkjlVPWRGasRKho/ChymMwgH1WkVHb3xqkG4dDrCyd/BHA1AQAA"
    },
    "Metadata": {
     "aws:cdk:path": "K9Example/CDKMetadata/Default"

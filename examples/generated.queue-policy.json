@@ -136,7 +136,7 @@
         },
         "ArnNotEquals": {
           "aws:PrincipalArn": [
-            "${Token[TOKEN.42]}",
+            "${Token[TOKEN.38]}",
             "arn:aws:iam::123456789012:user/ci",
             "arn:aws:iam::123456789012:user/person1",
             "arn:aws:iam::123456789012:role/k9-auditor",

@@ -187,6 +187,11 @@ DynamoDB Resource Policy:
 * [Templatized DynamoDB Resource Policy](examples/generated.dynamodb-policy.json)
 * [ResourcePolicy attribute of GlobalTable resource in CFn template](examples/K9Example.template.json)
 
+EventBridge Event Bus Policy:
+
+* [Templatized Event Bus Policy](examples/generated.eventbus-policy.json)
+* [EventBusPolicy resources in CFn template](examples/K9Example.template.json)
+
 
 ## Restricting Access to Specific Organizations
 

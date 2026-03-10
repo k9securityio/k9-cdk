@@ -4,6 +4,7 @@ import * as cdk from "aws-cdk-lib";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as kms from "aws-cdk-lib/aws-kms";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as events from "aws-cdk-lib/aws-events";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import * as k9 from "@k9securityio/k9-cdk";
 
@@ -135,5 +136,33 @@ new dynamodb.TableV2(stack, 'TestTable', {
   partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
   resourcePolicy: ddbResourcePolicy,
 });
+
+// demonstrate generating a k9 EventBridge bus policy
+const bus = new events.EventBus(stack, 'TestBus', {
+    eventBusName: 'app-bus-with-k9-policy',
+});
+
+const k9EventBusPolicyProps: k9.events.K9EventBusResourcePolicyProps = {
+    bus: bus,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.READ_CONFIG,
+            allowPrincipalArns: readConfigArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: writeDataArns,
+        }
+        // EventBridge does not support read-data or delete-data capabilities
+    )
+};
+
+k9.events.grantAccessViaResourcePolicy(k9EventBusPolicyProps);
+writeFileSync('generated.eventbus-policy.json',
+    JSON.stringify(k9.events.makeResourcePolicy(k9EventBusPolicyProps).toJSON(), null, 2));
 
 app.synth();
