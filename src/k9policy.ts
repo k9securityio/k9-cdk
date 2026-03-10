@@ -149,6 +149,8 @@ export function toPascalCase(input: string): string {
     .join('');
 }
 
+export const SID_DENY_UNTRUSTED_ORGS = 'DenyUntrustedOrgs';
+
 export class K9PolicyFactory {
 
   /**
@@ -394,6 +396,61 @@ export class K9PolicyFactory {
          * So after these machinations, we end up with what we want.
          */
     return [new AnyPrincipal(), new AnyPrincipal()];
+  }
+
+  /**
+   * Create a DenyUntrustedOrgs statement that explicitly denies principals from
+   * untrusted orgs for org-restricted actions. This provides defense-in-depth
+   * beyond the implicit deny from org-constrained Allow statements.
+   *
+   * The StringNotEquals condition on aws:PrincipalOrgID is inherently safe for
+   * AWS service principals because the key is absent from their request context,
+   * so the condition is not satisfied and the Deny does not apply.
+   *
+   * @return a PolicyStatement with Effect Deny, or undefined if no access specs have org restrictions
+   * @internal
+   */
+  _makeDenyUntrustedOrgsStatement(
+    serviceName: string,
+    supportedCapabilities: Array<AccessCapability>,
+    accessSpecsByCapability: Map<AccessCapability, IAccessSpec>,
+    resourceArns: Array<string>,
+  ): PolicyStatement | undefined {
+    const allActions = new Set<string>();
+    const allOrgIDs = new Set<string>();
+
+    for (let capability of supportedCapabilities) {
+      const accessSpec = accessSpecsByCapability.get(capability);
+      if (accessSpec?.restrictToPrincipalOrgIDs && accessSpec.restrictToPrincipalOrgIDs.length > 0) {
+        const actions = this.getActions(serviceName, capability);
+        for (let action of actions) {
+          allActions.add(action);
+        }
+        for (let orgID of accessSpec.restrictToPrincipalOrgIDs) {
+          allOrgIDs.add(orgID);
+        }
+      }
+    }
+
+    if (allActions.size === 0) {
+      return undefined;
+    }
+
+    const statement = new PolicyStatement({
+      sid: SID_DENY_UNTRUSTED_ORGS,
+      effect: Effect.DENY,
+      principals: this.makeDenyEveryoneElsePrincipals(),
+      actions: Array.from(allActions),
+      resources: resourceArns,
+    });
+    statement.addCondition('Bool', {
+      'aws:PrincipalIsAWSService': ['false'],
+    });
+    statement.addCondition('StringNotEquals', {
+      'aws:PrincipalOrgID': Array.from(allOrgIDs),
+    });
+
+    return statement;
   }
 
 }

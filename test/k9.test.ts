@@ -9,7 +9,7 @@ import { RemovalPolicy } from 'aws-cdk-lib/core';
 // @ts-ignore
 import { fail, stringifyPolicy } from './helpers';
 import * as k9 from '../lib';
-import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator } from '../lib/k9policy';
+import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator, SID_DENY_UNTRUSTED_ORGS } from '../lib/k9policy';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
 import {
   K9BucketPolicyProps,
@@ -397,7 +397,11 @@ test('K9BucketPolicy - restrictToPrincipalOrgIDs restricts write-data to org', (
   let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'S3OrgRestricted', k9BucketPolicyProps);
   expect(bucket.policy).toBeDefined();
 
-  assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
+  // 9 base statements + 1 DenyUntrustedOrgs = 10
+  expect(addToResourcePolicyResults.length).toEqual(10);
+  for (let result of addToResourcePolicyResults) {
+    expect(result.statementAdded).toBeTruthy();
+  }
 
   let policyStr = stringifyPolicy(bucket.policy?.document);
   console.log('org-restricted bucket policy: ' + policyStr);
@@ -425,6 +429,12 @@ test('K9BucketPolicy - restrictToPrincipalOrgIDs restricts write-data to org', (
   let denyStmt = statements.find((s: any) => s.Sid === 'DenyEveryoneElse');
   expect(denyStmt).toBeDefined();
   expect(denyStmt.Effect).toEqual('Deny');
+
+  // Verify DenyUntrustedOrgs statement
+  let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+  expect(denyUntrustedOrgsStmt).toBeDefined();
+  expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+  expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
 
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
@@ -649,6 +659,12 @@ describe('K9KeyPolicy', () => {
     let denyStmt = statements.find((s: any) => s.Sid === SID_DENY_EVERYONE_ELSE);
     expect(denyStmt).toBeFalsy();
 
+    // Verify DenyUntrustedOrgs IS present (independent of trustAccountIdentities)
+    let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+    expect(denyUntrustedOrgsStmt).toBeDefined();
+    expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+    expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
     new kms.Key(stack, 'TestKeyOrgRestricted', { policy: keyPolicy });
 
     expectCDK(stack).to(haveResource('AWS::KMS::Key'));
@@ -790,6 +806,12 @@ describe('DynamoDBResourcePolicy', () => {
     let denyStmt = statements.find((s: any) => s.Sid === SID_DENY_EVERYONE_ELSE);
     expect(denyStmt).toBeDefined();
     expect(denyStmt.Effect).toEqual('Deny');
+
+    // Verify DenyUntrustedOrgs statement
+    let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+    expect(denyUntrustedOrgsStmt).toBeDefined();
+    expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+    expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
 
     const table = new dynamodb.TableV2(stack, 'test-table-org-restricted', {
       partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },

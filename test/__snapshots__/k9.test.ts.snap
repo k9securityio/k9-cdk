@@ -407,6 +407,36 @@ exports[`DynamoDBResourcePolicy restrictToPrincipalOrgIDs restricts write-data t
                     "Resource": "*",
                     "Sid": "DenyEveryoneElse",
                   },
+                  {
+                    "Action": [
+                      "dynamodb:BatchWriteItem",
+                      "dynamodb:PartiQLInsert",
+                      "dynamodb:PartiQLUpdate",
+                      "dynamodb:PutItem",
+                      "dynamodb:UpdateItem",
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:PrincipalIsAWSService": [
+                          "false",
+                        ],
+                      },
+                      "StringNotEquals": {
+                        "aws:PrincipalOrgID": [
+                          "o-abc123",
+                        ],
+                      },
+                    },
+                    "Effect": "Deny",
+                    "Principal": {
+                      "AWS": [
+                        "*",
+                        "*",
+                      ],
+                    },
+                    "Resource": "*",
+                    "Sid": "DenyUntrustedOrgs",
+                  },
                 ],
                 "Version": "2012-10-17",
               },
@@ -1683,6 +1713,62 @@ exports[`K9BucketPolicy - restrictToPrincipalOrgIDs restricts write-data to org 
               ],
               "Sid": "DenyEveryoneElse",
             },
+            {
+              "Action": [
+                "s3:AbortMultipartUpload",
+                "s3:InitiateReplication",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:PrincipalIsAWSService": [
+                    "false",
+                  ],
+                },
+                "StringNotEquals": {
+                  "aws:PrincipalOrgID": [
+                    "o-abc123",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUntrustedOrgs",
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -2841,6 +2927,41 @@ exports[`K9KeyPolicy restrictToPrincipalOrgIDs restricts write-data to org 1`] =
               },
               "Resource": "*",
               "Sid": "Allow Restricted delete-data",
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateRandom",
+                "kms:ImportKeyMaterial",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:Sign",
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:PrincipalIsAWSService": [
+                    "false",
+                  ],
+                },
+                "StringNotEquals": {
+                  "aws:PrincipalOrgID": [
+                    "o-abc123",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": "*",
+              "Sid": "DenyUntrustedOrgs",
             },
           ],
           "Version": "2012-10-17",

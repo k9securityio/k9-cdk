@@ -99,6 +99,12 @@ export function makeResourcePolicy(props: K9EventBusResourcePolicyProps): Policy
     policy.addStatements(denyEveryoneElseStatement);
   }
 
+  const denyUntrustedOrgsStatement = policyFactory._makeDenyUntrustedOrgsStatement(
+    'EventBridge', SUPPORTED_CAPABILITIES, accessSpecsByCapability, resourceArns);
+  if (denyUntrustedOrgsStatement) {
+    policy.addStatements(denyUntrustedOrgsStatement);
+  }
+
   policy.validateForResourcePolicy();
 
   return policy;

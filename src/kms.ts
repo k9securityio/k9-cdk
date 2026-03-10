@@ -182,6 +182,12 @@ export function makeKeyPolicy(props: K9KeyPolicyProps): PolicyDocument {
     //console.log('Omitting Allow root and DenyEveryoneElse statements');
   }
 
+  const denyUntrustedOrgsStatement = policyFactory._makeDenyUntrustedOrgsStatement(
+    'KMS', SUPPORTED_CAPABILITIES, accessSpecsByCapability, resourceArns);
+  if (denyUntrustedOrgsStatement) {
+    policy.addStatements(denyUntrustedOrgsStatement);
+  }
+
   policy.validateForResourcePolicy();
 
   return policy;

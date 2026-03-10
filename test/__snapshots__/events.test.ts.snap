@@ -92,6 +92,39 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
       },
       "Type": "AWS::Events::EventBusPolicy",
     },
+    "testbusorgsnapshotcdkDenyUntrustedOrgs065DD3F3": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusorgsnapshot203C2631",
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Condition": {
+            "Bool": {
+              "aws:PrincipalIsAWSService": [
+                "false",
+              ],
+            },
+            "StringNotEquals": {
+              "aws:PrincipalOrgID": [
+                "o-abc123",
+              ],
+            },
+          },
+          "Effect": "Deny",
+          "Principal": {
+            "AWS": [
+              "*",
+              "*",
+            ],
+          },
+          "Resource": "*",
+          "Sid": "cdk-DenyUntrustedOrgs",
+        },
+        "StatementId": "cdk-DenyUntrustedOrgs",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
   },
 }
 `;

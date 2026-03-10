@@ -3,7 +3,7 @@ import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { expect as expectCDK, haveResource, SynthUtils } from '@aws-cdk/assert';
 
 import * as k9 from '../lib';
-import { AccessCapability, IAccessSpec } from '../lib/k9policy';
+import { AccessCapability, IAccessSpec, SID_DENY_UNTRUSTED_ORGS } from '../lib/k9policy';
 import { SID_DENY_EVERYONE_ELSE } from '../lib/sqs';
 import { K9SQSResourcePolicyProps } from '../src/sqs';
 
@@ -187,6 +187,12 @@ describe('SQSResourcePolicy', () => {
     let denyStmt = statements.find((s: any) => s.Sid === SID_DENY_EVERYONE_ELSE);
     expect(denyStmt).toBeDefined();
     expect(denyStmt.Effect).toEqual('Deny');
+
+    // Verify DenyUntrustedOrgs statement
+    let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+    expect(denyUntrustedOrgsStmt).toBeDefined();
+    expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+    expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
   });
 
 });

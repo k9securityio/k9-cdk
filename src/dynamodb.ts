@@ -86,6 +86,12 @@ export function makeResourcePolicy(props: K9DynamoDBResourcePolicyProps): Policy
     denyEveryoneElseStatement,
   );
 
+  const denyUntrustedOrgsStatement = policyFactory._makeDenyUntrustedOrgsStatement(
+    'DynamoDB', SUPPORTED_CAPABILITIES, accessSpecsByCapability, resourceArns);
+  if (denyUntrustedOrgsStatement) {
+    policy.addStatements(denyUntrustedOrgsStatement);
+  }
+
   policy.validateForResourcePolicy();
 
   return policy;

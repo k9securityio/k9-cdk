@@ -3,7 +3,7 @@ import * as events from 'aws-cdk-lib/aws-events';
 import { expect as expectCDK, haveResource, SynthUtils } from '@aws-cdk/assert';
 
 import * as k9 from '../lib';
-import { AccessCapability, IAccessSpec } from '../lib/k9policy';
+import { AccessCapability, IAccessSpec, SID_DENY_UNTRUSTED_ORGS } from '../lib/k9policy';
 import { SID_DENY_EVERYONE_ELSE } from '../lib/events';
 import { K9EventBusResourcePolicyProps } from '../src/events';
 
@@ -127,14 +127,15 @@ describe('EventBusResourcePolicy', () => {
     let policyObj = JSON.parse(policyStr);
     let statements = policyObj.Statement;
 
-    // Should have 3 Allow statements but NO DenyEveryoneElse (wildcard principal present)
-    expect(statements.length).toEqual(3);
+    // Should have 3 Allow statements + DenyUntrustedOrgs but NO DenyEveryoneElse (wildcard principal present)
+    expect(statements.length).toEqual(4);
 
     let sids = statements.map((s: any) => s.Sid);
     expect(sids).toContain('AllowRestrictedAdministerResource');
     expect(sids).toContain('AllowRestrictedReadConfig');
     expect(sids).toContain('AllowRestrictedWriteData');
     expect(sids).not.toContain(SID_DENY_EVERYONE_ELSE);
+    expect(sids).toContain(SID_DENY_UNTRUSTED_ORGS);
 
     // Verify write-data statement uses aws:PrincipalOrgID condition (not aws:PrincipalArn)
     let writeStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedWriteData');
@@ -146,6 +147,11 @@ describe('EventBusResourcePolicy', () => {
     let adminStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedAdministerResource');
     expect(adminStmt.Condition.ArnEquals).toBeDefined();
     expect(adminStmt.Condition.ArnEquals['aws:PrincipalArn']).toBeDefined();
+
+    // Verify DenyUntrustedOrgs statement
+    let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+    expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+    expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
   });
 
   test('Specific principals + org constraint', () => {
@@ -176,11 +182,12 @@ describe('EventBusResourcePolicy', () => {
     let policyObj = JSON.parse(policyStr);
     let statements = policyObj.Statement;
 
-    // Should have 3 Allow statements + DenyEveryoneElse (no wildcard principals)
-    expect(statements.length).toEqual(4);
+    // Should have 3 Allow statements + DenyEveryoneElse + DenyUntrustedOrgs (no wildcard principals)
+    expect(statements.length).toEqual(5);
 
     let sids = statements.map((s: any) => s.Sid);
     expect(sids).toContain(SID_DENY_EVERYONE_ELSE);
+    expect(sids).toContain(SID_DENY_UNTRUSTED_ORGS);
 
     // Verify write-data has BOTH aws:PrincipalArn AND aws:PrincipalOrgID conditions
     let writeStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedWriteData');
@@ -188,6 +195,11 @@ describe('EventBusResourcePolicy', () => {
     expect(writeStmt.Condition.ArnEquals['aws:PrincipalArn']).toBeDefined();
     expect(writeStmt.Condition.StringEquals).toBeDefined();
     expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+    // Verify DenyUntrustedOrgs statement
+    let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+    expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+    expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
   });
 
   test('Specific principals + multi-account multi-org constraint with wildcards', () => {
@@ -226,14 +238,15 @@ describe('EventBusResourcePolicy', () => {
     let policyObj = JSON.parse(policyStr);
     let statements = policyObj.Statement;
 
-    // Should have 3 Allow statements + DenyEveryoneElse (specific principals, not wildcard)
-    expect(statements.length).toEqual(4);
+    // Should have 3 Allow statements + DenyEveryoneElse + DenyUntrustedOrgs (specific principals, not wildcard)
+    expect(statements.length).toEqual(5);
 
     let sids = statements.map((s: any) => s.Sid);
     expect(sids).toContain('AllowRestrictedAdministerResource');
     expect(sids).toContain('AllowRestrictedReadConfig');
     expect(sids).toContain('AllowRestrictedWriteData');
     expect(sids).toContain(SID_DENY_EVERYONE_ELSE);
+    expect(sids).toContain(SID_DENY_UNTRUSTED_ORGS);
 
     // Verify write-data uses ArnLike (wildcards in ARNs) with BOTH PrincipalArn AND PrincipalOrgID
     let writeStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedWriteData');
@@ -260,6 +273,11 @@ describe('EventBusResourcePolicy', () => {
     for (let arn of administerResourceArns) {
       expect(denyExceptionArns).toContain(arn);
     }
+
+    // Verify DenyUntrustedOrgs statement with multiple org IDs
+    let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+    expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+    expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123', 'o-def345']);
   });
 
   test('Snapshot — typical usage', () => {
