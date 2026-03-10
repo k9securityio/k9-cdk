@@ -208,6 +208,219 @@ exports[`DynamoDBResourcePolicy Typical usage 1`] = `
 }
 `;
 
+exports[`DynamoDBResourcePolicy restrictToPrincipalOrgIDs restricts write-data to org 1`] = `
+{
+  "Resources": {
+    "testtableorgrestrictedA0624464": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+        ],
+        "Replicas": [
+          {
+            "Region": "us-east-1",
+            "ResourcePolicy": {
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": [
+                      "dynamodb:CreateBackup",
+                      "dynamodb:DeleteResourcePolicy",
+                      "dynamodb:DeleteTableReplica",
+                      "dynamodb:DisableKinesisStreamingDestination",
+                      "dynamodb:EnableKinesisStreamingDestination",
+                      "dynamodb:ExportTableToPointInTime",
+                      "dynamodb:PutResourcePolicy",
+                      "dynamodb:RestoreTableToPointInTime",
+                      "dynamodb:TagResource",
+                      "dynamodb:UntagResource",
+                      "dynamodb:UpdateContinuousBackups",
+                      "dynamodb:UpdateContributorInsights",
+                      "dynamodb:UpdateKinesisStreamingDestination",
+                      "dynamodb:UpdateTable",
+                      "dynamodb:UpdateTableReplicaAutoScaling",
+                      "dynamodb:UpdateTimeToLive",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::139710491120:user/ci",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedAdministerResource",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:DescribeContinuousBackups",
+                      "dynamodb:DescribeContributorInsights",
+                      "dynamodb:DescribeExport",
+                      "dynamodb:DescribeKinesisStreamingDestination",
+                      "dynamodb:DescribeTable",
+                      "dynamodb:DescribeTableReplicaAutoScaling",
+                      "dynamodb:DescribeTimeToLive",
+                      "dynamodb:GetResourcePolicy",
+                      "dynamodb:ListTagsOfResource",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::139710491120:user/ci",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedReadConfig",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:BatchGetItem",
+                      "dynamodb:ConditionCheckItem",
+                      "dynamodb:GetItem",
+                      "dynamodb:PartiQLSelect",
+                      "dynamodb:Query",
+                      "dynamodb:Scan",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::123456789012:role/app-backend",
+                          "arn:aws:iam::123456789012:role/customer-service",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedReadData",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:BatchWriteItem",
+                      "dynamodb:PartiQLInsert",
+                      "dynamodb:PartiQLUpdate",
+                      "dynamodb:PutItem",
+                      "dynamodb:UpdateItem",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::123456789012:role/app-backend",
+                        ],
+                      },
+                      "StringEquals": {
+                        "aws:PrincipalOrgID": [
+                          "o-abc123",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedWriteData",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:DeleteItem",
+                      "dynamodb:DeleteTable",
+                      "dynamodb:DeleteTableReplica",
+                      "dynamodb:PartiQLDelete",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::139710491120:user/super-admin",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedDeleteData",
+                  },
+                  {
+                    "Action": "dynamodb:*",
+                    "Condition": {
+                      "ArnNotEquals": {
+                        "aws:PrincipalArn": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition",
+                                },
+                                ":iam::",
+                                {
+                                  "Ref": "AWS::AccountId",
+                                },
+                                ":root",
+                              ],
+                            ],
+                          },
+                          "arn:aws:iam::139710491120:user/ci",
+                          "arn:aws:iam::123456789012:role/app-backend",
+                          "arn:aws:iam::123456789012:role/customer-service",
+                          "arn:aws:iam::139710491120:user/super-admin",
+                        ],
+                      },
+                      "Bool": {
+                        "aws:PrincipalIsAWSService": [
+                          "false",
+                        ],
+                      },
+                    },
+                    "Effect": "Deny",
+                    "Principal": {
+                      "AWS": [
+                        "*",
+                        "*",
+                      ],
+                    },
+                    "Resource": "*",
+                    "Sid": "DenyEveryoneElse",
+                  },
+                ],
+                "Version": "2012-10-17",
+              },
+            },
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
 exports[`K9BucketPolicy - IAccessSpec with set of capabilities 1`] = `
 {
   "Resources": {
