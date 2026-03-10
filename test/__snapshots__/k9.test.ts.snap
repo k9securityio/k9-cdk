@@ -208,6 +208,249 @@ exports[`DynamoDBResourcePolicy Typical usage 1`] = `
 }
 `;
 
+exports[`DynamoDBResourcePolicy restrictToPrincipalOrgIDs restricts write-data to org 1`] = `
+{
+  "Resources": {
+    "testtableorgrestrictedA0624464": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "pk",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "pk",
+            "KeyType": "HASH",
+          },
+        ],
+        "Replicas": [
+          {
+            "Region": "us-east-1",
+            "ResourcePolicy": {
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": [
+                      "dynamodb:CreateBackup",
+                      "dynamodb:DeleteResourcePolicy",
+                      "dynamodb:DeleteTableReplica",
+                      "dynamodb:DisableKinesisStreamingDestination",
+                      "dynamodb:EnableKinesisStreamingDestination",
+                      "dynamodb:ExportTableToPointInTime",
+                      "dynamodb:PutResourcePolicy",
+                      "dynamodb:RestoreTableToPointInTime",
+                      "dynamodb:TagResource",
+                      "dynamodb:UntagResource",
+                      "dynamodb:UpdateContinuousBackups",
+                      "dynamodb:UpdateContributorInsights",
+                      "dynamodb:UpdateKinesisStreamingDestination",
+                      "dynamodb:UpdateTable",
+                      "dynamodb:UpdateTableReplicaAutoScaling",
+                      "dynamodb:UpdateTimeToLive",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::139710491120:user/ci",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedAdministerResource",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:DescribeContinuousBackups",
+                      "dynamodb:DescribeContributorInsights",
+                      "dynamodb:DescribeExport",
+                      "dynamodb:DescribeKinesisStreamingDestination",
+                      "dynamodb:DescribeTable",
+                      "dynamodb:DescribeTableReplicaAutoScaling",
+                      "dynamodb:DescribeTimeToLive",
+                      "dynamodb:GetResourcePolicy",
+                      "dynamodb:ListTagsOfResource",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::139710491120:user/ci",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedReadConfig",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:BatchGetItem",
+                      "dynamodb:ConditionCheckItem",
+                      "dynamodb:GetItem",
+                      "dynamodb:PartiQLSelect",
+                      "dynamodb:Query",
+                      "dynamodb:Scan",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::123456789012:role/app-backend",
+                          "arn:aws:iam::123456789012:role/customer-service",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedReadData",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:BatchWriteItem",
+                      "dynamodb:PartiQLInsert",
+                      "dynamodb:PartiQLUpdate",
+                      "dynamodb:PutItem",
+                      "dynamodb:UpdateItem",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::123456789012:role/app-backend",
+                        ],
+                      },
+                      "StringEquals": {
+                        "aws:PrincipalOrgID": [
+                          "o-abc123",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedWriteData",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:DeleteItem",
+                      "dynamodb:DeleteTable",
+                      "dynamodb:DeleteTableReplica",
+                      "dynamodb:PartiQLDelete",
+                    ],
+                    "Condition": {
+                      "ArnEquals": {
+                        "aws:PrincipalArn": [
+                          "arn:aws:iam::139710491120:user/super-admin",
+                        ],
+                      },
+                    },
+                    "Effect": "Allow",
+                    "Principal": {
+                      "AWS": "*",
+                    },
+                    "Resource": "*",
+                    "Sid": "AllowRestrictedDeleteData",
+                  },
+                  {
+                    "Action": "dynamodb:*",
+                    "Condition": {
+                      "ArnNotEquals": {
+                        "aws:PrincipalArn": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition",
+                                },
+                                ":iam::",
+                                {
+                                  "Ref": "AWS::AccountId",
+                                },
+                                ":root",
+                              ],
+                            ],
+                          },
+                          "arn:aws:iam::139710491120:user/ci",
+                          "arn:aws:iam::123456789012:role/app-backend",
+                          "arn:aws:iam::123456789012:role/customer-service",
+                          "arn:aws:iam::139710491120:user/super-admin",
+                        ],
+                      },
+                      "Bool": {
+                        "aws:PrincipalIsAWSService": [
+                          "false",
+                        ],
+                      },
+                    },
+                    "Effect": "Deny",
+                    "Principal": {
+                      "AWS": [
+                        "*",
+                        "*",
+                      ],
+                    },
+                    "Resource": "*",
+                    "Sid": "DenyEveryoneElse",
+                  },
+                  {
+                    "Action": [
+                      "dynamodb:BatchWriteItem",
+                      "dynamodb:PartiQLInsert",
+                      "dynamodb:PartiQLUpdate",
+                      "dynamodb:PutItem",
+                      "dynamodb:UpdateItem",
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:PrincipalIsAWSService": [
+                          "false",
+                        ],
+                      },
+                      "StringNotEquals": {
+                        "aws:PrincipalOrgID": [
+                          "o-abc123",
+                        ],
+                      },
+                    },
+                    "Effect": "Deny",
+                    "Principal": {
+                      "AWS": [
+                        "*",
+                        "*",
+                      ],
+                    },
+                    "Resource": "*",
+                    "Sid": "DenyUntrustedOrgs",
+                  },
+                ],
+                "Version": "2012-10-17",
+              },
+            },
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::GlobalTable",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
 exports[`K9BucketPolicy - IAccessSpec with set of capabilities 1`] = `
 {
   "Resources": {
@@ -1024,6 +1267,513 @@ exports[`K9BucketPolicy - do not enforce KMS encryption at rest when configured 
       "DeletionPolicy": "Retain",
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;
+
+exports[`K9BucketPolicy - restrictToPrincipalOrgIDs restricts write-data to org 1`] = `
+{
+  "Resources": {
+    "OrgRestrictedBucketB4B6AF7B": {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "S3OrgRestrictedPolicy2DA1A3D2": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "OrgRestrictedBucketB4B6AF7B",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:DeleteBucket",
+                "s3:DeleteBucketPolicy",
+                "s3:DeleteBucketWebsite",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutAnalyticsConfiguration",
+                "s3:PutBucketAcl",
+                "s3:PutBucketCORS",
+                "s3:PutBucketLogging",
+                "s3:PutBucketNotification",
+                "s3:PutBucketObjectLockConfiguration",
+                "s3:PutBucketOwnershipControls",
+                "s3:PutBucketPolicy",
+                "s3:PutBucketPublicAccessBlock",
+                "s3:PutBucketRequestPayment",
+                "s3:PutBucketTagging",
+                "s3:PutBucketVersioning",
+                "s3:PutBucketWebsite",
+                "s3:PutEncryptionConfiguration",
+                "s3:PutIntelligentTieringConfiguration",
+                "s3:PutInventoryConfiguration",
+                "s3:PutLifecycleConfiguration",
+                "s3:PutMetricsConfiguration",
+                "s3:PutObjectAcl",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectVersionAcl",
+                "s3:PutReplicationConfiguration",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted administer-resource",
+            },
+            {
+              "Action": [
+                "s3:GetAccelerateConfiguration",
+                "s3:GetAnalyticsConfiguration",
+                "s3:GetBucketAcl",
+                "s3:GetBucketCORS",
+                "s3:GetBucketLocation",
+                "s3:GetBucketLogging",
+                "s3:GetBucketNotification",
+                "s3:GetBucketObjectLockConfiguration",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketRequestPayment",
+                "s3:GetBucketTagging",
+                "s3:GetBucketVersioning",
+                "s3:GetBucketWebsite",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetIntelligentTieringConfiguration",
+                "s3:GetInventoryConfiguration",
+                "s3:GetLifecycleConfiguration",
+                "s3:GetMetricsConfiguration",
+                "s3:GetObjectAcl",
+                "s3:GetObjectAttributes",
+                "s3:GetObjectLegalHold",
+                "s3:GetObjectRetention",
+                "s3:GetObjectTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:GetObjectVersionAttributes",
+                "s3:GetObjectVersionTagging",
+                "s3:GetReplicationConfiguration",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListBucketVersions",
+                "s3:ListMultipartUploadParts",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-config",
+            },
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:GetObjectTorrent",
+                "s3:GetObjectVersion",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetObjectVersionTorrent",
+                "s3:ListBucket",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted read-data",
+            },
+            {
+              "Action": [
+                "s3:AbortMultipartUpload",
+                "s3:InitiateReplication",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
+                },
+                "StringEquals": {
+                  "aws:PrincipalOrgID": [
+                    "o-abc123",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted write-data",
+            },
+            {
+              "Action": [
+                "s3:DeleteObject",
+                "s3:DeleteObjectTagging",
+                "s3:DeleteObjectVersion",
+                "s3:DeleteObjectVersionTagging",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "Allow Restricted delete-data",
+            },
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyInsecureCommunications",
+            },
+            {
+              "Action": [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": {
+                "Null": {
+                  "s3:x-amz-server-side-encryption": true,
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnencryptedStorage",
+            },
+            {
+              "Action": [
+                "s3:PutObject",
+                "s3:ReplicateObject",
+              ],
+              "Condition": {
+                "StringNotEquals": {
+                  "s3:x-amz-server-side-encryption": "aws:kms",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUnexpectedEncryptionMethod",
+            },
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "ArnNotEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyEveryoneElse",
+            },
+            {
+              "Action": [
+                "s3:AbortMultipartUpload",
+                "s3:InitiateReplication",
+                "s3:PutBucketTagging",
+                "s3:PutObject",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:ReplicateDelete",
+                "s3:ReplicateObject",
+                "s3:ReplicateTags",
+                "s3:RestoreObject",
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:PrincipalIsAWSService": [
+                    "false",
+                  ],
+                },
+                "StringNotEquals": {
+                  "aws:PrincipalOrgID": [
+                    "o-abc123",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "OrgRestrictedBucketB4B6AF7B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "OrgRestrictedBucketB4B6AF7B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "DenyUntrustedOrgs",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
   },
 }
@@ -2020,6 +2770,198 @@ exports[`K9KeyPolicy Without Allow root user and Identity policies 1`] = `
               },
               "Resource": "*",
               "Sid": "Allow Restricted delete-data",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::KMS::Key",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;
+
+exports[`K9KeyPolicy restrictToPrincipalOrgIDs restricts write-data to org 1`] = `
+{
+  "Resources": {
+    "TestKeyOrgRestrictedC99C38C6": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "KeyPolicy": {
+          "Statement": [
+            {
+              "Action": [
+                "kms:CancelKeyDeletion",
+                "kms:ConnectCustomKeyStore",
+                "kms:CreateAlias",
+                "kms:CreateCustomKeyStore",
+                "kms:CreateGrant",
+                "kms:CreateKey",
+                "kms:DeleteAlias",
+                "kms:DisableKey",
+                "kms:DisableKeyRotation",
+                "kms:DisconnectCustomKeyStore",
+                "kms:EnableKey",
+                "kms:EnableKeyRotation",
+                "kms:PutKeyPolicy",
+                "kms:RetireGrant",
+                "kms:RevokeGrant",
+                "kms:ScheduleKeyDeletion",
+                "kms:TagResource",
+                "kms:UntagResource",
+                "kms:UpdateAlias",
+                "kms:UpdateCustomKeyStore",
+                "kms:UpdateKeyDescription",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted administer-resource",
+            },
+            {
+              "Action": [
+                "kms:DescribeCustomKeyStores",
+                "kms:DescribeKey",
+                "kms:GetKeyPolicy",
+                "kms:GetKeyRotationStatus",
+                "kms:GetParametersForImport",
+                "kms:GetPublicKey",
+                "kms:ListAliases",
+                "kms:ListGrants",
+                "kms:ListKeyPolicies",
+                "kms:ListKeys",
+                "kms:ListResourceTags",
+                "kms:ListRetirableGrants",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/ci",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted read-config",
+            },
+            {
+              "Action": [
+                "kms:Decrypt",
+                "kms:Verify",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                    "arn:aws:iam::123456789012:role/customer-service",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted read-data",
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateRandom",
+                "kms:ImportKeyMaterial",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:Sign",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::123456789012:role/app-backend",
+                  ],
+                },
+                "StringEquals": {
+                  "aws:PrincipalOrgID": [
+                    "o-abc123",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted write-data",
+            },
+            {
+              "Action": [
+                "kms:DeleteCustomKeyStore",
+                "kms:DeleteImportedKeyMaterial",
+              ],
+              "Condition": {
+                "ArnEquals": {
+                  "aws:PrincipalArn": [
+                    "arn:aws:iam::139710491120:user/super-admin",
+                  ],
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "*",
+              "Sid": "Allow Restricted delete-data",
+            },
+            {
+              "Action": [
+                "kms:Encrypt",
+                "kms:GenerateDataKey",
+                "kms:GenerateDataKeyPair",
+                "kms:GenerateDataKeyPairWithoutPlaintext",
+                "kms:GenerateDataKeyWithoutPlaintext",
+                "kms:GenerateRandom",
+                "kms:ImportKeyMaterial",
+                "kms:ReEncryptFrom",
+                "kms:ReEncryptTo",
+                "kms:Sign",
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:PrincipalIsAWSService": [
+                    "false",
+                  ],
+                },
+                "StringNotEquals": {
+                  "aws:PrincipalOrgID": [
+                    "o-abc123",
+                  ],
+                },
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": [
+                  "*",
+                  "*",
+                ],
+              },
+              "Resource": "*",
+              "Sid": "DenyUntrustedOrgs",
             },
           ],
           "Version": "2012-10-17",

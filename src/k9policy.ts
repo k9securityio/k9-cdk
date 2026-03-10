@@ -41,6 +41,17 @@ export interface IAccessSpec {
   accessCapabilities: Array<AccessCapability> | AccessCapability;
   allowPrincipalArns: Array<string>;
   test?: ArnConditionTest;
+  /**
+   * Optional list of AWS Organization IDs that restrict the principals specified
+   * in `allowPrincipalArns`. When present, generated Allow statements will include
+   * a `StringEquals` condition on `aws:PrincipalOrgID` and a DenyUntrustedOrgs statement will
+   * be generated for the permissions that are restricted by org IDs.
+   *
+   * Org IDs restrict which principals are allowed — they do not replace
+   * `allowPrincipalArns`. If you want to allow an entire org, add `*` to `allowPrincipalArns` and the org ID to
+   * `restrictToPrincipalOrgIDs`.
+   */
+  restrictToPrincipalOrgIDs?: Array<string>;
 }
 
 /**
@@ -84,6 +95,42 @@ export function canPrincipalsManageResources(accessSpecsByCapability: Map<Access
 
 
 /**
+ * Check if any access spec contains a wildcard principal ("*").
+ */
+export function hasWildcardPrincipal(accessSpecs: Array<IAccessSpec>): boolean {
+  for (let spec of accessSpecs) {
+    if (spec.allowPrincipalArns.includes('*')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Validate that access specs have valid principal ARN + org constraint combinations.
+ * Throws an error for invalid combinations:
+ * - Empty allowPrincipalArns
+ * - Wildcard allowPrincipalArns without restrictToPrincipalOrgIDs (public access)
+ */
+export function validateAccessSpecs(accessSpecs: Array<IAccessSpec>): void {
+  for (let spec of accessSpecs) {
+    if (!spec.allowPrincipalArns || spec.allowPrincipalArns.length === 0) {
+      throw new Error(
+        'allowPrincipalArns must not be empty; every resource policy statement requires a Principal element.',
+      );
+    }
+    if (spec.allowPrincipalArns.includes('*') &&
+        (!spec.restrictToPrincipalOrgIDs || spec.restrictToPrincipalOrgIDs.length === 0)) {
+      throw new Error(
+        'k9-cdk will not generate a resource policy that allows fully public access.' +
+        ' Wildcard principal ("*") requires restrictToPrincipalOrgIDs to scope access.' +
+        ' Consider specifying account principal ARNs or constraining to specific PrincipalOrgIDs.',
+      );
+    }
+  }
+}
+
+/**
  * Converts a string to PascalCase, which is useful for e.g. policy types that don't
  * do not support spaces or hyphens in statement ids.
  *
@@ -103,6 +150,8 @@ export function toPascalCase(input: string): string {
     )
     .join('');
 }
+
+export const SID_DENY_UNTRUSTED_ORGS = 'DenyUntrustedOrgs';
 
 export class K9PolicyFactory {
 
@@ -131,6 +180,7 @@ export class K9PolicyFactory {
     'KMS',
     'DynamoDB',
     'SQS',
+    'EventBridge',
   ]);
 
   /** @internal */
@@ -170,6 +220,14 @@ export class K9PolicyFactory {
       if (addition.test) {
         target.test = addition.test;
       }
+    }
+
+    // Merge restrictToPrincipalOrgIDs
+    if (addition.restrictToPrincipalOrgIDs && addition.restrictToPrincipalOrgIDs.length > 0) {
+      if (!target.restrictToPrincipalOrgIDs) {
+        target.restrictToPrincipalOrgIDs = [];
+      }
+      target.restrictToPrincipalOrgIDs.push(...addition.restrictToPrincipalOrgIDs);
     }
 
   }
@@ -256,7 +314,8 @@ export class K9PolicyFactory {
         this.getActions(serviceName, supportedCapability),
         accessSpec.allowPrincipalArns,
         arnConditionTest,
-        resourceArns);
+        resourceArns,
+        accessSpec.restrictToPrincipalOrgIDs);
       policyStatements.push(statement);
     }
     return policyStatements;
@@ -266,7 +325,8 @@ export class K9PolicyFactory {
     actions: Array<string>,
     principalArns: Array<string>,
     test: ArnConditionTest,
-    resources: Array<string>): PolicyStatement {
+    resources: Array<string>,
+    restrictToPrincipalOrgIDs?: Array<string>): PolicyStatement {
     const policyStatementProps: PolicyStatementProps = {
       sid: sid,
       effect: Effect.ALLOW,
@@ -275,7 +335,24 @@ export class K9PolicyFactory {
     statement.addActions(...actions);
     statement.addAnyPrincipal();
     statement.addResources(...resources);
-    statement.addCondition(test, { 'aws:PrincipalArn': K9PolicyFactory.deduplicatePrincipals(principalArns) });
+
+    const isWildcardPrincipal = principalArns.includes('*');
+    const hasOrgConstraint = restrictToPrincipalOrgIDs && restrictToPrincipalOrgIDs.length > 0;
+
+    if (isWildcardPrincipal && hasOrgConstraint) {
+      // Code Path B: wildcard + org constraint
+      // Use Principal: "*" (already added via addAnyPrincipal) + aws:PrincipalOrgID condition
+      // Do NOT add aws:PrincipalArn condition
+      statement.addCondition('StringEquals', { 'aws:PrincipalOrgID': restrictToPrincipalOrgIDs });
+    } else {
+      // Code Path A: specific principal ARNs (existing behavior)
+      statement.addCondition(test, { 'aws:PrincipalArn': K9PolicyFactory.deduplicatePrincipals(principalArns) });
+      if (hasOrgConstraint) {
+        // Specific ARNs + org constraint: both conditions must be true
+        statement.addCondition('StringEquals', { 'aws:PrincipalOrgID': restrictToPrincipalOrgIDs });
+      }
+    }
+
     return statement;
   }
 
@@ -321,6 +398,61 @@ export class K9PolicyFactory {
          * So after these machinations, we end up with what we want.
          */
     return [new AnyPrincipal(), new AnyPrincipal()];
+  }
+
+  /**
+   * Create a DenyUntrustedOrgs statement that explicitly denies principals from
+   * untrusted orgs for org-restricted actions. This provides defense-in-depth
+   * beyond the implicit deny from org-constrained Allow statements.
+   *
+   * The StringNotEquals condition on aws:PrincipalOrgID is inherently safe for
+   * AWS service principals because the key is absent from their request context,
+   * so the condition is not satisfied and the Deny does not apply.
+   *
+   * @return a PolicyStatement with Effect Deny, or undefined if no access specs have org restrictions
+   * @internal
+   */
+  _makeDenyUntrustedOrgsStatement(
+    serviceName: string,
+    supportedCapabilities: Array<AccessCapability>,
+    accessSpecsByCapability: Map<AccessCapability, IAccessSpec>,
+    resourceArns: Array<string>,
+  ): PolicyStatement | undefined {
+    const allActions = new Set<string>();
+    const allOrgIDs = new Set<string>();
+
+    for (let capability of supportedCapabilities) {
+      const accessSpec = accessSpecsByCapability.get(capability);
+      if (accessSpec?.restrictToPrincipalOrgIDs && accessSpec.restrictToPrincipalOrgIDs.length > 0) {
+        const actions = this.getActions(serviceName, capability);
+        for (let action of actions) {
+          allActions.add(action);
+        }
+        for (let orgID of accessSpec.restrictToPrincipalOrgIDs) {
+          allOrgIDs.add(orgID);
+        }
+      }
+    }
+
+    if (allActions.size === 0) {
+      return undefined;
+    }
+
+    const statement = new PolicyStatement({
+      sid: SID_DENY_UNTRUSTED_ORGS,
+      effect: Effect.DENY,
+      principals: this.makeDenyEveryoneElsePrincipals(),
+      actions: Array.from(allActions),
+      resources: resourceArns,
+    });
+    statement.addCondition('Bool', {
+      'aws:PrincipalIsAWSService': ['false'],
+    });
+    statement.addCondition('StringNotEquals', {
+      'aws:PrincipalOrgID': Array.from(allOrgIDs),
+    });
+
+    return statement;
   }
 
 }

@@ -10,6 +10,7 @@ Supported services:
 * KMS
 * DynamoDB
 * SQS
+* EventBridge
 
 This library [simplifies IAM as described in Effective IAM for AWS](https://www.effectiveiam.com/simplify-aws-iam) and is fully-supported by k9 Security. We're happy to answer questions or help you integrate it via a [GitHub issue](https://github.com/k9securityio/k9-cdk/issues) or email to [support@k9security.io](mailto:support@k9security.io?subject=k9-cdk). 
 
@@ -130,9 +131,41 @@ const table = new dynamodb.TableV2(stack, 'app-table-with-k9-policy', {
 });
 ```
 
+Granting access to an EventBridge event bus works like SQS, using the `k9.events.grantAccessViaResourcePolicy` function.
+EventBridge supports the `administer-resource`, `read-config`, and `write-data` capabilities:
+
+```typescript
+import * as events from "aws-cdk-lib/aws-events";
+
+const bus = new events.EventBus(stack, 'AppEventBus', {
+    eventBusName: 'app-bus-with-k9-policy',
+});
+
+const k9EventBusProps: k9.events.K9EventBusResourcePolicyProps = {
+    bus: bus,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: [
+                k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+                k9.k9policy.AccessCapability.READ_CONFIG,
+            ],
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: [
+                "arn:aws:iam::123456789012:role/app-backend",
+            ],
+        },
+    ),
+};
+
+k9.events.grantAccessViaResourcePolicy(k9EventBusProps);
+```
+
 ## Example stack
 
-The example stack demonstrates full use of the k9 S3, KMS, and DynamoDB policy generators.  Generated policies:
+The example stack demonstrates full use of the k9 S3, KMS, DynamoDB, SQS, and EventBridge policy generators.  Generated policies:
 
 S3 Bucket Policy:
 
@@ -154,6 +187,60 @@ DynamoDB Resource Policy:
 * [Templatized DynamoDB Resource Policy](examples/generated.dynamodb-policy.json)
 * [ResourcePolicy attribute of GlobalTable resource in CFn template](examples/K9Example.template.json)
 
+
+## Restricting Access to Specific Organizations
+
+You can restrict access capabilities to principals within specific AWS Organizations by setting `restrictToPrincipalOrgIDs` on an `IAccessSpec`. When set, k9-cdk will:
+
+1. Add a `StringEquals` condition on `aws:PrincipalOrgID` to the Allow statements for those capabilities
+2. Generate a `DenyUntrustedOrgs` statement that explicitly denies the org-restricted actions for principals outside the specified organizations
+
+This provides defense-in-depth: even if another Allow statement is added to the policy without an org constraint, the explicit Deny prevents principals from untrusted organizations from gaining access _for those permissions_.
+
+`restrictToPrincipalOrgIDs` can be combined with specific principal ARNs (both conditions must be satisfied) or with a wildcard `*` principal to allow any principal within the organization:
+
+```typescript
+const k9BucketPolicyProps: k9.s3.K9BucketPolicyProps = {
+    bucket: bucket,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: [
+                k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+                k9.k9policy.AccessCapability.READ_CONFIG,
+            ],
+            allowPrincipalArns: administerResourceArns,
+        },
+        {   // restrict write-data to specific principals within the org
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: [
+                "arn:aws:iam::123456789012:role/app-backend",
+            ],
+            restrictToPrincipalOrgIDs: ["o-abc123"],
+        },
+        {   // allow any principal in the org to read data
+            accessCapabilities: k9.k9policy.AccessCapability.READ_DATA,
+            allowPrincipalArns: ["*"],
+            restrictToPrincipalOrgIDs: ["o-abc123"],
+        },
+    ),
+};
+```
+
+In this example, the `write-data` Allow statement requires the caller to match both the specific principal ARN and the org ID. The `read-data` Allow statement allows any principal from `o-abc123`. Both capabilities are covered by the `DenyUntrustedOrgs` statement, which denies the corresponding actions for principals outside `o-abc123`.
+
+**Caveat:** When you use a wildcard `*` principal with `restrictToPrincipalOrgIDs`, k9-cdk will _not_ generate a `DenyEveryoneElse` statement. The `DenyEveryoneElse` statement works by excepting specific principal ARNs from the deny, but a `*` wildcard principal cannot be meaningfully excepted because exempting `*` would exempt everyone and render the deny ineffective. In this case, access is constrained by the `aws:PrincipalOrgID` condition on the Allow statements and the `DenyUntrustedOrgs` deny statement rather than `DenyEveryoneElse`. As an alternative, you can specify principal ARNs with wildcards and test with `ArnLike`:
+
+```typescript
+{   // restrict write-data to all 'publisher' principals within the org
+    accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+    allowPrincipalArns: [
+        "arn:aws:iam::*:role/*publisher*",
+    ],
+    restrictToPrincipalOrgIDs: ["o-abc123"],
+}
+```
+
+That's not every principal in the org, but it may be closer to what you want in practice.
 
 ## Specialized Use Cases
 

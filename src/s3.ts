@@ -10,7 +10,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import { IBucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { IConstruct } from 'constructs';
 import * as aws_iam_utils from './aws-iam-utils';
-import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator, K9PolicyFactory } from './k9policy';
+import { AccessCapability, getAccessCapabilityFromValue, IAccessSpec, IAWSServiceAccessGenerator, K9PolicyFactory } from './k9policy';
 
 /**
  * Configure the k9 Security S3 Bucket policy generator with the K9BucketPolicyProps.
@@ -256,6 +256,18 @@ export function grantAccessViaResourcePolicy(scope: IConstruct, id: string, prop
   }
 
   k9Statements.push(denyEveryoneElseStatement);
+
+  // Build accessSpecsByCapability map for DenyUntrustedOrgs
+  const accessSpecsByCapabilityRecs = policyFactory.mergeDesiredAccessSpecsByCapability(SUPPORTED_CAPABILITIES, props.k9DesiredAccess);
+  const accessSpecsByCapability: Map<AccessCapability, IAccessSpec> = new Map();
+  for (let [capabilityStr, accessSpec] of Object.entries(accessSpecsByCapabilityRecs)) {
+    accessSpecsByCapability.set(getAccessCapabilityFromValue(capabilityStr), accessSpec);
+  }
+  const denyUntrustedOrgsStatement = policyFactory._makeDenyUntrustedOrgsStatement(
+    'S3', SUPPORTED_CAPABILITIES, accessSpecsByCapability, resourceArns);
+  if (denyUntrustedOrgsStatement) {
+    k9Statements.push(denyUntrustedOrgsStatement);
+  }
 
   for (let statement of k9Statements) {
     let addToResourcePolicyResult = props.bucket.addToResourcePolicy(statement);

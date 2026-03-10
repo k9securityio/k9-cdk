@@ -9,7 +9,7 @@ import { RemovalPolicy } from 'aws-cdk-lib/core';
 // @ts-ignore
 import { fail, stringifyPolicy } from './helpers';
 import * as k9 from '../lib';
-import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator } from '../lib/k9policy';
+import { AccessCapability, IAccessSpec, IAWSServiceAccessGenerator, SID_DENY_UNTRUSTED_ORGS } from '../lib/k9policy';
 import { K9KeyPolicyProps, SID_ALLOW_ROOT_AND_IDENTITY_POLICIES, SID_DENY_EVERYONE_ELSE } from '../lib/kms';
 import {
   K9BucketPolicyProps,
@@ -371,6 +371,74 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
+test('K9BucketPolicy - restrictToPrincipalOrgIDs restricts write-data to org', () => {
+  const stack = new cdk.Stack(app, 'K9PolicyTestOrgRestricted');
+  const bucket = new s3.Bucket(stack, 'OrgRestrictedBucket', {});
+
+  const k9BucketPolicyProps: K9BucketPolicyProps = {
+    bucket: bucket,
+    k9DesiredAccess: new Array<IAccessSpec>(
+      {
+        accessCapabilities: AccessCapability.ADMINISTER_RESOURCE,
+        allowPrincipalArns: administerResourceArns,
+      },
+      {
+        accessCapabilities: AccessCapability.WRITE_DATA,
+        allowPrincipalArns: writeDataArns,
+        restrictToPrincipalOrgIDs: ['o-abc123'],
+      },
+      {
+        accessCapabilities: AccessCapability.READ_DATA,
+        allowPrincipalArns: readDataArns,
+      },
+    ),
+  };
+
+  let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, 'S3OrgRestricted', k9BucketPolicyProps);
+  expect(bucket.policy).toBeDefined();
+
+  // 9 base statements + 1 DenyUntrustedOrgs = 10
+  expect(addToResourcePolicyResults.length).toEqual(10);
+  for (let result of addToResourcePolicyResults) {
+    expect(result.statementAdded).toBeTruthy();
+  }
+
+  let policyStr = stringifyPolicy(bucket.policy?.document);
+  console.log('org-restricted bucket policy: ' + policyStr);
+  let policyObj = JSON.parse(policyStr);
+  let statements = policyObj.Statement;
+
+  // Verify write-data has BOTH aws:PrincipalArn AND aws:PrincipalOrgID conditions
+  let writeStmt = statements.find((s: any) => s.Sid === 'Allow Restricted write-data');
+  expect(writeStmt).toBeDefined();
+  expect(writeStmt.Condition.ArnEquals['aws:PrincipalArn']).toEqual(writeDataArns);
+  expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+  // Verify other statements do NOT have org constraint
+  let adminStmt = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource');
+  expect(adminStmt).toBeDefined();
+  expect(adminStmt.Condition.ArnEquals).toBeDefined();
+  expect(adminStmt.Condition.StringEquals).toBeUndefined();
+
+  let readStmt = statements.find((s: any) => s.Sid === 'Allow Restricted read-data');
+  expect(readStmt).toBeDefined();
+  expect(readStmt.Condition.ArnEquals).toBeDefined();
+  expect(readStmt.Condition.StringEquals).toBeUndefined();
+
+  // Verify DenyEveryoneElse is still present (specific ARNs, not wildcard)
+  let denyStmt = statements.find((s: any) => s.Sid === 'DenyEveryoneElse');
+  expect(denyStmt).toBeDefined();
+  expect(denyStmt.Effect).toEqual('Deny');
+
+  // Verify DenyUntrustedOrgs statement
+  let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+  expect(denyUntrustedOrgsStmt).toBeDefined();
+  expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+  expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+});
+
 describe('K9KeyPolicy', () => {
   const desiredAccess = new Array<IAccessSpec>(
     {
@@ -533,6 +601,75 @@ describe('K9KeyPolicy', () => {
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });
 
+  test('restrictToPrincipalOrgIDs restricts write-data to org', () => {
+    const stack = new cdk.Stack(app, 'K9KeyPolicyOrgRestricted');
+    const k9KeyPolicyProps: K9KeyPolicyProps = {
+      k9DesiredAccess: new Array<IAccessSpec>(
+        {
+          accessCapabilities: [
+            AccessCapability.ADMINISTER_RESOURCE,
+            AccessCapability.READ_CONFIG,
+          ],
+          allowPrincipalArns: administerResourceArns,
+        },
+        {
+          accessCapabilities: AccessCapability.WRITE_DATA,
+          allowPrincipalArns: writeDataArns,
+          restrictToPrincipalOrgIDs: ['o-abc123'],
+        },
+        {
+          accessCapabilities: AccessCapability.READ_DATA,
+          allowPrincipalArns: readDataArns,
+        },
+        {
+          accessCapabilities: AccessCapability.DELETE_DATA,
+          allowPrincipalArns: deleteDataArns,
+        },
+      ),
+      trustAccountIdentities: false,
+    };
+
+    const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
+
+    let policyJsonStr = stringifyPolicy(keyPolicy);
+    console.log('org-restricted key policy: ' + policyJsonStr);
+    let policyObj = JSON.parse(policyJsonStr);
+    let statements = policyObj.Statement;
+    expect(statements).toBeDefined();
+
+    // Verify write-data has BOTH aws:PrincipalArn AND aws:PrincipalOrgID conditions
+    let writeStmt = statements.find((s: any) => s.Sid === 'Allow Restricted write-data');
+    expect(writeStmt).toBeDefined();
+    expect(writeStmt.Condition.ArnEquals['aws:PrincipalArn']).toEqual(writeDataArns);
+    expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+    // Verify administer-resource does NOT have org constraint
+    let adminStmt = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource');
+    expect(adminStmt).toBeDefined();
+    expect(adminStmt.Condition.ArnEquals).toBeDefined();
+    expect(adminStmt.Condition.StringEquals).toBeUndefined();
+
+    // Verify read-data does NOT have org constraint
+    let readStmt = statements.find((s: any) => s.Sid === 'Allow Restricted read-data');
+    expect(readStmt).toBeDefined();
+    expect(readStmt.Condition.ArnEquals).toBeDefined();
+    expect(readStmt.Condition.StringEquals).toBeUndefined();
+
+    // Verify DenyEveryoneElse is NOT present (trustAccountIdentities: false)
+    let denyStmt = statements.find((s: any) => s.Sid === SID_DENY_EVERYONE_ELSE);
+    expect(denyStmt).toBeFalsy();
+
+    // Verify DenyUntrustedOrgs IS present (independent of trustAccountIdentities)
+    let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+    expect(denyUntrustedOrgsStmt).toBeDefined();
+    expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+    expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+    new kms.Key(stack, 'TestKeyOrgRestricted', { policy: keyPolicy });
+
+    expectCDK(stack).to(haveResource('AWS::KMS::Key'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
 
 });
 
@@ -607,6 +744,82 @@ describe('DynamoDBResourcePolicy', () => {
     console.log('table: ' + table);
     console.log('table.resourcePolicy: ' + stringifyPolicy(table.resourcePolicy));
 
+    expectCDK(stack).to(haveResource('AWS::DynamoDB::GlobalTable'));
+    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  });
+
+  test('restrictToPrincipalOrgIDs restricts write-data to org', () => {
+    const stack = new cdk.Stack(app, 'K9DDBResourcePolicyTestOrgRestricted', { env: { region: 'us-east-1' } });
+
+    const ddbResourcePolicyProps: K9DynamoDBResourcePolicyProps = {
+      k9DesiredAccess: new Array<IAccessSpec>(
+        {
+          accessCapabilities: [
+            AccessCapability.ADMINISTER_RESOURCE,
+            AccessCapability.READ_CONFIG,
+          ],
+          allowPrincipalArns: administerResourceArns,
+        },
+        {
+          accessCapabilities: AccessCapability.WRITE_DATA,
+          allowPrincipalArns: writeDataArns,
+          restrictToPrincipalOrgIDs: ['o-abc123'],
+        },
+        {
+          accessCapabilities: AccessCapability.READ_DATA,
+          allowPrincipalArns: readDataArns,
+        },
+        {
+          accessCapabilities: AccessCapability.DELETE_DATA,
+          allowPrincipalArns: deleteDataArns,
+        },
+      ),
+    };
+
+    let resourcePolicy = k9.dynamodb.makeResourcePolicy(ddbResourcePolicyProps);
+    let policyStr = stringifyPolicy(resourcePolicy);
+    console.log('org-restricted DynamoDB policy: ' + policyStr);
+
+    let policyObj = JSON.parse(policyStr);
+    let statements = policyObj.Statement;
+    expect(statements).toBeDefined();
+
+    // Verify write-data has BOTH aws:PrincipalArn AND aws:PrincipalOrgID conditions
+    let writeStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedWriteData');
+    expect(writeStmt).toBeDefined();
+    expect(writeStmt.Condition.ArnEquals['aws:PrincipalArn']).toEqual(writeDataArns);
+    expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+    // Verify administer-resource does NOT have org constraint
+    let adminStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedAdministerResource');
+    expect(adminStmt).toBeDefined();
+    expect(adminStmt.Condition.ArnEquals).toBeDefined();
+    expect(adminStmt.Condition.StringEquals).toBeUndefined();
+
+    // Verify read-data does NOT have org constraint
+    let readStmt = statements.find((s: any) => s.Sid === 'AllowRestrictedReadData');
+    expect(readStmt).toBeDefined();
+    expect(readStmt.Condition.ArnEquals).toBeDefined();
+    expect(readStmt.Condition.StringEquals).toBeUndefined();
+
+    // Verify DenyEveryoneElse is present (specific ARNs, not wildcard)
+    let denyStmt = statements.find((s: any) => s.Sid === SID_DENY_EVERYONE_ELSE);
+    expect(denyStmt).toBeDefined();
+    expect(denyStmt.Effect).toEqual('Deny');
+
+    // Verify DenyUntrustedOrgs statement
+    let denyUntrustedOrgsStmt = statements.find((s: any) => s.Sid === SID_DENY_UNTRUSTED_ORGS);
+    expect(denyUntrustedOrgsStmt).toBeDefined();
+    expect(denyUntrustedOrgsStmt.Effect).toEqual('Deny');
+    expect(denyUntrustedOrgsStmt.Condition.StringNotEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
+
+    const table = new dynamodb.TableV2(stack, 'test-table-org-restricted', {
+      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      resourcePolicy: resourcePolicy,
+    });
+
+    console.log('table: ' + table);
     expectCDK(stack).to(haveResource('AWS::DynamoDB::GlobalTable'));
     expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
   });

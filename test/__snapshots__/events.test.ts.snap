@@ -1,0 +1,424 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
+{
+  "Resources": {
+    "testbusorgsnapshot203C2631": {
+      "Properties": {
+        "Name": "K9EventBusOrgSnapshottestbusorgsnapshot0DB4F33A",
+      },
+      "Type": "AWS::Events::EventBus",
+    },
+    "testbusorgsnapshotcdkAllowRestrictedAdministerResourceC811FF22": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusorgsnapshot203C2631",
+        },
+        "Statement": {
+          "Action": [
+            "events:TagResource",
+            "events:UntagResource",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:role/ci",
+                "arn:aws:iam::139710491120:role/k9-dev-appeng",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedAdministerResource",
+        },
+        "StatementId": "cdk-AllowRestrictedAdministerResource",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbusorgsnapshotcdkAllowRestrictedReadConfig84AE420F": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusorgsnapshot203C2631",
+        },
+        "Statement": {
+          "Action": [
+            "events:DescribeEventBus",
+            "events:ListTagsForResource",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:role/ci",
+                "arn:aws:iam::139710491120:role/k9-dev-appeng",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedReadConfig",
+        },
+        "StatementId": "cdk-AllowRestrictedReadConfig",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbusorgsnapshotcdkAllowRestrictedWriteData29374AA8": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusorgsnapshot203C2631",
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Condition": {
+            "StringEquals": {
+              "aws:PrincipalOrgID": [
+                "o-abc123",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedWriteData",
+        },
+        "StatementId": "cdk-AllowRestrictedWriteData",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbusorgsnapshotcdkDenyUntrustedOrgs065DD3F3": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbusorgsnapshot203C2631",
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Condition": {
+            "Bool": {
+              "aws:PrincipalIsAWSService": [
+                "false",
+              ],
+            },
+            "StringNotEquals": {
+              "aws:PrincipalOrgID": [
+                "o-abc123",
+              ],
+            },
+          },
+          "Effect": "Deny",
+          "Principal": {
+            "AWS": [
+              "*",
+              "*",
+            ],
+          },
+          "Resource": "*",
+          "Sid": "cdk-DenyUntrustedOrgs",
+        },
+        "StatementId": "cdk-DenyUntrustedOrgs",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+  },
+}
+`;
+
+exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
+{
+  "Resources": {
+    "testbussnapshot31E5750E": {
+      "Properties": {
+        "Name": "K9EventBusSnapshottestbussnapshot9644679A",
+      },
+      "Type": "AWS::Events::EventBus",
+    },
+    "testbussnapshotcdkAllowRestrictedAdministerResourceEBF6E5DB": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbussnapshot31E5750E",
+        },
+        "Statement": {
+          "Action": [
+            "events:TagResource",
+            "events:UntagResource",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:role/ci",
+                "arn:aws:iam::139710491120:role/k9-dev-appeng",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedAdministerResource",
+        },
+        "StatementId": "cdk-AllowRestrictedAdministerResource",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbussnapshotcdkAllowRestrictedReadConfigFFF40D36": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbussnapshot31E5750E",
+        },
+        "Statement": {
+          "Action": [
+            "events:DescribeEventBus",
+            "events:ListTagsForResource",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:role/ci",
+                "arn:aws:iam::139710491120:role/k9-dev-appeng",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedReadConfig",
+        },
+        "StatementId": "cdk-AllowRestrictedReadConfig",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbussnapshotcdkAllowRestrictedWriteDataB7A88FF1": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbussnapshot31E5750E",
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::123456789012:role/app-backend",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedWriteData",
+        },
+        "StatementId": "cdk-AllowRestrictedWriteData",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbussnapshotcdkDenyEveryoneElse970AA208": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbussnapshot31E5750E",
+        },
+        "Statement": {
+          "Action": "events:*",
+          "Condition": {
+            "ArnNotEquals": {
+              "aws:PrincipalArn": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
+                    ],
+                  ],
+                },
+                "arn:aws:iam::139710491120:role/ci",
+                "arn:aws:iam::139710491120:role/k9-dev-appeng",
+                "arn:aws:iam::123456789012:role/app-backend",
+              ],
+            },
+            "Bool": {
+              "aws:PrincipalIsAWSService": [
+                "false",
+              ],
+            },
+          },
+          "Effect": "Deny",
+          "Principal": {
+            "AWS": [
+              "*",
+              "*",
+            ],
+          },
+          "Resource": "*",
+          "Sid": "cdk-DenyEveryoneElse",
+        },
+        "StatementId": "cdk-DenyEveryoneElse",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+  },
+}
+`;
+
+exports[`EventBusResourcePolicy Typical usage — specific principals, no org constraint 1`] = `
+{
+  "Resources": {
+    "testbustypicalusage6B2659F6": {
+      "Properties": {
+        "Name": "K9EventBusTypicalUsagetestbustypicalusageD3F8CAD4",
+      },
+      "Type": "AWS::Events::EventBus",
+    },
+    "testbustypicalusagecdkAllowRestrictedAdministerResourceD8498F90": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbustypicalusage6B2659F6",
+        },
+        "Statement": {
+          "Action": [
+            "events:TagResource",
+            "events:UntagResource",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:role/ci",
+                "arn:aws:iam::139710491120:role/k9-dev-appeng",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedAdministerResource",
+        },
+        "StatementId": "cdk-AllowRestrictedAdministerResource",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbustypicalusagecdkAllowRestrictedReadConfig9E6B0DB0": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbustypicalusage6B2659F6",
+        },
+        "Statement": {
+          "Action": [
+            "events:DescribeEventBus",
+            "events:ListTagsForResource",
+          ],
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::139710491120:role/ci",
+                "arn:aws:iam::139710491120:role/k9-dev-appeng",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedReadConfig",
+        },
+        "StatementId": "cdk-AllowRestrictedReadConfig",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbustypicalusagecdkAllowRestrictedWriteData1B46A3CB": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbustypicalusage6B2659F6",
+        },
+        "Statement": {
+          "Action": "events:PutEvents",
+          "Condition": {
+            "ArnEquals": {
+              "aws:PrincipalArn": [
+                "arn:aws:iam::123456789012:role/app-backend",
+              ],
+            },
+          },
+          "Effect": "Allow",
+          "Principal": {
+            "AWS": "*",
+          },
+          "Resource": "*",
+          "Sid": "cdk-AllowRestrictedWriteData",
+        },
+        "StatementId": "cdk-AllowRestrictedWriteData",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+    "testbustypicalusagecdkDenyEveryoneElse4D511C9F": {
+      "Properties": {
+        "EventBusName": {
+          "Ref": "testbustypicalusage6B2659F6",
+        },
+        "Statement": {
+          "Action": "events:*",
+          "Condition": {
+            "ArnNotEquals": {
+              "aws:PrincipalArn": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":iam::",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":root",
+                    ],
+                  ],
+                },
+                "arn:aws:iam::139710491120:role/ci",
+                "arn:aws:iam::139710491120:role/k9-dev-appeng",
+                "arn:aws:iam::123456789012:role/app-backend",
+              ],
+            },
+            "Bool": {
+              "aws:PrincipalIsAWSService": [
+                "false",
+              ],
+            },
+          },
+          "Effect": "Deny",
+          "Principal": {
+            "AWS": [
+              "*",
+              "*",
+            ],
+          },
+          "Resource": "*",
+          "Sid": "cdk-DenyEveryoneElse",
+        },
+        "StatementId": "cdk-DenyEveryoneElse",
+      },
+      "Type": "AWS::Events::EventBusPolicy",
+    },
+  },
+}
+`;

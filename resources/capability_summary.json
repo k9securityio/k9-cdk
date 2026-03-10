@@ -171,6 +171,19 @@
       "dynamodbstreams:GetShardIterator"
     ]
   },
+  "EventBridge": {
+    "administer-resource": [
+      "events:TagResource",
+      "events:UntagResource"
+    ],
+    "read-config": [
+      "events:DescribeEventBus",
+      "events:ListTagsForResource"
+    ],
+    "write-data": [
+      "events:PutEvents"
+    ]
+  },
   "IAM": {
     "administer-resource": [
       "iam:AddRoleToInstanceProfile",
