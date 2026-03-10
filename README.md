@@ -10,6 +10,7 @@ Supported services:
 * KMS
 * DynamoDB
 * SQS
+* EventBridge
 
 This library [simplifies IAM as described in Effective IAM for AWS](https://www.effectiveiam.com/simplify-aws-iam) and is fully-supported by k9 Security. We're happy to answer questions or help you integrate it via a [GitHub issue](https://github.com/k9securityio/k9-cdk/issues) or email to [support@k9security.io](mailto:support@k9security.io?subject=k9-cdk). 
 
@@ -130,9 +131,41 @@ const table = new dynamodb.TableV2(stack, 'app-table-with-k9-policy', {
 });
 ```
 
+Granting access to an EventBridge event bus works like SQS, using the `k9.events.grantAccessViaResourcePolicy` function.
+EventBridge supports the `administer-resource`, `read-config`, and `write-data` capabilities:
+
+```typescript
+import * as events from "aws-cdk-lib/aws-events";
+
+const bus = new events.EventBus(stack, 'AppEventBus', {
+    eventBusName: 'app-bus-with-k9-policy',
+});
+
+const k9EventBusProps: k9.events.K9EventBusResourcePolicyProps = {
+    bus: bus,
+    k9DesiredAccess: new Array<k9.k9policy.IAccessSpec>(
+        {
+            accessCapabilities: [
+                k9.k9policy.AccessCapability.ADMINISTER_RESOURCE,
+                k9.k9policy.AccessCapability.READ_CONFIG,
+            ],
+            allowPrincipalArns: administerResourceArns,
+        },
+        {
+            accessCapabilities: k9.k9policy.AccessCapability.WRITE_DATA,
+            allowPrincipalArns: [
+                "arn:aws:iam::123456789012:role/app-backend",
+            ],
+        },
+    ),
+};
+
+k9.events.grantAccessViaResourcePolicy(k9EventBusProps);
+```
+
 ## Example stack
 
-The example stack demonstrates full use of the k9 S3, KMS, and DynamoDB policy generators.  Generated policies:
+The example stack demonstrates full use of the k9 S3, KMS, DynamoDB, SQS, and EventBridge policy generators.  Generated policies:
 
 S3 Bucket Policy:
 
