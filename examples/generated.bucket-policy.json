@@ -44,8 +44,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted administer-resource"
     },
@@ -100,8 +100,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted read-config"
     },
@@ -127,8 +127,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted read-data"
     },
@@ -157,8 +157,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted write-data"
     },
@@ -179,8 +179,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "Allow Restricted delete-data"
     },
@@ -196,8 +196,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "DenyInsecureCommunications"
     },
@@ -216,8 +216,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "DenyUnencryptedStorage"
     },
@@ -236,8 +236,8 @@
         "AWS": "*"
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "DenyUnexpectedEncryptionMethod"
     },
@@ -263,8 +263,8 @@
         ]
       },
       "Resource": [
-        "${Token[TOKEN.20]}",
-        "${Token[TOKEN.20]}/*"
+        "${Token[TOKEN.22]}",
+        "${Token[TOKEN.22]}/*"
       ],
       "Sid": "DenyEveryoneElse"
     }

@@ -173,12 +173,20 @@
   },
   "EventBridge": {
     "administer-resource": [
+      "events:DeleteRule",
+      "events:DisableRule",
+      "events:EnableRule",
+      "events:PutRule",
+      "events:PutTargets",
+      "events:RemoveTargets",
       "events:TagResource",
       "events:UntagResource"
     ],
     "read-config": [
       "events:DescribeEventBus",
-      "events:ListTagsForResource"
+      "events:DescribeRule",
+      "events:ListTagsForResource",
+      "events:ListTargetsByRule"
     ],
     "write-data": [
       "events:PutEvents"

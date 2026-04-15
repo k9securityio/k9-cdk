@@ -16,6 +16,12 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
         },
         "Statement": {
           "Action": [
+            "events:DeleteRule",
+            "events:DisableRule",
+            "events:EnableRule",
+            "events:PutRule",
+            "events:PutTargets",
+            "events:RemoveTargets",
             "events:TagResource",
             "events:UntagResource",
           ],
@@ -46,7 +52,9 @@ exports[`EventBusResourcePolicy Snapshot — org-scoped access 1`] = `
         "Statement": {
           "Action": [
             "events:DescribeEventBus",
+            "events:DescribeRule",
             "events:ListTagsForResource",
+            "events:ListTargetsByRule",
           ],
           "Condition": {
             "ArnEquals": {
@@ -145,6 +153,12 @@ exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
         },
         "Statement": {
           "Action": [
+            "events:DeleteRule",
+            "events:DisableRule",
+            "events:EnableRule",
+            "events:PutRule",
+            "events:PutTargets",
+            "events:RemoveTargets",
             "events:TagResource",
             "events:UntagResource",
           ],
@@ -175,7 +189,9 @@ exports[`EventBusResourcePolicy Snapshot — typical usage 1`] = `
         "Statement": {
           "Action": [
             "events:DescribeEventBus",
+            "events:DescribeRule",
             "events:ListTagsForResource",
+            "events:ListTargetsByRule",
           ],
           "Condition": {
             "ArnEquals": {
@@ -292,6 +308,12 @@ exports[`EventBusResourcePolicy Typical usage — specific principals, no org co
         },
         "Statement": {
           "Action": [
+            "events:DeleteRule",
+            "events:DisableRule",
+            "events:EnableRule",
+            "events:PutRule",
+            "events:PutTargets",
+            "events:RemoveTargets",
             "events:TagResource",
             "events:UntagResource",
           ],
@@ -322,7 +344,9 @@ exports[`EventBusResourcePolicy Typical usage — specific principals, no org co
         "Statement": {
           "Action": [
             "events:DescribeEventBus",
+            "events:DescribeRule",
             "events:ListTagsForResource",
+            "events:ListTargetsByRule",
           ],
           "Condition": {
             "ArnEquals": {

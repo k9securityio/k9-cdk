@@ -2,6 +2,12 @@
   "Statement": [
     {
       "Action": [
+        "events:DeleteRule",
+        "events:DisableRule",
+        "events:EnableRule",
+        "events:PutRule",
+        "events:PutTargets",
+        "events:RemoveTargets",
         "events:TagResource",
         "events:UntagResource"
       ],
@@ -23,7 +29,9 @@
     {
       "Action": [
         "events:DescribeEventBus",
-        "events:ListTagsForResource"
+        "events:DescribeRule",
+        "events:ListTagsForResource",
+        "events:ListTargetsByRule"
       ],
       "Condition": {
         "ArnEquals": {
@@ -68,7 +76,7 @@
         },
         "ArnNotEquals": {
           "aws:PrincipalArn": [
-            "${Token[TOKEN.78]}",
+            "${Token[TOKEN.80]}",
             "arn:aws:iam::123456789012:user/ci",
             "arn:aws:iam::123456789012:user/person1",
             "arn:aws:iam::123456789012:role/k9-auditor",

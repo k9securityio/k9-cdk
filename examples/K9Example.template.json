@@ -1029,6 +1029,12 @@
     },
     "Statement": {
      "Action": [
+      "events:DeleteRule",
+      "events:DisableRule",
+      "events:EnableRule",
+      "events:PutRule",
+      "events:PutTargets",
+      "events:RemoveTargets",
       "events:TagResource",
       "events:UntagResource"
      ],
@@ -1062,7 +1068,9 @@
     "Statement": {
      "Action": [
       "events:DescribeEventBus",
-      "events:ListTagsForResource"
+      "events:DescribeRule",
+      "events:ListTagsForResource",
+      "events:ListTargetsByRule"
      ],
      "Condition": {
       "ArnEquals": {
