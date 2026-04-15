@@ -474,6 +474,12 @@ describe('K9PolicyFactory EventBridge capability mapping', () => {
   test('getActions returns expected administer-resource actions', () => {
     const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.ADMINISTER_RESOURCE);
     expect(actions).toEqual([
+      'events:DeleteRule',
+      'events:DisableRule',
+      'events:EnableRule',
+      'events:PutRule',
+      'events:PutTargets',
+      'events:RemoveTargets',
       'events:TagResource',
       'events:UntagResource',
     ]);
@@ -490,7 +496,9 @@ describe('K9PolicyFactory EventBridge capability mapping', () => {
     const actions = k9PolicyFactory.getActions('EventBridge', AccessCapability.READ_CONFIG);
     expect(actions).toEqual([
       'events:DescribeEventBus',
+      'events:DescribeRule',
       'events:ListTagsForResource',
+      'events:ListTargetsByRule',
     ]);
   });
 
