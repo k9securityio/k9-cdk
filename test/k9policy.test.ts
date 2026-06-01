@@ -1,4 +1,4 @@
-import { AnyPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { AnyPrincipal } from 'aws-cdk-lib/aws-iam';
 import { stringifyStatement } from './helpers';
 import {
   AccessCapability,
@@ -155,10 +155,10 @@ test('K9PolicyFactory#getAllowedPrincipalArns', () => {
 
 // noinspection JSUnusedLocalSymbols
 // @ts-ignore
-function logStatement(stmt: PolicyStatement) {
-  let statementJsonStr = stringifyStatement(stmt);
-  console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
-}
+// function logStatement(stmt: PolicyStatement) {
+//   let statementJsonStr = stringifyStatement(stmt);
+//   console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
+// }
 
 describe('K9PolicyFactory#makeAllowStatements', () => {
   const k9PolicyFactory = new K9PolicyFactory();

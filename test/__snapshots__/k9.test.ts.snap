@@ -133,8 +133,6 @@ exports[`DynamoDBResourcePolicy Typical usage 1`] = `
                   {
                     "Action": [
                       "dynamodb:DeleteItem",
-                      "dynamodb:DeleteTable",
-                      "dynamodb:DeleteTableReplica",
                       "dynamodb:PartiQLDelete",
                     ],
                     "Condition": {
@@ -346,8 +344,6 @@ exports[`DynamoDBResourcePolicy restrictToPrincipalOrgIDs restricts write-data t
                   {
                     "Action": [
                       "dynamodb:DeleteItem",
-                      "dynamodb:DeleteTable",
-                      "dynamodb:DeleteTableReplica",
                       "dynamodb:PartiQLDelete",
                     ],
                     "Condition": {

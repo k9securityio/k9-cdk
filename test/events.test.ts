@@ -47,7 +47,7 @@ describe('EventBusResourcePolicy', () => {
     };
 
     let addToResourcePolicyResults = k9.events.grantAccessViaResourcePolicy(eventBusResourcePolicyProps);
-    console.log('addToResourcePolicyResults: ' + addToResourcePolicyResults);
+    // console.log('addToResourcePolicyResults: ' + addToResourcePolicyResults);
 
     for (let result of addToResourcePolicyResults) {
       expect(result.statementAdded).toBeTruthy();
@@ -66,7 +66,7 @@ describe('EventBusResourcePolicy', () => {
 
     const policy = k9.events.makeResourcePolicy(eventBusResourcePolicyProps);
     let policyStr = stringifyPolicy(policy);
-    console.log('EventBridge policy: ' + policyStr);
+    // console.log('EventBridge policy: ' + policyStr);
 
     let policyObj = JSON.parse(policyStr);
     let statements = policyObj.Statement;
@@ -122,7 +122,7 @@ describe('EventBusResourcePolicy', () => {
 
     const policy = k9.events.makeResourcePolicy(eventBusResourcePolicyProps);
     let policyStr = stringifyPolicy(policy);
-    console.log('EventBridge org-scoped policy: ' + policyStr);
+    // console.log('EventBridge org-scoped policy: ' + policyStr);
 
     let policyObj = JSON.parse(policyStr);
     let statements = policyObj.Statement;
@@ -177,7 +177,7 @@ describe('EventBusResourcePolicy', () => {
 
     const policy = k9.events.makeResourcePolicy(eventBusResourcePolicyProps);
     let policyStr = stringifyPolicy(policy);
-    console.log('EventBridge specific+org policy: ' + policyStr);
+    // console.log('EventBridge specific+org policy: ' + policyStr);
 
     let policyObj = JSON.parse(policyStr);
     let statements = policyObj.Statement;
@@ -233,7 +233,7 @@ describe('EventBusResourcePolicy', () => {
 
     const policy = k9.events.makeResourcePolicy(eventBusResourcePolicyProps);
     let policyStr = stringifyPolicy(policy);
-    console.log('EventBridge multi-account+multi-org policy: ' + policyStr);
+    // console.log('EventBridge multi-account+multi-org policy: ' + policyStr);
 
     let policyObj = JSON.parse(policyStr);
     let statements = policyObj.Statement;

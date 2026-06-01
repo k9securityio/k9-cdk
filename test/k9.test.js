@@ -46,7 +46,7 @@ test('K9BucketPolicy - typical usage', () => {
     let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "S3Bucket", k9BucketPolicyProps);
     expect(bucket.policy).toBeDefined();
     let policyStr = helpers_1.stringifyPolicy((_a = bucket.policy) === null || _a === void 0 ? void 0 : _a.document);
-    console.log("bucket.policy?.document: " + policyStr);
+    // console.log("bucket.policy?.document: " + policyStr);
     expect((_b = bucket.policy) === null || _b === void 0 ? void 0 : _b.document).toBeDefined();
     assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
     let policyObj = JSON.parse(policyStr);
@@ -76,7 +76,7 @@ test('K9BucketPolicy - specify encryption method - KMS', () => {
     let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "BucketPolicyWithEncryptionMethodKMS", k9BucketPolicyProps);
     expect(bucket.policy).toBeDefined();
     let policyStr = helpers_1.stringifyPolicy((_a = bucket.policy) === null || _a === void 0 ? void 0 : _a.document);
-    console.log("bucket.policy?.document: " + policyStr);
+    // console.log("bucket.policy?.document: " + policyStr);
     expect((_b = bucket.policy) === null || _b === void 0 ? void 0 : _b.document).toBeDefined();
     assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
     let policyObj = JSON.parse(policyStr);
@@ -103,7 +103,7 @@ test('K9BucketPolicy - specify encryption method - S3_MANAGED', () => {
     let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "BucketPolicyWithAlternateEncryptionMethod", k9BucketPolicyProps);
     expect(bucket.policy).toBeDefined();
     let policyStr = helpers_1.stringifyPolicy((_a = bucket.policy) === null || _a === void 0 ? void 0 : _a.document);
-    console.log("bucket.policy?.document: " + policyStr);
+    // console.log("bucket.policy?.document: " + policyStr);
     expect((_b = bucket.policy) === null || _b === void 0 ? void 0 : _b.document).toBeDefined();
     assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
     let policyObj = JSON.parse(policyStr);
@@ -133,7 +133,7 @@ test('K9BucketPolicy - for a public website (direct to S3) - sse-s3 + public-rea
     let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "BucketPolicyForPublicWebsite", k9BucketPolicyProps);
     expect(bucket.policy).toBeDefined();
     let policyStr = helpers_1.stringifyPolicy((_a = bucket.policy) === null || _a === void 0 ? void 0 : _a.document);
-    console.log("bucket.policy?.document: " + policyStr);
+    // console.log("bucket.policy?.document: " + policyStr);
     expect((_b = bucket.policy) === null || _b === void 0 ? void 0 : _b.document).toBeDefined();
     assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults, k9BucketPolicyProps);
     let policyObj = JSON.parse(policyStr);
@@ -173,7 +173,7 @@ test('K9BucketPolicy - AccessSpec with set of capabilities', () => {
     };
     let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(localstack, "S3BucketMultiAccessSpec", k9BucketPolicyProps);
     expect(bucket.policy).toBeDefined();
-    console.log("bucket.policy?.document: " + helpers_1.stringifyPolicy((_a = bucket.policy) === null || _a === void 0 ? void 0 : _a.document));
+    // console.log("bucket.policy?.document: " + helpers_1.stringifyPolicy((_a = bucket.policy) === null || _a === void 0 ? void 0 : _a.document));
     expect((_b = bucket.policy) === null || _b === void 0 ? void 0 : _b.document).toBeDefined();
     assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
     assert_1.expect(localstack).to(assert_1.haveResource("AWS::S3::Bucket"));
@@ -189,7 +189,7 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
     });
     let originalBucketPolicy = bucket.policy;
     expect(originalBucketPolicy).toBeTruthy();
-    console.log("original bucketPolicy.document: " + helpers_1.stringifyPolicy((_a = bucket === null || bucket === void 0 ? void 0 : bucket.policy) === null || _a === void 0 ? void 0 : _a.document));
+    // console.log("original bucketPolicy.document: " + helpers_1.stringifyPolicy((_a = bucket === null || bucket === void 0 ? void 0 : bucket.policy) === null || _a === void 0 ? void 0 : _a.document));
     const k9BucketPolicyProps = {
         bucket: bucket,
         k9DesiredAccess: new Array({
@@ -203,7 +203,7 @@ test('k9.s3.grantAccessViaResourcePolicy merges permissions for autoDeleteObject
     let addToResourcePolicyResults = k9.s3.grantAccessViaResourcePolicy(stack, "AutoDeleteBucket", k9BucketPolicyProps);
     expect(bucket.policy).toStrictEqual(originalBucketPolicy);
     assertK9StatementsAddedToS3ResourcePolicy(addToResourcePolicyResults);
-    console.log("k9 bucket policy: " + helpers_1.stringifyPolicy((_b = bucket.policy) === null || _b === void 0 ? void 0 : _b.document));
+    // console.log("k9 bucket policy: " + helpers_1.stringifyPolicy((_b = bucket.policy) === null || _b === void 0 ? void 0 : _b.document));
     expect(assert_1.SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 describe('K9KeyPolicy', () => {
@@ -231,7 +231,7 @@ describe('K9KeyPolicy', () => {
         expect(k9KeyPolicyProps.trustAccountIdentities).toBeFalsy();
         const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
         let policyJsonStr = helpers_1.stringifyPolicy(keyPolicy);
-        console.log(`keyPolicy.document (trustAccountIdentities: ${k9KeyPolicyProps.trustAccountIdentities}): ${policyJsonStr}`);
+        // console.log(`keyPolicy.document (trustAccountIdentities: ${k9KeyPolicyProps.trustAccountIdentities}): ${policyJsonStr}`);
         let policyObj = JSON.parse(policyJsonStr);
         let actualPolicyStatements = policyObj['Statement'];
         expect(actualPolicyStatements).toBeDefined();
@@ -260,7 +260,7 @@ describe('K9KeyPolicy', () => {
         expect(k9KeyPolicyProps.trustAccountIdentities).toBeTruthy();
         const keyPolicy = k9.kms.makeKeyPolicy(k9KeyPolicyProps);
         let policyJsonStr = helpers_1.stringifyPolicy(keyPolicy);
-        console.log(`keyPolicy.document (trustAccountIdentities: ${k9KeyPolicyProps.trustAccountIdentities}): ${policyJsonStr}`);
+        // console.log(`keyPolicy.document (trustAccountIdentities: ${k9KeyPolicyProps.trustAccountIdentities}): ${policyJsonStr}`);
         let policyObj = JSON.parse(policyJsonStr);
         let actualPolicyStatements = policyObj['Statement'];
         expect(actualPolicyStatements).toBeDefined();
@@ -305,7 +305,7 @@ describe('K9KeyPolicy', () => {
 });
 function assertContainsStatementWithId(expectStmtId, statements) {
     let foundStmt = false;
-    console.log(`looking for statement id: ${expectStmtId}`);
+    // console.log(`looking for statement id: ${expectStmtId}`);
     for (let stmt of statements) {
         if (expectStmtId == stmt.Sid) {
             foundStmt = true;

@@ -63,13 +63,13 @@ describe('SQSResourcePolicy', () => {
     };
 
     let addToResourcePolicyResults = k9.sqs.grantAccessViaResourcePolicy(sqsResourcePolicyProps);
-    console.log('addToResourcePolicyResults: ' + addToResourcePolicyResults);
+    // console.log('addToResourcePolicyResults: ' + addToResourcePolicyResults);
 
     for (let result of addToResourcePolicyResults) {
       expect(result.statementAdded).toBeTruthy();
     }
 
-    console.log('queue: ' + queue);
+    // console.log('queue: ' + queue);
 
     // sadly, fails with Resolution error: statement.freeze is not a function deep in CDK
     expectCDK(stack).to(haveResource('AWS::SQS::Queue'));
@@ -87,7 +87,7 @@ describe('SQSResourcePolicy', () => {
     };
 
     let resourcePolicy = k9.sqs.makeResourcePolicy(sqsResourcePolicyProps);
-    console.log('resourcePolicy: ' + stringifyPolicy(resourcePolicy));
+    // console.log('resourcePolicy: ' + stringifyPolicy(resourcePolicy));
 
     expect(resourcePolicy).toBeDefined();
 
@@ -99,8 +99,7 @@ describe('SQSResourcePolicy', () => {
 
     const expectStmtIds = [
       SID_DENY_EVERYONE_ELSE,
-      'Allow Restricted administer-resource 1',
-      'Allow Restricted administer-resource 2',
+      'Allow Restricted administer-resource',
       'Allow Restricted read-config',
       'Allow Restricted read-data',
       'Allow Restricted write-data',
@@ -124,7 +123,7 @@ describe('SQSResourcePolicy', () => {
       queue.addToResourcePolicy(stmt);
     }
 
-    console.log('queue: ' + queue);
+    // console.log('queue: ' + queue);
   });
 
   test('restrictToPrincipalOrgIDs restricts write-data to org', () => {
@@ -159,7 +158,7 @@ describe('SQSResourcePolicy', () => {
 
     let resourcePolicy = k9.sqs.makeResourcePolicy(sqsResourcePolicyProps);
     let policyStr = stringifyPolicy(resourcePolicy);
-    console.log('org-restricted SQS policy: ' + policyStr);
+    // console.log('org-restricted SQS policy: ' + policyStr);
 
     let policyObj = JSON.parse(policyStr);
     let statements = policyObj.Statement;
@@ -172,7 +171,7 @@ describe('SQSResourcePolicy', () => {
     expect(writeStmt.Condition.StringEquals['aws:PrincipalOrgID']).toEqual(['o-abc123']);
 
     // Verify administer-resource does NOT have org constraint
-    let adminStmt1 = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource 1');
+    let adminStmt1 = statements.find((s: any) => s.Sid === 'Allow Restricted administer-resource');
     expect(adminStmt1).toBeDefined();
     expect(adminStmt1.Condition.ArnEquals).toBeDefined();
     expect(adminStmt1.Condition.StringEquals).toBeUndefined();

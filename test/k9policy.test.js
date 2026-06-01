@@ -43,7 +43,7 @@ test('K9PolicyFactory#getAllowedPrincipalArns', () => {
 // noinspection JSUnusedLocalSymbols
 function logStatement(stmt) {
     let statementJsonStr = helpers_1.stringifyStatement(stmt);
-    console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
+    // console.log(`actual policy statement: ${stmt} json: ${statementJsonStr}`);
 }
 describe('K9PolicyFactory#makeAllowStatements', () => {
     const k9PolicyFactory = new k9policy_1.K9PolicyFactory();
