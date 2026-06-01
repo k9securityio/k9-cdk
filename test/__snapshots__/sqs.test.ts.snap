@@ -15,31 +15,10 @@ exports[`SQSResourcePolicy Typical usage 1`] = `
             {
               "Action": [
                 "sqs:AddPermission",
-                "sqs:CancelMessageMoveTask",
                 "sqs:CreateQueue",
                 "sqs:DeleteQueue",
-                "sqs:PurgeQueue",
                 "sqs:RemovePermission",
                 "sqs:SetQueueAttributes",
-              ],
-              "Condition": {
-                "ArnEquals": {
-                  "aws:PrincipalArn": [
-                    "arn:aws:iam::139710491120:user/ci",
-                    "arn:aws:iam::139710491120:role/k9-dev-appeng",
-                  ],
-                },
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "AWS": "*",
-              },
-              "Resource": "*",
-              "Sid": "Allow Restricted administer-resource 1",
-            },
-            {
-              "Action": [
-                "sqs:StartMessageMoveTask",
                 "sqs:TagQueue",
                 "sqs:UntagQueue",
               ],
@@ -56,7 +35,7 @@ exports[`SQSResourcePolicy Typical usage 1`] = `
                 "AWS": "*",
               },
               "Resource": "*",
-              "Sid": "Allow Restricted administer-resource 2",
+              "Sid": "Allow Restricted administer-resource",
             },
             {
               "Action": [
@@ -103,6 +82,8 @@ exports[`SQSResourcePolicy Typical usage 1`] = `
               "Action": [
                 "sqs:ChangeMessageVisibility",
                 "sqs:SendMessage",
+                "sqs:StartMessageMoveTask",
+                "sqs:CancelMessageMoveTask",
               ],
               "Condition": {
                 "ArnEquals": {
@@ -121,7 +102,6 @@ exports[`SQSResourcePolicy Typical usage 1`] = `
             {
               "Action": [
                 "sqs:DeleteMessage",
-                "sqs:DeleteQueue",
                 "sqs:PurgeQueue",
               ],
               "Condition": {
