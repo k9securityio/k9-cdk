@@ -50,9 +50,6 @@
       "cloudtrail:StopLogging",
       "cloudtrail:UpdateTrail"
     ],
-    "delete-data": [
-      "cloudtrail:DeleteTrail"
-    ],
     "read-config": [
       "cloudtrail:DescribeTrails",
       "cloudtrail:GetEventSelectors",
@@ -88,8 +85,6 @@
     ],
     "delete-data": [
       "dynamodb:DeleteItem",
-      "dynamodb:DeleteTable",
-      "dynamodb:DeleteTableReplica",
       "dynamodb:PartiQLDelete"
     ],
     "read-config": [
@@ -134,10 +129,7 @@
       "dax:UpdateSubnetGroup"
     ],
     "delete-data": [
-      "dax:DeleteCluster",
-      "dax:DeleteItem",
-      "dax:DeleteParameterGroup",
-      "dax:DeleteSubnetGroup"
+      "dax:DeleteItem"
     ],
     "read-config": [
       "dax:DescribeClusters",
@@ -483,15 +475,6 @@
       "rds:StopDBCluster",
       "rds:StopDBInstance"
     ],
-    "delete-data": [
-      "rds:DeleteDBCluster",
-      "rds:DeleteDBClusterSnapshot",
-      "rds:DeleteDBInstance",
-      "rds:DeleteDBInstanceAutomatedBackup",
-      "rds:DeleteDBSnapshot",
-      "rds:DeleteGlobalCluster",
-      "rds:DeleteOptionGroup"
-    ],
     "read-config": [
       "rds:DescribeAccountAttributes",
       "rds:DescribeCertificates",
@@ -623,9 +606,8 @@
       "redshift:RotateEncryptionKey"
     ],
     "delete-data": [
-      "redshift:BatchDeleteClusterSnapshots",
-      "redshift:DeleteCluster",
-      "redshift:DeleteClusterSnapshot"
+      "redshift:DeleteSavedQueries",
+      "redshift:DeleteScheduledAction"
     ],
     "read-config": [
       "redshift:DescribeAccountAttributes",
@@ -677,10 +659,6 @@
       "redshift:CopyClusterSnapshot",
       "redshift:CreateSavedQuery",
       "redshift:CreateScheduledAction",
-      "redshift:CreateTags",
-      "redshift:DeleteSavedQueries",
-      "redshift:DeleteScheduledAction",
-      "redshift:DeleteTags",
       "redshift:ExecuteQuery",
       "redshift:ModifySavedQuery",
       "redshift:ViewQueriesInConsole"
@@ -782,19 +760,15 @@
   "SQS": {
     "administer-resource": [
       "sqs:AddPermission",
-      "sqs:CancelMessageMoveTask",
       "sqs:CreateQueue",
       "sqs:DeleteQueue",
-      "sqs:PurgeQueue",
       "sqs:RemovePermission",
       "sqs:SetQueueAttributes",
-      "sqs:StartMessageMoveTask",
       "sqs:TagQueue",
       "sqs:UntagQueue"
     ],
     "delete-data": [
       "sqs:DeleteMessage",
-      "sqs:DeleteQueue",
       "sqs:PurgeQueue"
     ],
     "read-config": [
@@ -810,7 +784,9 @@
     ],
     "write-data": [
       "sqs:ChangeMessageVisibility",
-      "sqs:SendMessage"
+      "sqs:SendMessage",
+      "sqs:StartMessageMoveTask",
+      "sqs:CancelMessageMoveTask"
     ]
   },
   "STS": {
